@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/output.scss'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Home - Dennis Kibet R.',
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-white dark:bg-[#040405] relative`}>{children}</body>
+      <body className={`bg-white dark:bg-[#040405] relative`}>
+        <main>{children}</main>
+        <Toaster />
+      </body>
     </html>
   )
 }

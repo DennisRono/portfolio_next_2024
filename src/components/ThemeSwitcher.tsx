@@ -1,6 +1,5 @@
 'use client'
-import React, { useRef, useEffect, useState } from 'react'
-import clsx from 'clsx'
+import React, { useEffect, useState } from 'react'
 
 const svg = {
   light: (
@@ -30,42 +29,29 @@ const svg = {
 }
 
 const ThemeSwitcher: React.FC = (): JSX.Element => {
-  const switcher = useRef<HTMLDivElement | null>(null)
-  const switcherButton = useRef<HTMLButtonElement>(null)
-
   const [activeTheme, setActiveTheme] = useState<string>('light')
-  const [showDropdown, setShowDropdown] = useState<boolean>(false)
-
-  const dropdownMenuClasses = clsx(
-    'min-w-max absolute bg-white text-base z-[1000] overflow-hidden float-left list-none text-left rounded-lg shadow-lg m-0 bg-clip-padding border-none dark:bg-neutral-800',
-    showDropdown ? 'block -translate-x-full -translate-y-full' : 'hidden'
-  )
 
   const setDarkTheme = () => {
     document.documentElement.classList.add('dark')
     localStorage.theme = 'dark'
-
     setActiveTheme('dark')
-    setShowDropdown(false)
   }
 
   const setLightTheme = () => {
     document.documentElement.classList.remove('dark')
     localStorage.theme = 'light'
-
     setActiveTheme('light')
-    setShowDropdown(false)
   }
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (!switcher.current?.contains(event.target as Node)) {
-      setShowDropdown(false)
-      return
+  const toggleTheme = () => {
+    if (activeTheme === 'light') {
+      setDarkTheme()
+    } else {
+      setLightTheme()
     }
   }
 
   useEffect(() => {
-    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (
       localStorage.theme === 'dark' ||
       (!('theme' in localStorage) &&
@@ -77,76 +63,17 @@ const ThemeSwitcher: React.FC = (): JSX.Element => {
     }
   }, [])
 
-  useEffect(() => {
-    window.addEventListener('click', handleClickOutside)
-    return () => {
-      window.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
-
   return (
-    <>
-      <div
-        className="fixed right-5 bottom-5 z-[9999]"
-        id="theme-switcher"
-        ref={switcher}
+    <div className="fixed right-5 top-5 z-[9999]" id="theme-switcher">
+      <button
+        className="w-[30px] h-[30px] text-neutral-800 dark:text-white uppercase rounded-full hover:shadow-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 focus:bg-neutral-300 dark:focus:bg-neutral-700 focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out flex items-center justify-center whitespace-nowrap motion-reduce:transition-none"
+        type="button"
+        id="themeSwitcher"
+        onClick={toggleTheme}
       >
-        <div className="relative">
-          <button
-            ref={switcherButton}
-            className="w-[30px] h-[30px] text-neutral-800 dark:text-white uppercase rounded-full hover:shadow-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 focus:bg-neutral-300 dark:focus:bg-neutral-700 focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out flex items-center justify-center whitespace-nowrap motion-reduce:transition-none"
-            type="button"
-            id="themeSwitcher"
-            aria-expanded="false"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            {svg[activeTheme as keyof typeof svg]}
-          </button>
-          <ul className={dropdownMenuClasses} aria-labelledby="themeSwitcher">
-            <li>
-              <a
-                className="text-sm py-2 px-3 font-normal block w-full whitespace-nowrap bg-transparent text-neutral-700 dark:text-neutral-100 hover:bg-neutral-100 disabled:text-neutral-400 disabled:pointer-events-none disabled:bg-transparent active:no-underline active:text-neutral-800 dark:hover:bg-neutral-600 focus:outline-none focus:bg-neutral-200 focus:dark:bg-neutral-600"
-                style={
-                  activeTheme === 'light' ? { color: 'rgb(101,144,213)' } : {}
-                }
-                data-theme="light"
-                onClick={setLightTheme}
-              >
-                <div className="pointer-events-none">
-                  <div
-                    className="inline-block w-[24px] text-center"
-                    data-theme-icon="light"
-                  >
-                    {svg.light}
-                  </div>
-                  <span data-theme-name="light">Light</span>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a
-                className="text-sm py-2 px-3 font-normal block w-full whitespace-nowrap bg-transparent text-neutral-700 dark:text-neutral-100 hover:bg-neutral-100 disabled:text-neutral-400 disabled:pointer-events-none disabled:bg-transparent active:no-underline active:text-neutral-800 dark:hover:bg-neutral-600 focus:outline-none focus:bg-neutral-200 focus:dark:bg-neutral-600"
-                style={
-                  activeTheme === 'dark' ? { color: 'rgb(101,144,213)' } : {}
-                }
-                data-theme="dark"
-                onClick={setDarkTheme}
-              >
-                <div className="pointer-events-none">
-                  <div
-                    className="inline-block w-[24px] text-center"
-                    data-theme-icon="dark"
-                  >
-                    {svg.dark}
-                  </div>
-                  <span data-theme-name="dark">Dark</span>
-                </div>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </>
+        {svg[activeTheme as keyof typeof svg]}
+      </button>
+    </div>
   )
 }
 
