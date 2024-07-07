@@ -9,7 +9,7 @@ const About = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/3 sticky top-0">
-            <h1 className="text-3xl font-mono text-gray-900 mb-4 text-center md:text-left">
+            <h1 className="text-xl font-space-mono text-gray-900 mb-8 text-center md:text-left dark:text-white">
               About me <code>&lt;/&gt;</code>
             </h1>
             <div className="relative w-56 h-56 mx-auto md:mx-0 mb-6">
@@ -24,18 +24,20 @@ const About = () => {
               </div>
             </div>
             <div className="text-center md:text-left">
-              <h2 className="text-2xl text-gray-900">Dennis Kibet R.</h2>
-              <h4 className="text-xl text-gray-600">
+              <h2 className="text-2xl text-gray-900 dark:text-white">
+                Dennis Kibet R.
+              </h2>
+              <h4 className="text-xl text-gray-600 dark:text-white">
                 Full-Stack Software Developer
               </h4>
             </div>
           </div>
           <div className="md:flex-1 mt-8 md:mt-0 md:pl-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-right md:text-left">
+              <h2 className="text-2xl  text-right md:text-left dark:text-white">
                 Background <span className="text-teal-500">.01</span>
               </h2>
-              <p className="text-lg text-gray-700">
+              <p className="text-lg text-gray-700 dark:text-white">
                 Hello, I am Dennis. I am currently a student at Moringa School
                 Kenya, studying Software Engineering. I love building things for
                 the internet. My native home place is Eldoret Kenya. My interest
@@ -51,66 +53,100 @@ const About = () => {
               </p>
             </div>
             <div className="mb-8">
-              <h2 className="text-2xl font-bold">
-                <span className="text-teal-500">.02</span> Technologies I use
+              <h2 className="text-2xl  dark:text-white">
+                <span className="text-teal-500 ">.02</span> Technologies I use
               </h2>
-              <p className="text-lg text-gray-700">
+              <p className="text-lg text-gray-700 dark:text-white">
                 Here are a few technologies I've been working with recently:
               </p>
               <div className="flex flex-wrap justify-between mt-4">
                 <div>
-                  <h2 className="text-xl text-gray-900 mb-2">Languages</h2>
+                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                    Languages
+                  </h2>
                   <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       php
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Node.js
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Java
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       C#
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Python
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Javascript (ES6+)
                     </li>
                   </ul>
                 </div>
                 <div>
-                  <h2 className="text-xl text-gray-900 mb-2">Frameworks</h2>
+                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                    Frameworks
+                  </h2>
                   <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       React.js
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
-                      TensorFlow
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      Next.js
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      React Native
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Electron
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Django
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      Flutter
                     </li>
                   </ul>
                 </div>
                 <div>
-                  <h2 className="text-xl text-gray-900 mb-2">Design</h2>
+                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                    AI & Machine Learning
+                  </h2>
                   <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      TensorFlow
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      PyTorch
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      sklearn
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      Pandas
+                    </li>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                      Numpy
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                    Design
+                  </h2>
+                  <ul>
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Adobe XD
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Figma
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Sketch
                     </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500">
+                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
                       Webflow
                     </li>
                   </ul>
@@ -120,21 +156,21 @@ const About = () => {
           </div>
         </div>
         <div className="mb-8">
-          <h2 className="text-2xl font-bold">
-            <span className="text-teal-500">.03</span> Career
+          <h2 className="text-2xl dark:text-white text-center">
+            <span className="text-teal-500 text-sm">.03</span> Career
           </h2>
-          <div className="flex flex-col md:flex-row mt-4 gap-8">
-            <div className="md:w-2/3">
-              <h2 className="text-xl font-mono text-gray-900 mb-2">
+          <div className="flex flex-col md:flex-row mt-4 gap-8 min-h-min relative">
+            <div className="md:w-2/3 h-min sticky top-2">
+              <h2 className="text-xl font-space-mono text-gray-900 dark:text-white mb-2">
                 Full-Stack Software Developer
               </h2>
-              <p className="text-lg text-gray-700 mb-4">
+              <p className="text-lg text-gray-700 mb-4 dark:text-white">
                 I am an innovative full-stack software developer with over three
                 years of expertise, specializing in the seamless integration of
                 frontend and backend components for intricate, scalable web and
                 mobile applications.
               </p>
-              <p className="text-lg text-gray-700">
+              <p className="text-lg text-gray-700 dark:text-white">
                 Over the past three years, my journey as a software artisan led
                 to a portfolio with remote agency work, startup collaborations,
                 and diverse partnerships. This path resulted in innovative
@@ -143,65 +179,55 @@ const About = () => {
               </p>
             </div>
             <div className="md:w-1/3">
-              <h4 className="text-xl font-mono text-gray-900 mb-4">
+              <h4 className="text-xl font-space-mono text-gray-900 mb-4 dark:text-white">
                 ~ what i do
               </h4>
               <div className="space-y-4">
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
+                <div className="p-4 bg-[var(--background-modals)] rounded-md overflow-hidden">
+                  <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Web Apps & APIs
                   </h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm font-space-mono text-gray-700 dark:text-white">
                     I develop both front-end & back-end of websites using
                     Express.js, React.js, Python Flask/Django, Node.js and
                     Go-lang
                   </p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
+                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                  <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Machine Learning
                   </h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm font-space-mono text-gray-700 dark:text-white">
                     With knowledge in AI & Machine learning, I create effective
                     models for complex business challenges using
                     Tensorflow/Keras & Scikit-learn.
                   </p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
+                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                  <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Mobile Development
                   </h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm font-space-mono text-gray-700 dark:text-white">
                     I build cross-platform mobile apps using React Native &
                     Flutter, delivering seamless user experiences on both iOS
                     and Android.
                   </p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
+                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                  <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     UI/UX
                   </h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm font-space-mono text-gray-700 dark:text-white">
                     I design user-centered digital experiences emphasizing
                     functionality, usability, and aesthetics, ensuring
                     user-friendly products.
                   </p>
                 </div>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
-                    Technical Writing
-                  </h3>
-                  <p className="text-sm text-gray-700">
-                    I create clear and concise technical documentation,
-                    tutorials, and articles, simplifying complex topics for
-                    diverse audiences.
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <h3 className="text-lg font-mono text-gray-900 mb-2">
+                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                  <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     DevOps
                   </h3>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm font-space-mono text-gray-700 dark:text-white">
                     I use CI/CD practices to automate deployment and testing
                     processes, ensuring robust and stable releases, while
                     leveraging Docker & Kubernetes for scalability.
@@ -212,63 +238,107 @@ const About = () => {
           </div>
         </div>
         <div className="mb-8">
-          <h2 className="text-2xl font-bold">
-            <span className="text-teal-500">.04</span> Current
+          <h2 className="text-2xl dark:text-white text-center">
+            <span className="text-teal-500 text-sm dark:text-white">.04</span>{' '}
+            Experience & Schooling
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">
-                IT Services Provider
-              </h4>
-              <p className="text-gray-700">
-                Offering IT support, infrastructure management, and consulting
-                services to optimize business operations and ensure system
-                efficiency.
-              </p>
+          <div className="py-3 mx-4">
+            <div className="my-8 flex items-center justify-between gap-14">
+              <div className="flex-1">
+                <h2 className="text-2xl mb-2 dark:text-white">
+                  Samoei Boys Secondary School, Nandi Hills
+                </h2>
+                <p className="text-lg dark:text-white">
+                  at samoei i learned alot of life skills and career developing
+                  skills through my four years there, This is where i had my
+                  first intrest in computers
+                </p>
+              </div>
+              <div className="w-1/4 flex items-start justify-end">
+                <span className="text-nowrap dark:text-white">
+                  2016 Jan - 2019 Dec
+                </span>
+              </div>
             </div>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">
-                Cross-Platform Mobile Development
-              </h4>
-              <p className="text-gray-700">
-                Creating cross-platform mobile applications using React Native &
-                Flutter to deliver seamless experiences across iOS and Android
-                devices.
-              </p>
+          </div>
+          <div className="py-3 mx-4">
+            <div className="my-8 flex items-center justify-between gap-14">
+              <div className="flex-1">
+                <h2 className="text-2xl mb-2 dark:text-white">
+                  Alphax College (Web Development), Eldoret
+                </h2>
+                <p className="text-lg dark:text-white">
+                  here i took a practical course on web development where i
+                  gained skills in HTML, css, javascript and php. I also got
+                  certified in web development
+                </p>
+              </div>
+              <div className="w-1/4 flex items-start justify-end">
+                <span className="text-nowrap dark:text-white">
+                  2020 Jan - 2020 April
+                </span>
+              </div>
             </div>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">UI/UX Design</h4>
-              <p className="text-gray-700">
-                Focusing on designing intuitive user interfaces and experiences
-                that enhance user satisfaction and engagement.
-              </p>
+          </div>
+          <div className="py-3 mx-4">
+            <div className="my-8 flex items-center justify-between gap-14">
+              <div className="flex-1">
+                <h2 className="text-2xl mb-2 dark:text-white">
+                  Machakos University (Computer Science), Machakos
+                </h2>
+                <p className="text-lg dark:text-white">
+                  At Machakos University, I gained a deep understanding of the
+                  theoretical foundations of computing technologies. I had the
+                  opportunity to collaborate with many peers on various school
+                  projects over the four years. This experience was incredibly
+                  rewarding, allowing me to forge lifelong connections and
+                  acquire a range of skills that enhanced my personal
+                  development and advanced my career.
+                </p>
+              </div>
+              <div className="w-1/4 flex items-start justify-end">
+                <span className="text-nowrap dark:text-white">
+                  2020 Sept - 2024 April
+                </span>
+              </div>
             </div>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">
-                Technical Writing
-              </h4>
-              <p className="text-gray-700">
-                Producing technical documentation, tutorials, and articles to
-                simplify complex topics for a broader audience.
-              </p>
+          </div>
+          <div className="py-3 mx-4">
+            <div className="my-8 flex items-center justify-between gap-14">
+              <div className="flex-1">
+                <h2 className="text-2xl mb-2 dark:text-white">
+                  Water Resources Authority (Attaché), Nairobi
+                </h2>
+                <p className="text-lg dark:text-white">
+                  As an Attaché at WRA, I adeptly applied ICT expertise,
+                  enhancing tech solutions, workflow efficiency, and
+                  communication. Adept in tech advancements, I boosted
+                  organizational proficiency and innovation.
+                </p>
+              </div>
+              <div className="w-1/4 flex items-start justify-end">
+                <span className="text-nowrap dark:text-white">
+                  2023 May - 2023 August
+                </span>
+              </div>
             </div>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">
-                Cloud Solutions Architect
-              </h4>
-              <p className="text-gray-700">
-                Designing and implementing scalable cloud-based solutions to
-                meet the evolving needs of businesses.
-              </p>
-            </div>
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h4 className="text-lg font-bold text-gray-900">
-                E-Learning Platform Development
-              </h4>
-              <p className="text-gray-700">
-                Developing innovative e-learning platforms to enhance
-                educational experiences and accessibility.
-              </p>
+          </div>
+          <div className="py-3 mx-4">
+            <div className="my-8 flex items-center justify-between gap-14">
+              <div className="flex-1">
+                <h2 className="text-2xl mb-2 dark:text-white">
+                  Moringa School (Software Engineering), Nairobi
+                </h2>
+                <p className="text-lg dark:text-white">
+                  I am currently at Moringa School persuing software
+                  engineering. So far so good here.
+                </p>
+              </div>
+              <div className="w-1/4 flex items-start justify-end">
+                <span className="text-nowrap dark:text-white">
+                  2024 June - 2024 December
+                </span>
+              </div>
             </div>
           </div>
         </div>
