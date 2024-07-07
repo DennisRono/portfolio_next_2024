@@ -14,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-white dark:bg-[#040405] relative`}>
+      <body
+        className={`bg-gradient-to-b bg-no-repeat from-[#e3e1ff] from-10% via-[#e3edff] via-30% to-[#fff] to-90% dark:bg-gradient-to-b dark:from-[#09090e] dark:from-20% dark:via-[#090c14] dark:via-50% dark:to-[#0f121a] dark:to-90% dark:bg-no-repeat relative`}
+      >
         <main>{children}</main>
         <Toaster />
       </body>
