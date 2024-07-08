@@ -1,4 +1,10 @@
+import Image from 'next/image'
 import React from 'react'
+import Calendar from '@/assets/images/calendar.png'
+import Grad from '@/assets/images/graduation-cap.png'
+import Projects from '@/assets/images/projects.png'
+import Book from '@/assets/images/book.png'
+import Link from 'next/link'
 
 const Landing = () => {
   return (
@@ -32,7 +38,68 @@ const Landing = () => {
             nuances. Have a good read!
           </p>
         </div>
-        <div className="flex-1"></div>
+        <div className="flex-1 flex flex-col items-end justify-center pt-4">
+          <a
+            href="https://calendly.com/dennisrkibet/30min"
+            target="_blank"
+            rel="noreferrer"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
+            title="chat with me"
+          >
+            <div className="h-6 w-6">
+              <Image src={Calendar} alt={'calendar image'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap">
+              Chat with me
+            </span>
+          </a>
+          <a
+            href="https://calendly.com"
+            target="_blank"
+            rel="noreferrer"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
+            title="chat with me"
+          >
+            <div className="h-6 w-6">
+              <Image src={Grad} alt={'calendar image'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap">
+              Hire me
+            </span>
+            <span className="text-black dark:text-white">|</span>
+            <span className="text-black dark:text-white">Resume</span>
+          </a>
+          <Link
+            href="/projetcs"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
+            title="chat with me"
+          >
+            <div className="h-6 w-6">
+              <Image src={Projects} alt={'calendar image'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap text-xs">
+              What i&apos;ve done
+            </span>
+            <span className="text-black dark:text-white">|</span>
+            <span className="text-black dark:text-white">Projects</span>
+          </Link>
+          <Link
+            href="#about-me"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
+            title="chat with me"
+          >
+            <div className="h-6 w-6">
+              <Image src={Book} alt={'calendar image'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap text-xs">
+              Know me
+            </span>
+            <span className="text-black dark:text-white">|</span>
+            <span className="text-nowrap text-black dark:text-white">
+              About Me
+            </span>
+          </Link>
+        </div>
       </div>
     </div>
   )

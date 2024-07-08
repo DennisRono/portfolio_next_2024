@@ -6,7 +6,7 @@ import Image from 'next/image'
 const About = () => {
   return (
     <Fragment>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8" id="about-me">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/3 sticky top-0">
             <h1 className="text-xl font-space-mono text-gray-900 mb-8 text-center md:text-left dark:text-white">
