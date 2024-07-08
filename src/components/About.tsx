@@ -35,7 +35,7 @@ const About = () => {
           <div className="md:flex-1 mt-8 md:mt-0 md:pl-8">
             <div className="mb-8">
               <h2 className="text-2xl  text-right md:text-left dark:text-white">
-                Background <span className="text-teal-500">.01</span>
+                Background <span className="text-teal-500 text-sm">.01</span>
               </h2>
               <p className="text-lg text-gray-700 dark:text-white">
                 Hello, I am Dennis. I am currently a student at Moringa School
@@ -52,110 +52,111 @@ const About = () => {
                 cross-cultural, global teams.
               </p>
             </div>
-            <div className="mb-8">
-              <h2 className="text-2xl  dark:text-white">
-                <span className="text-teal-500 ">.02</span> Technologies I use
+          </div>
+        </div>
+        <div className="my-14">
+          <h2 className="text-2xl  dark:text-white text-center mb-8">
+            <span className="text-teal-500 text-sm mr-2">.02</span>
+            Technologies I use
+          </h2>
+          <p className="text-lg text-gray-700 dark:text-white mb-4">
+            Here are a few technologies I've been working with recently:
+          </p>
+          <div className="flex flex-wrap justify-between mt-4">
+            <div>
+              <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                Languages
               </h2>
-              <p className="text-lg text-gray-700 dark:text-white">
-                Here are a few technologies I've been working with recently:
-              </p>
-              <div className="flex flex-wrap justify-between mt-4">
-                <div>
-                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
-                    Languages
-                  </h2>
-                  <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      php
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Node.js
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Java
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      C#
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Python
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Javascript (ES6+)
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
-                    Frameworks
-                  </h2>
-                  <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      React.js
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Next.js
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      React Native
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Electron
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Django
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Flutter
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
-                    AI & Machine Learning
-                  </h2>
-                  <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      TensorFlow
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      PyTorch
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      sklearn
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Pandas
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Numpy
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
-                    Design
-                  </h2>
-                  <ul>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Adobe XD
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Figma
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Sketch
-                    </li>
-                    <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
-                      Webflow
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              <ul>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  php
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Node.js
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Java
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  C#
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Python
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Javascript (ES6+)
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                Frameworks
+              </h2>
+              <ul>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  React.js
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Next.js
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  React Native
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Electron
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Django & Flask
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Flutter
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                AI & Machine Learning
+              </h2>
+              <ul>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  TensorFlow
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  PyTorch
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  sklearn
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Pandas
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Numpy
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl text-gray-900 mb-2 dark:text-white">
+                Design
+              </h2>
+              <ul>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Adobe XD
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Figma
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Sketch
+                </li>
+                <li className="relative pl-4 mb-2 text-lg text-gray-700 before:absolute before:left-0 before:content-['▹'] before:text-teal-500 dark:text-white">
+                  Webflow
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-        <div className="mb-8">
+        <div className="my-14">
           <h2 className="text-2xl dark:text-white text-center">
             <span className="text-teal-500 text-sm">.03</span> Career
           </h2>
@@ -237,10 +238,10 @@ const About = () => {
             </div>
           </div>
         </div>
-        <div className="mb-8">
+        <div className="my-14">
           <h2 className="text-2xl dark:text-white text-center">
-            <span className="text-teal-500 text-sm dark:text-white">.04</span>{' '}
-            Experience & Schooling
+            <span className="text-teal-500 text-sm mr-2">.04</span> Experience &
+            Schooling
           </h2>
           <div className="py-3 mx-4">
             <div className="my-8 flex items-center justify-between gap-14">
