@@ -184,7 +184,7 @@ const About = () => {
                 ~ what i do
               </h4>
               <div className="space-y-4">
-                <div className="p-4 bg-[var(--background-modals)] rounded-md overflow-hidden">
+                <div className="p-4 bg-[var(--background-modals)] rounded-[5px] overflow-hidden">
                   <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Web Apps & APIs
                   </h3>
@@ -194,7 +194,7 @@ const About = () => {
                     Go-lang
                   </p>
                 </div>
-                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                <div className="p-4 bg-[var(--background-modals)] rounded-[5px]">
                   <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Machine Learning
                   </h3>
@@ -204,7 +204,7 @@ const About = () => {
                     Tensorflow/Keras & Scikit-learn.
                   </p>
                 </div>
-                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                <div className="p-4 bg-[var(--background-modals)] rounded-[5px]">
                   <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     Mobile Development
                   </h3>
@@ -214,7 +214,7 @@ const About = () => {
                     and Android.
                   </p>
                 </div>
-                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                <div className="p-4 bg-[var(--background-modals)] rounded-[5px]">
                   <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     UI/UX
                   </h3>
@@ -224,7 +224,7 @@ const About = () => {
                     user-friendly products.
                   </p>
                 </div>
-                <div className="p-4 bg-[var(--background-modals)] rounded-lg">
+                <div className="p-4 bg-[var(--background-modals)] rounded-[5px]">
                   <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">
                     DevOps
                   </h3>

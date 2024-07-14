@@ -76,7 +76,7 @@ const page = () => {
                     <ul className="flex -translate-y-1.5 flex-wrap">
                       {proj.stack.map((stack, index) => (
                         <li className="my-1 mr-1.5" key={index}>
-                          <div className="flex items-center rounded-full bg-[var(--background-modals)] px-3 py-1 text-xs font-medium leading-5 text-[#2b2b2b]">
+                          <div className="flex items-center rounded-full bg-[var(--background-modals)] px-3 py-1 text-xs font-medium leading-5 text-ctm">
                             {stack}
                           </div>
                         </li>
