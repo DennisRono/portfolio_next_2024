@@ -988,12 +988,12 @@ video {
   text-wrap: nowrap;
 }
 
-.rounded-full{
-  border-radius: 9999px;
+.rounded-\[5px\]{
+  border-radius: 5px;
 }
 
-.rounded-lg{
-  border-radius: var(--radius);
+.rounded-full{
+  border-radius: 9999px;
 }
 
 .rounded-md{
@@ -1002,14 +1002,6 @@ video {
 
 .rounded-xl{
   border-radius: 0.75rem;
-}
-
-.rounded-sm{
-  border-radius: calc(var(--radius) - 4px);
-}
-
-.rounded-\[5px\]{
-  border-radius: 5px;
 }
 
 .border{
