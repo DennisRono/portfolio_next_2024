@@ -2,6 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import Grad from '@/assets/images/graduation-cap.png'
 import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
 const page = () => {
   return (
@@ -11,9 +13,15 @@ const page = () => {
       </h1>
       <Link
         href="/"
-        className="absolute top-0 right-0 m-4 hover:underline text-[#2b2b2b] dark:text-[#e6e6e6]"
+        className="flex items-center justify-start gap-2 group absolute top-4 left-4"
       >
-        Back Home
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="text-[#2b2b2b] dark:text-[#e6e6e6] text-lg h-4 transition-transform group-hover:-translate-x-2"
+        />
+        <span className="text-xl text-[#2b2b2b] dark:text-[#e6e6e6] font-volte-rounded-semibold">
+          Dennis Kibet
+        </span>
       </Link>
       <div className="flex items-center justify-center h-full">
         <div className="p-2 -mt-[20%]">
