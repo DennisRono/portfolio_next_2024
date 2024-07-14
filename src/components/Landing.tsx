@@ -53,10 +53,8 @@ const Landing = () => {
               Chat with me
             </span>
           </a>
-          <a
-            href="https://calendly.com"
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            href="/resume"
             className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
             title="chat with me"
           >
@@ -68,9 +66,9 @@ const Landing = () => {
             </span>
             <span className="text-black dark:text-white">|</span>
             <span className="text-black dark:text-white">Resume</span>
-          </a>
+          </Link>
           <Link
-            href="/projetcs"
+            href="/projects"
             className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
             title="chat with me"
           >
