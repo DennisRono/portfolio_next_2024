@@ -19,7 +19,7 @@ const config = {
       '2xl': '1536px',
     },
     fontFamily: {
-      'space-mono': 'Space Mono',
+      'space-mono': ['Space Mono', 'monospace'],
       'volte-rounded': 'Volte Rounded, Roboto',
       apercu: 'Apercu',
       'volte-rounded-bold': ['VolteRounded-Bold'],
