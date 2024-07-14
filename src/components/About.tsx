@@ -8,7 +8,7 @@ const About = () => {
     <Fragment>
       <div className="container mx-auto px-4 py-8" id="about-me">
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/3 sticky top-0">
+          <div className="md:w-1/3 md:sticky md:top-0">
             <h1 className="text-xl font-space-mono text-gray-900 mb-8 text-center md:text-left dark:text-white">
               About me <code>&lt;/&gt;</code>
             </h1>
@@ -161,7 +161,7 @@ const About = () => {
             <span className="text-teal-500 text-sm">.03</span> Career
           </h2>
           <div className="flex flex-col md:flex-row mt-4 gap-8 min-h-min relative">
-            <div className="md:w-2/3 h-min sticky top-2">
+            <div className="md:w-2/3 h-min md:sticky md:top-2">
               <h2 className="text-xl font-space-mono text-gray-900 dark:text-white mb-2">
                 Full-Stack Software Developer
               </h2>
@@ -244,7 +244,7 @@ const About = () => {
             Schooling
           </h2>
           <div className="py-3 mx-4">
-            <div className="my-8 flex items-center justify-between gap-14">
+            <div className="my-8 sm:flex sm:items-center sm:justify-between sm:gap-14">
               <div className="flex-1">
                 <h2 className="text-2xl mb-2 dark:text-white">
                   Samoei Boys Secondary School, Nandi Hills
@@ -255,7 +255,7 @@ const About = () => {
                   first intrest in computers
                 </p>
               </div>
-              <div className="w-1/4 flex items-start justify-end">
+              <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
                   2016 Jan - 2019 Dec
                 </span>
@@ -263,7 +263,7 @@ const About = () => {
             </div>
           </div>
           <div className="py-3 mx-4">
-            <div className="my-8 flex items-center justify-between gap-14">
+            <div className="my-8 sm:flex sm:items-center sm:justify-between sm:gap-14">
               <div className="flex-1">
                 <h2 className="text-2xl mb-2 dark:text-white">
                   Alphax College (Web Development), Eldoret
@@ -274,7 +274,7 @@ const About = () => {
                   certified in web development
                 </p>
               </div>
-              <div className="w-1/4 flex items-start justify-end">
+              <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
                   2020 Jan - 2020 April
                 </span>
@@ -282,7 +282,7 @@ const About = () => {
             </div>
           </div>
           <div className="py-3 mx-4">
-            <div className="my-8 flex items-center justify-between gap-14">
+            <div className="my-8 sm:flex sm:items-center sm:justify-between sm:gap-14">
               <div className="flex-1">
                 <h2 className="text-2xl mb-2 dark:text-white">
                   Machakos University (Computer Science), Machakos
@@ -297,7 +297,7 @@ const About = () => {
                   development and advanced my career.
                 </p>
               </div>
-              <div className="w-1/4 flex items-start justify-end">
+              <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
                   2020 Sept - 2024 April
                 </span>
@@ -305,7 +305,7 @@ const About = () => {
             </div>
           </div>
           <div className="py-3 mx-4">
-            <div className="my-8 flex items-center justify-between gap-14">
+            <div className="my-8 sm:flex sm:items-center sm:justify-between sm:gap-14">
               <div className="flex-1">
                 <h2 className="text-2xl mb-2 dark:text-white">
                   Water Resources Authority (Attaché), Nairobi
@@ -317,7 +317,7 @@ const About = () => {
                   organizational proficiency and innovation.
                 </p>
               </div>
-              <div className="w-1/4 flex items-start justify-end">
+              <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
                   2023 May - 2023 August
                 </span>
@@ -325,7 +325,7 @@ const About = () => {
             </div>
           </div>
           <div className="py-3 mx-4">
-            <div className="my-8 flex items-center justify-between gap-14">
+            <div className="my-8 sm:flex sm:items-center sm:justify-between sm:gap-14">
               <div className="flex-1">
                 <h2 className="text-2xl mb-2 dark:text-white">
                   Moringa School (Software Engineering), Nairobi
@@ -335,7 +335,7 @@ const About = () => {
                   engineering. So far so good here.
                 </p>
               </div>
-              <div className="w-1/4 flex items-start justify-end">
+              <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
                   2024 June - 2024 December
                 </span>

@@ -9,7 +9,7 @@ import Link from 'next/link'
 const Landing = () => {
   return (
     <div className="min-h-[50vh] py-[5rem] flex flex-col justify-center">
-      <div className="flex items-start justify-between gap-4">
+      <div className="sm:flex items-start justify-between gap-4">
         <div className="flex-1">
           <h1 className="text-4xl xl:text-6xl 2xl:text-8xl font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu mb-2 -ml-2">
             <span
@@ -38,7 +38,7 @@ const Landing = () => {
             nuances. Have a good read!
           </p>
         </div>
-        <div className="flex-1 flex flex-col items-end justify-center pt-4">
+        <div className="flex-1 flex flex-col items-start sm:items-end justify-center pt-4">
           <a
             href="https://calendly.com/dennisrkibet/30min"
             target="_blank"
