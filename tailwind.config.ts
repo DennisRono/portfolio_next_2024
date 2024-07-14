@@ -23,6 +23,7 @@ const config = {
       'volte-rounded': 'Volte Rounded, Roboto',
       apercu: 'Apercu',
       'volte-rounded-bold': ['VolteRounded-Bold'],
+      'volte-rounded-semibold': ['Volte-Rounded-Semibold'],
     },
     container: {
       center: true,

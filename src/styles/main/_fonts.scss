@@ -1,13 +1,3 @@
-@font-face {
-  font-family: 'Space Mono';
-  src: url(../../assets/fonts/Space_Mono/SpaceMono-Bold.ttf);
-  src: url(../../assets/fonts/Space_Mono/SpaceMono-Italic.ttf);
-  src: url(../../assets/fonts/Space_Mono/SpaceMono-BoldItalic.ttf);
-  src: url(../../assets/fonts/Space_Mono/SpaceMono-Regular.ttf)
-    format('truetype');
-  font-style: normal;
-}
-
 /* Apercu font */
 @font-face {
   font-family: Apercu;
@@ -182,11 +172,20 @@
 }
 
 @font-face {
-  font-family: Volte Rounded;
+  font-family: 'Volte-Rounded-Regular';
   src: url(../../assets/fonts/Volte-Rounded/VolteRounded-Regular.woff2);
   src: url(../../assets/fonts/Volte-Rounded/VolteRounded-Regular.woff2)
     format('woff2');
   font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Volte-Rounded-Semibold';
+  src: url(../../assets/fonts/Volte-Rounded/Volte-Rounded-Semibold.otf);
+  src: url(../../assets/fonts/Volte-Rounded/Volte-Rounded-Semibold.otf)
+    format('otf');
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -207,5 +206,34 @@
     /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
       url('../../assets/fonts/VolteRounded-Bold/@font-face/428912faef6cbf7a2c43c3952c8de813.svg#VolteRounded-Bold')
       format('svg'); /* iOS 4.1- */
+  font-style: normal;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&display=swap');
+
+@font-face {
+  font-family: 'BookerlyDisplay_W_Rg';
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.eot');
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.eot')
+    format('eot');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BookerlyDisplay_W_Rg';
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.woff');
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BookerlyDisplay_W_Rg';
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.woff2');
+  src: url('../../assets/fonts/BookerlyDisplay/BookerlyDisplay.woff2')
+    format('woff2');
+  font-weight: normal;
   font-style: normal;
 }

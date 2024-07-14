@@ -30,3 +30,10 @@ body {
   transition: background 2s;
   position: relative;
 }
+
+.text-ctm {
+  @apply text-[#2b2b2b] dark:text-[#e6e6e6];
+}
+.text-ctm-inv {
+  @apply text-[#e6e6e6] dark:text-[#2b2b2b];
+}

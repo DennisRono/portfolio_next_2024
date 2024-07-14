@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 const page = () => {
   return (
-    <div className="h-screen pt-4">
+    <div className="h-screen pt-4 overflow-hidden">
       <h1 className="font-semibold text-center font-volte-rounded-bold text-8xl mt-4 text-[#2b2b2b] dark:text-[#e6e6e6]">
         Hire Me
       </h1>
