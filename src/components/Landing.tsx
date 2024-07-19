@@ -5,6 +5,7 @@ import Grad from '@/assets/images/graduation-cap.png'
 import Projects from '@/assets/images/projects.png'
 import Book from '@/assets/images/book.png'
 import Link from 'next/link'
+import Script from 'next/script'
 
 const Landing = () => {
   return (
@@ -37,6 +38,10 @@ const Landing = () => {
             This is my place for contemplation, candid reflections, and all the
             nuances. Have a good read!
           </p>
+          <Script
+            src="https://liberapay.com/denniskibet/widgets/button.js"
+            strategy="worker"
+          />
         </div>
         <div className="flex-1 flex flex-col items-start sm:items-end justify-center pt-4">
           <a
