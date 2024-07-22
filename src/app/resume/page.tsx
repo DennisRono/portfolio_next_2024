@@ -4,6 +4,7 @@ import Grad from '@/assets/images/graduation-cap.png'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import ResumeForm from './ResumeForm'
 
 const page = () => {
   return (
@@ -33,16 +34,7 @@ const page = () => {
             />
           </div>
           <div className="text-center flex flex-col items-center">
-            <form className="flex items-center justify-center gap-4 mb-4">
-              <input
-                type="text"
-                className="py-2 px-6 w-[300px] rounded-md outline-none border border-slate-900"
-                placeholder="email..."
-              />
-              <button className="bg-blue-500 h-10 w-24 rounded-full text-white cursor-pointer">
-                request
-              </button>
-            </form>
+            <ResumeForm />
             <p className="text-center text-lg w-[65%] text-[#2b2b2b] dark:text-[#e6e6e6]">
               Request and you&apos;ll get an email with the resume attached
             </p>

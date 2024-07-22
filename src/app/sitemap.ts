@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 import { getBaseUrl } from '@/lib/Helpers'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const response = await fetch(`${getBaseUrl}/api/blogs`, {
+  const response = await fetch(`${getBaseUrl()}/api/blogs`, {
     method: 'GET',
     redirect: 'follow',
     cache: 'no-store',

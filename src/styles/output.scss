@@ -988,6 +988,10 @@ video {
   border-radius: 0.75rem;
 }
 
+.rounded-sm{
+  border-radius: calc(var(--radius) - 4px);
+}
+
 .border{
   border-width: 1px;
 }
@@ -1491,6 +1495,59 @@ body {
 .text-ctm-inv:is(.dark *){
   --tw-text-opacity: 1;
   color: rgb(43 43 43 / var(--tw-text-opacity));
+}
+
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+  margin: 0 auto;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #ffffff;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    background-color: #ffffff;
+  }
+
+  50%,
+  100% {
+    background-color: #fff3f333;
+  }
 }
 
 .before\:absolute::before{
