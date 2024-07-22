@@ -14,7 +14,7 @@ const ResumeForm = () => {
       const origin =
         typeof window !== 'undefined' && window.location.origin
           ? window.location.origin
-          : 'https://shop-next.nullchemy.com'
+          : 'https://denniskibet.com'
       const res: any = await fetch(`${origin}/api/resume`, {
         method: 'POST',
         redirect: 'follow',
