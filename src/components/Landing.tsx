@@ -4,6 +4,7 @@ import Calendar from '@/assets/images/calendar.png'
 import Grad from '@/assets/images/graduation-cap.png'
 import Projects from '@/assets/images/projects.png'
 import Book from '@/assets/images/book.png'
+import Blog from '@/assets/images/blog.png'
 import Link from 'next/link'
 import Script from 'next/script'
 
@@ -48,7 +49,7 @@ const Landing = () => {
             href="https://calendly.com/dennisrkibet/30min"
             target="_blank"
             rel="noreferrer"
-            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
             title="chat with me"
           >
             <div className="h-6 w-6">
@@ -60,13 +61,13 @@ const Landing = () => {
           </a>
           <Link
             href="/resume"
-            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
-            title="chat with me"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+            title="Resume"
           >
             <div className="h-6 w-6">
               <Image src={Grad} alt={'calendar image'} />
             </div>
-            <span className="text-black dark:text-white text-nowrap">
+            <span className="text-black dark:text-white text-nowrap text-xs">
               Hire me
             </span>
             <span className="text-black dark:text-white">|</span>
@@ -74,8 +75,8 @@ const Landing = () => {
           </Link>
           <Link
             href="/projects"
-            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
-            title="chat with me"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+            title="My Projects"
           >
             <div className="h-6 w-6">
               <Image src={Projects} alt={'calendar image'} />
@@ -88,8 +89,8 @@ const Landing = () => {
           </Link>
           <Link
             href="#about-me"
-            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4"
-            title="chat with me"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+            title="About Me"
           >
             <div className="h-6 w-6">
               <Image src={Book} alt={'calendar image'} />
@@ -101,6 +102,20 @@ const Landing = () => {
             <span className="text-nowrap text-black dark:text-white">
               About Me
             </span>
+          </Link>
+          <Link
+            href="/blog"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+            title="my blog"
+          >
+            <div className="h-6 w-6">
+              <Image src={Blog} alt={'calendar image'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap text-xs">
+              My Thoughts
+            </span>
+            <span className="text-black dark:text-white">|</span>
+            <span className="text-nowrap text-black dark:text-white">Blog</span>
           </Link>
         </div>
       </div>
