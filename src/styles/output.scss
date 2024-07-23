@@ -665,6 +665,11 @@ video {
   margin-bottom: 2rem;
 }
 
+.mx-0{
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .-ml-2{
   margin-left: -0.5rem;
 }
@@ -723,6 +728,26 @@ video {
 
 .mt-8{
   margin-top: 2rem;
+}
+
+.mt-14{
+  margin-top: 3.5rem;
+}
+
+.mt-10{
+  margin-top: 2.5rem;
+}
+
+.ml-4{
+  margin-left: 1rem;
+}
+
+.ml-10{
+  margin-left: 2.5rem;
+}
+
+.ml-8{
+  margin-left: 2rem;
 }
 
 .inline-block{
@@ -794,6 +819,14 @@ video {
   height: 100vh;
 }
 
+.h-\[100px\]{
+  height: 100px;
+}
+
+.h-\[80px\]{
+  height: 80px;
+}
+
 .max-h-screen{
   max-height: 100vh;
 }
@@ -854,6 +887,10 @@ video {
 .w-min{
   width: -moz-min-content;
   width: min-content;
+}
+
+.w-\[100px\]{
+  width: 100px;
 }
 
 .max-w-screen-2xl{
@@ -1263,6 +1300,11 @@ video {
 .text-xs{
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-3xl{
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 
 .font-bold{
@@ -1978,11 +2020,26 @@ body {
     font-size: 3.75rem;
     line-height: 1;
   }
+
+  .xl\:text-4xl{
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
+  .xl\:text-5xl{
+    font-size: 3rem;
+    line-height: 1;
+  }
 }
 
 @media (min-width: 1536px){
   .\32xl\:text-8xl{
     font-size: 6rem;
+    line-height: 1;
+  }
+
+  .\32xl\:text-6xl{
+    font-size: 3.75rem;
     line-height: 1;
   }
 }
