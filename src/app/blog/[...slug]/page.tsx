@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { siteConfig } from '@/config/site'
 import { Tag } from '@/components/tag'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 interface PostPageProps {
   params: {
     slug: string[]
@@ -72,20 +74,24 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <article className="container py-6 prose dark:prose-invert max-w-4xl mx-auto">
-      <h1 className="mb-2 text-5xl">{post.title}</h1>
-      <div className="flex gap-2 mb-2">
-        {post.tags?.map((tag) => (
-          <Tag tag={tag} key={tag} />
-        ))}
-      </div>
-      {post.description ? (
-        <p className="text-xl mt-0 text-muted-foreground font-extralight">
-          {post.description}
-        </p>
-      ) : null}
-      <hr className="my-4" />
-      <MDXContent code={post.body} />
-    </article>
+    <div className="">
+      <Header />
+      <article className="container py-6 prose dark:prose-invert max-w-4xl mx-auto">
+        <h1 className="mb-2 text-5xl">{post.title}</h1>
+        <div className="flex gap-2 mb-2">
+          {post.tags?.map((tag) => (
+            <Tag tag={tag} key={tag} />
+          ))}
+        </div>
+        {post.description ? (
+          <p className="text-xl mt-0 text-muted-foreground font-extralight">
+            {post.description}
+          </p>
+        ) : null}
+        <hr className="my-4" />
+        <MDXContent code={post.body} />
+      </article>
+      <Footer />
+    </div>
   )
 }

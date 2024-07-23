@@ -22,7 +22,7 @@ const Landing = () => {
               }}
               className="capitalize font-bold"
             >
-              Dennis Kibet
+              Dennis Kibet R.
             </span>
           </h1>
           <h2 className="font-semibold font-space-mono text-2xl mb-4 dark:text-white">
