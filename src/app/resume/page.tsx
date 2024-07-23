@@ -5,13 +5,14 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import ResumeForm from './ResumeForm'
+import MadDeveloper from '@/assets/images/mad-designer.png'
 
 const page = () => {
   return (
     <div className="h-screen pt-4 overflow-hidden">
       <Link
         href="/"
-        className="flex items-center justify-start gap-2 group absolute top-4 left-4"
+        className="flex items-center justify-start gap-2 group absolute top-4 left-4 cursor-pointer z-[999]"
       >
         <FontAwesomeIcon
           icon={faArrowLeft}
@@ -21,8 +22,8 @@ const page = () => {
           Dennis Kibet
         </span>
       </Link>
-      <div className="flex items-center justify-start h-full">
-        <div className="p-2">
+      <div className="flex items-center justify-center h-full">
+        <div className="p-2 flex-1">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-center text-3xl xl:text-5xl 2xl:text-6xl font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu">
               <span
@@ -48,6 +49,9 @@ const page = () => {
               Request and you&apos;ll get an email with the resume attached
             </p>
           </div>
+        </div>
+        <div className="flex items-center justify-center flex-1">
+          <Image src={MadDeveloper} alt="" className="w-[85%]" />
         </div>
       </div>
     </div>
