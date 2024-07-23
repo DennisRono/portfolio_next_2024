@@ -5,7 +5,7 @@ import React from 'react'
 
 export default function CodeCopyBtn({ children }: any) {
   const [copyOk, setCopyOk] = React.useState(false)
-  const iconColor = copyOk ? '#0af20a' : '#ddd'
+  const iconColor = copyOk ? '#0af20a !important' : '#ddd !important'
 
   const handleClick = (e: any) => {
     const textToCopy = children
@@ -22,17 +22,19 @@ export default function CodeCopyBtn({ children }: any) {
   }
 
   return (
-    <div className="code-copy-btn">
+    <div className="code-copy-btn !text-white">
       {copyOk ? (
         <FontAwesomeIcon
           icon={faCheck}
           onClick={handleClick}
+          className="text-white"
           style={{ fill: iconColor, color: iconColor }}
         />
       ) : (
         <FontAwesomeIcon
           icon={faCopy}
           onClick={handleClick}
+          className="text-white"
           style={{ fill: iconColor, color: iconColor }}
         />
       )}

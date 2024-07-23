@@ -12,7 +12,7 @@ const useMDXComponent = (code: string) => {
 }
 
 const Pre = ({ children }: any) => (
-  <pre className="blog-pre my-2">
+  <pre className="my-2">
     <CodeCopyBtn>{children}</CodeCopyBtn>
     {children}
   </pre>
@@ -28,25 +28,7 @@ const components = {
   br: (props: any) => <br {...props} />,
   p: (props: any) => <p {...props} className="text-black dark:text-white" />,
   hr: (props: any) => <p {...props} className="my-4" />,
-  pre: Pre,
-  code({ node, inline, className, children, ...props }: any) {
-    const match = /language-(\w+)/.exec(className || '')
-    return !inline && match ? (
-      <SyntaxHighlighter
-        {...props}
-        style={dracula}
-        language={match[1]}
-        PreTag="div"
-        className="bg-black"
-      >
-        {String(children).replace(/\n$/, '')}
-      </SyntaxHighlighter>
-    ) : (
-      <code {...props} className={cn('code_area text-white', className)}>
-        {children}
-      </code>
-    )
-  },
+  pre: (props: any) => <pre {...props} className="my-4 rounded-[5px]" />,
 }
 
 interface MdxProps {
