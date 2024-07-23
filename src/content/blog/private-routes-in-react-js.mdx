@@ -1,0 +1,369 @@
+---
+title: Private Routes in React.js Application with React Router, JSON Web Tokens (JWT) and Redux
+description: Authentication is a critical aspect of modern web applications, ensuring that only authorized users can access certain parts of your website. In this blog, we will explore how to implement authentication in a React.js application using JSON Web Tokens (JWT), React Router and Redux to create protected routes. By the end of this tutorial, you will have a strong foundation for building secure and user-friendly applications.
+date: 2024-07-23
+tags: ["react.js", "redux", "typescript", "redux-persist"]
+published: true
+---
+
+# Setting up the React Application
+
+Before we begin, make sure you have the following tools and libraries installed:
+
+- Node.js and npm
+- React.js
+- React Router
+- A server-side application to handle user registration and JWT generation (such as Node.js with Express)
+
+Create a new React application using create-react-app or your preferred method.
+
+```bash
+npx create-react-app my-auth-app
+cd my-auth-app
+```
+
+Install the necessary dependencies:
+
+```bash
+npm install react-router-dom@latest axios react-redux redux-persist @reduxjs/toolkit react-toastify
+```
+
+Create the file `Routes.tsx` to set up routing:
+
+```jsx
+import React, { Fragment } from 'react'
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom'
+import Home from './routes/Home'
+import ErrorBoundary from './routes/ErrorBoundary'
+import NotFound from './routes/NotFound'
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
+      <Route path="/test" element={<Test />} errorElement={<ErrorBoundary />} />
+      <Route path="*" element={<NotFound />} errorElement={<ErrorBoundary />} />
+    </>
+  )
+)
+
+const Routes = () => {
+  return (
+    <Fragment>
+      <RouterProvider router={router} />
+    </Fragment>
+  )
+}
+
+export default Routes
+```
+
+Now that you have the routing logic in the Routes component, you can use it in the App component like this:
+
+```jsx
+import React, { Fragment } from 'react'
+import Routes from './Routes'
+
+const App = () => {
+  return (
+    <Fragment>
+      <Routes />
+    </Fragment>
+  )
+}
+
+export default App
+```
+
+# Setting up Redux
+
+```tsx
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
+import allReducers from './reducers'
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+
+const persistConfig = {
+  key: 'root',
+  storage,
+}
+
+const persistedReducer = persistReducer(persistConfig, allReducers)
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+})
+
+export let persistor = persistStore(store)
+export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>
+```
+
+# Creating our custom hooks
+
+now lets create our custom hooks to use globally on our application. Create a file and name it `src/state/hooks.tsx`
+
+```tsx
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from './store'
+
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+```
+
+# Actions to set our states
+
+let now create a an action that will set our state. Create a file `src/state/actions/loggedAction.ts`
+
+```tsx
+export const setIsLogged = (logged: boolean) => {
+  return {
+    type: 'SETLOGGED',
+    payload: logged,
+  }
+}
+```
+
+# Setting Login Reducer
+
+let’s then create a reducer to handle our action. `src/state/reducers/loggedReducer.ts`
+
+```tsx
+type Action = {
+  type: string
+  payload?: boolean
+}
+const loggedReducer = (state: boolean = false, action: Action) => {
+  switch (action.type) {
+    case 'SETLOGGED':
+      return action.payload
+    default:
+      return state
+  }
+}
+
+export default loggedReducer
+```
+
+# User Authentication
+
+For user authentication, we need to create a login form in the `src/utils/Signin.tsx` and a registration form in the `src/utils/Signup.tsx`. Send a POST request to your server for user authentication in the respective components. On the server side, validate user credentials, and if valid, generate a JWT and send it back to the client. Store the JWT in the client application. Use the JWT to protect routes in your React application.
+
+For brevity, we won't go into the details of server-side authentication in this blog. You can use libraries like Passport.js or write custom logic for it. Here’s how I would do it.
+`src/utils/Signup.tsx`
+
+```jsx
+import React, { Fragment, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import api from '../api/axios'
+import { toast } from "react-toastify"
+
+const Signup = () => {
+  const [data, setData] = useState({
+    ...initial data here
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleSignup = async (e: any) => {
+    e.preventDefault()
+    setIsLoading(true)
+    const res: any = await api('POST', 'auth/client/signup', data)
+    setIsLoading(false)
+    if (res.status === 200) {
+	    toast("Sign Up Successful!", {type: "success"})
+      navigate('/confirm-email')
+    } else {
+	    toast(res.message, {type: "error"})
+    }
+  }
+  return (
+    <Fragment>
+      ... create your sign up form interface here
+    </Fragment>
+  )
+}
+
+export default Signup
+```
+
+`src/utils/Signin.tsx`
+
+```jsx
+import React, { Fragment, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import api from '../api/axios'
+import { setIsLogged } from '../state/actions/loggedAction'
+import { useAppDispatch } from '../state/hooks'
+
+const Signup = () => {
+  const [data, setData] = useState({
+    /*...initial data here*/
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const navigate = useNavigate()
+  let location = useLocation()
+  const dispatch = useAppDispatch()
+
+  const handleSignin = async (e: any) => {
+    e.preventDefault()
+    setIsLoading(true)
+    let from = location.state?.from?.pathname || '/workspace'
+    const res = await api('POST', 'auth/client/signin', data)
+    setIsLoading(false)
+    if (res.status === 200) {
+      dispatch(setIsLogged(true))
+      navigate(from, { replace: true })
+    }
+  }
+  return (
+    <Fragment>
+      ... create your sign in form interface here
+    </Fragment>
+  )
+}
+
+export default Signup
+```
+
+# Protecting Routes
+
+Now that you have implemented user authentication, you can protect routes in your React application. We'll use a higher-order component (HOC) to create protected routes. Create a new component `PrivateRoute.tsx`:
+
+```jsx
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAppSelector } from '../state/hooks'
+
+const ProtectedRoutes = (): JSX.Element => {
+  const islogged: boolean = useAppSelector((state) => state.logged)
+  let location = useLocation()
+  return islogged ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/signin" state={{ from: location }} replace />
+  )
+}
+
+export default ProtectedRoutes
+```
+
+In this component, we check whether the user is authenticated. If they are, the protected route is rendered; otherwise, they are redirected to the login page.
+
+# Using the `PrivateRoute.tsx` Component
+
+Replace the Route for the protected Route in the Routes component with the PrivateRoute component:
+
+```jsx
+<Route element={<ProtectedRoutes />}>
+  <Route
+    path="/profile"
+    element={<Profile />}
+    errorElement={<ErrorBoundary />}
+  />
+</Route>
+```
+
+# Authenticating Requests to the Server with JWT
+
+Requests to the server will require having a JWT token in the header of the request to allow the backend to verify incoming requests if they are authentic. Create a component `api/axios.ts`, this component will be used in sending requests to the backend and adding the Authorization header to requests if the user is authorized.
+
+```jsx
+import axios, { AxiosResponse } from 'axios'
+
+const backend = (): string => {
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    return process.env.REACT_APP_BACKEND_URI || 'https://localhost:8000'
+  } else {
+    return process.env.REACT_APP_BACKEND_URI || '<https://your-api-endpoint-url>'
+  }
+}
+
+const api = async (
+  method: string = 'GET',
+  slug: string,
+  data: object = {},
+  headers: object = {}
+  timeout: 120000
+): Promise<AxiosResponse> => {
+  try {
+    const config = {
+      method: method,
+      maxBodyLength: Infinity,
+      url: backend() + 'api/v1/' + slug,
+      headers: {
+        ...headers,
+      },
+      data: data,
+      withCredentials: true,
+      timeout: timeout
+    }
+    const res = await axios(config)
+    if (!res.ok) {
+      throw response
+    }
+    
+    return res
+  } catch (error: any) {
+	  console.error(error)
+    // Handle error response
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log(error.response.status)
+      console.log(error.response.data)
+      return {
+        ...error.response,
+        data: {
+          type: 'error',
+          message:
+            'Something Wrong Happened: status code falls out of the range of 2xx',
+        },
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser
+      console.log(error.request)
+      return {
+        ...error.response,
+        data: {
+          type: 'error',
+          message:
+            'Something Wrong Happened: no response was received from the backend',
+        },
+      }
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log('Error', error.message)
+      return {
+        ...error.response,
+        data: {
+          type: 'error',
+          message: 'Something Wrong Happened: Error setting up the request',
+        },
+      }
+    }
+  }
+}
+
+export default api
+```
+
+# Conclusion
+
+In this blog, we've seen how to set up user authentication in a React application using JSON Web Tokens (JWT), Redux and protect routes using React Router. While this is a simplified example, you can enhance security and user experience by adding features like token expiration, role-based authorization, and error handling. Building a secure authentication system is crucial for any application that deals with user data and sensitive information.
