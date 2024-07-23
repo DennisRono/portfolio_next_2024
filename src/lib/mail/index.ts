@@ -1,3 +1,4 @@
+import { EmailOptionsType } from '@/interfaces'
 import nodemailer, { Transporter } from 'nodemailer'
 require('dotenv').config()
 
@@ -25,12 +26,12 @@ class Mailer {
     try {
       if (Array.isArray(options.to)) {
         const results = await Promise.all(
-          options.to.map(async (email) => {
+          options.to.map(async (email: string) => {
             try {
               const info = await this.transporter.sendMail({
                 ...options,
                 to: email,
-                from: `"nullchemy shop" <shop@nullchemy.com>`,
+                from: `"Dennis Kibet R." <contact@denniskibet.com>`,
               })
               console.log('Message sent: %s', info.messageId)
               return { email, status: 'success' }

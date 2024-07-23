@@ -984,12 +984,12 @@ video {
   border-radius: calc(var(--radius) - 2px);
 }
 
-.rounded-xl{
-  border-radius: 0.75rem;
-}
-
 .rounded-sm{
   border-radius: calc(var(--radius) - 4px);
+}
+
+.rounded-xl{
+  border-radius: 0.75rem;
 }
 
 .border{
