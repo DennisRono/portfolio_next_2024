@@ -57,7 +57,7 @@ class Mailer {
       } else {
         const info = await this.transporter.sendMail({
           ...options,
-          from: `"nullchemy shop" <shop@nullchemy.com>`,
+          from: `"Dennis Kibet R." <contact@denniskibet.com>`,
         })
         console.log('Message sent: %s', info.messageId)
         return {
