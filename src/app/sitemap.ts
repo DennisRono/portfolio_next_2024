@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ? posts.map((item: any) => {
         return {
           ...siteobj,
-          url: `${getBaseUrl()}/blog/${item.slug}`,
+          url: `${getBaseUrl()}/${item.slug}`,
           lastModified: item.updatedAt,
         }
       })
