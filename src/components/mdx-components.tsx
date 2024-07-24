@@ -11,13 +11,6 @@ const useMDXComponent = (code: string) => {
   return fn({ ...runtime }).default
 }
 
-const Pre = ({ children }: any) => (
-  <pre className="my-2">
-    <CodeCopyBtn>{children}</CodeCopyBtn>
-    {children}
-  </pre>
-)
-
 const components = {
   Image,
   Callout,
@@ -30,10 +23,12 @@ const components = {
   br: (props: any) => <br {...props} />,
   p: (props: any) => <p {...props} className="text-black dark:text-white" />,
   hr: (props: any) => <p {...props} className="my-4" />,
-  pre: (props: any) => <pre {...props} className="my-4 rounded-[5px]" />,
   ul: (props: any) => <ul {...props} className="ml-4 my-2" />,
   ol: (props: any) => <ul {...props} className="ml-4 my-2" />,
   li: (props: any) => <li {...props} className="ml-4 !list-decimal mb-2" />,
+  aside: (props: any) => (
+    <aside {...props} className="p-2 rounded-md bg-amber-100/8" />
+  ),
 }
 
 interface MdxProps {

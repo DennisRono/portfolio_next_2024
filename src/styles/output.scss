@@ -1354,6 +1354,10 @@ video {
   padding: 3rem;
 }
 
+.p-2{
+  padding: 0.5rem;
+}
+
 .p-4{
   padding: 1rem;
 }
@@ -1990,6 +1994,8 @@ body {
 [data-rehype-pretty-code-figure] code{
   border-width: 0px;
   padding: 0px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
   line-height: 2 !important;
@@ -2050,6 +2056,91 @@ body {
 
 .subheading-anchor:hover{
   text-decoration-line: underline;
+}
+
+.hightlight_warn{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(254 215 170 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 249 195 / var(--tw-bg-opacity));
+  padding: 0.5rem;
+}
+
+code{
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  span {
+    color: #e85535;
+  }
+}
+
+code:not(pre code) {
+  padding: 0.12em 0.25em;
+  background: #f7f7f7;
+  border: 1px solid #ededed;
+  border-radius: 0.375rem;
+  display: inline-block;
+  line-height: 1.2;
+  margin: 0;
+}
+
+pre{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+pre > code {
+  counter-reset: line;
+  overflow: hidden;
+  border-radius: 10px;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+pre > code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  /* Other styling */
+  display: inline-block;
+  width: 1rem;
+  margin-right: 2rem;
+  text-align: right;
+  color: gray;
+}
+
+pre > code[data-line-numbers-max-digits='2'] > [data-line]::before {
+  width: 2rem;
+}
+
+pre > code[data-line-numbers-max-digits='3'] > [data-line]::before {
+  width: 3rem;
+}
+
+pre > code[data-theme*=' '],
+pre > code[data-theme*=' '] span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+  font-family: Roboto Mono, Menlo, Monaco, Liberation Mono, DejaVu Sans Mono,
+    Courier New, monospace;
+}
+
+pre > code[data-theme*=' '] span{
+  font-size: 0.8rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  pre > code[data-theme*=' '],
+  pre > code[data-theme*=' '] span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
 }
 
 @media (min-width: 640px){

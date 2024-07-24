@@ -11,6 +11,7 @@ export default function CodeCopyBtn({ children }: any) {
     const textToCopy = children
 
     console.log(textToCopy)
+    console.log(children)
 
     if (textToCopy) {
       navigator.clipboard.writeText(textToCopy)

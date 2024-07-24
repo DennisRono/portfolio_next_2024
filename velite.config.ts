@@ -40,7 +40,11 @@ export default defineConfig({
       [
         rehypePrettyCode,
         {
-          theme: 'dracula',
+          defaultLang: 'typescript',
+          theme: {
+            dark: 'one-dark-pro',
+            light: 'github-light',
+          },
           grid: true,
         },
       ],
