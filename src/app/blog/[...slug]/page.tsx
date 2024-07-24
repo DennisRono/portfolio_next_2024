@@ -32,6 +32,7 @@ export async function generateMetadata({
 
   const ogSearchParams = new URLSearchParams()
   ogSearchParams.set('title', post.title)
+  console.log(ogSearchParams.toString())
 
   return {
     title: post.title,

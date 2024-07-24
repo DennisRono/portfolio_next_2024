@@ -87,9 +87,26 @@ const config = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      backgroundImage: {
+        'gradient-to-r':
+          'linear-gradient(90deg, rgb(219, 39, 119), rgb(147, 51, 234))',
+      },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({ addUtilities }: any) {
+      addUtilities({
+        '.bg-clip-text': {
+          backgroundClip: 'text',
+          '-webkit-background-clip': 'text',
+        },
+        '.text-transparent': {
+          '-webkit-text-fill-color': 'transparent',
+        },
+      })
+    },
+  ],
 } satisfies Config
 
 export default config
