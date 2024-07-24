@@ -1,28 +1,15 @@
 import React from 'react'
 import Image from 'next/image'
 import Grad from '@/assets/images/graduation-cap.png'
-import Link from 'next/link'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import ResumeForm from './ResumeForm'
 import MadDeveloper from '@/assets/images/mad-designer.png'
+import Header from '@/components/Header'
 
 const page = () => {
   return (
     <div className="h-screen pt-4 overflow-hidden">
-      <Link
-        href="/"
-        className="flex items-center justify-start gap-2 group absolute top-4 left-4 cursor-pointer z-[999]"
-      >
-        <FontAwesomeIcon
-          icon={faArrowLeft}
-          className="text-[#2b2b2b] dark:text-[#e6e6e6] text-lg h-4 transition-transform group-hover:-translate-x-2"
-        />
-        <span className="text-xl text-[#2b2b2b] dark:text-[#e6e6e6] font-volte-rounded-semibold">
-          Dennis Kibet
-        </span>
-      </Link>
-      <div className="flex items-center justify-center h-full">
+      <Header />
+      <div className="container flex items-center justify-center h-[calc(100vh-56px)]">
         <div className="p-2 flex-1">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-center text-3xl xl:text-5xl 2xl:text-6xl font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu">
@@ -30,7 +17,7 @@ const page = () => {
                 style={{
                   backgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  backgroundImage: 'linear-gradient(90deg, #1d1335, #002259)',
+                  backgroundImage: 'linear-gradient(90deg, #8753ff, #64a0ff)',
                 }}
                 className="capitalize font-bold"
               >
@@ -50,8 +37,8 @@ const page = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-center flex-1">
-          <Image src={MadDeveloper} alt="" className="w-[85%]" />
+        <div className="flex items-center justify-start flex-1">
+          <Image src={MadDeveloper} alt="" className="w-[80%]" />
         </div>
       </div>
     </div>
