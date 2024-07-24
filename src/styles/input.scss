@@ -176,7 +176,7 @@ body {
 code {
   @apply !py-0;
   span {
-    color: #e85535;
+    @apply text-[#e85535] dark:text-[#e85535];
   }
 }
 
