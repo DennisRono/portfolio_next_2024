@@ -5,6 +5,11 @@ import Grad from '@/assets/images/graduation-cap.png'
 import Projects from '@/assets/images/projects.png'
 import Book from '@/assets/images/book.png'
 import Blog from '@/assets/images/blog.png'
+import Github from '@/assets/images/github.png'
+import Instagram from '@/assets/images/instagram.png'
+import Linkedin from '@/assets/images/linkedin.png'
+import Twitter from '@/assets/images/twitter.png'
+import Facebook from '@/assets/images/facebook.png'
 import Link from 'next/link'
 import Script from 'next/script'
 
@@ -117,6 +122,63 @@ const Landing = () => {
             <span className="text-black dark:text-white">|</span>
             <span className="text-nowrap text-black dark:text-white">Blog</span>
           </Link>
+          <div className="flex items-center justify-center gap-2">
+            <a
+              href="https://github.com/DennisRono"
+              target="_blank"
+              rel="noreferrer"
+              className="cursor-pointer overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+              title="Github"
+            >
+              <div className="h-8 w-8">
+                <Image src={Github} alt={'github icon'} />
+              </div>
+            </a>
+            <a
+              href="https://instagram.com/_kibetdennis_"
+              target="_blank"
+              rel="noreferrer"
+              className="cursor-pointer overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+              title="instagram"
+            >
+              <div className="h-8 w-8">
+                <Image src={Instagram} alt={'instagram icon'} />
+              </div>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/dennisrkibet"
+              target="_blank"
+              rel="noreferrer"
+              className="cursor-pointer overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+              title="linkedin"
+            >
+              <div className="h-8 w-8">
+                <Image src={Linkedin} alt={'Linkedin icon'} />
+              </div>
+            </a>
+            <a
+              href="https://x.com/dennisrkibet"
+              target="_blank"
+              rel="noreferrer"
+              className="cursor-pointer overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+              title="X - twitter"
+            >
+              <div className="h-8 w-8">
+                <Image src={Twitter} alt={'twitter icon'} />
+              </div>
+            </a>
+            <a
+              href="https://www.facebook.com/dennis.kibet.r"
+              target="_blank"
+              rel="noreferrer"
+              className="cursor-pointer overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+              title="facebook"
+            >
+              <div className="h-8 w-8">
+                <Image src={Facebook} alt={'facebook icon'} />
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>
