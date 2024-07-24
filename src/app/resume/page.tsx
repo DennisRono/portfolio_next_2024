@@ -9,8 +9,8 @@ const page = () => {
   return (
     <div className="h-screen pt-4 overflow-hidden">
       <Header />
-      <div className="container flex items-center justify-center h-[calc(100vh-56px)]">
-        <div className="p-2 flex-1">
+      <div className="sm:container flex items-center justify-center h-[calc(100vh-56px)]">
+        <div className="sm:p-2 flex-1 -translate-y-20 sm:translate-y-0">
           <div className="flex items-center justify-center gap-4 mb-4">
             <h1 className="text-center text-3xl xl:text-5xl 2xl:text-6xl font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu">
               <span
@@ -37,7 +37,7 @@ const page = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-start flex-1">
+        <div className="hidden sm:flex items-center justify-start flex-1">
           <Image src={MadDeveloper} alt="" className="w-[80%]" />
         </div>
       </div>

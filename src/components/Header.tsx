@@ -4,12 +4,12 @@ import React from 'react'
 const Header = () => {
   return (
     <div className="h-14">
-      <div className="container h-full">
+      <div className="px-4 sm:container h-full">
         <div className="flex items-center justify-between h-full">
           <div className="">
             <Link
               href="/"
-              className="text-3xl font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu mb-2 -ml-2"
+              className="text-2xl sm:text-3xl text-nowrap font-bold text-[#2b2b2b] dark:text-[#e6e6e6] font-apercu mb-2 -ml-2"
             >
               <span
                 style={{
@@ -27,7 +27,9 @@ const Header = () => {
           <div className="flex items-center justify-start gap-4">
             <Link href="/blog">Blog</Link>
             <Link href="/resume">Resume</Link>
-            <Link href="/#about">About</Link>
+            <Link href="/#about" className="hidden sm:block">
+              About
+            </Link>
           </div>
         </div>
       </div>

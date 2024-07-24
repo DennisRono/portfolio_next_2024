@@ -43,12 +43,12 @@ const ResumeForm = () => {
   }
   return (
     <form
-      className="flex items-center justify-center gap-4 mb-4"
+      className="flex flex-col sm:flex-row items-end sm:items-center justify-end sm:justify-center gap-4 mb-4 w-full px-2"
       onSubmit={handleSubmit}
     >
       <input
         type="text"
-        className="py-2 px-6 w-[350px] rounded-md outline-none border border-slate-900 !text-black"
+        className="py-2 px-6 w-[100%] sm:w-[350px] rounded-md outline-none border border-slate-900 !text-black"
         placeholder="email..."
         value={email}
         onChange={(e) => {
