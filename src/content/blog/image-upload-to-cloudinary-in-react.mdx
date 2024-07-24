@@ -105,6 +105,16 @@ cloudinary.config({
 export { cloudinary }
 ```
 
+Don’t forget to have your Environment variables set otherwise the upload will not work! You can get the details from Cloudinary website
+
+```tsx
+# cloudinary
+CLOUDINARY_CLOUD_NAME=''
+CLOUDINARY_API_KEY=''
+CLOUDINARY_API_SECRET=''
+REACT_APP_UPLOAD_PRESET=''
+```
+
 Lets now write some server side logic to handle uploading the image files to Cloudinary servers
 
 in our application lets create a file 
@@ -137,6 +147,58 @@ export async function POST(req: NextRequest) {
       imgUrl: res.result.secure_url,
     })
   } else return NextResponse.json({ message: 'failure' })
+}
+```
+
+lets also have a helper function to send `POST` request to Cloudinary and also to handle Folder structure of our uploaded images
+
+`utils/upload.ts`
+
+```tsx
+import { cloudinary } from '@/config/cloudinary'
+import { UploadApiErrorResponse, UploadApiResponse } from 'cloudinary'
+
+type UploadResponse =
+  | { success: true; result?: UploadApiResponse }
+  | { success: false; error: UploadApiErrorResponse }
+
+export const uploadToCloudinary = async (
+  fileUri: string,
+  fileName: string,
+  folder: string
+): Promise<UploadResponse> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload(fileUri, {
+        invalidate: true,
+        resource_type: 'auto',
+        filename_override: fileName,
+        folder: 'nullcommerce/' + folder, // you can specifu which folders you want the images to be saved in here
+        use_filename: true,
+        eager: [
+          {
+            transformation: [
+              { width: 800, height: 800, crop: 'fit' },
+              {
+                color: 'E1D6FF87',
+                overlay: 'text:roboto_18_bold_normal_left:nullchemy shop',
+                gravity: 'center',
+                x: 50,
+                y: -20,
+                flags: 'layer_apply',
+              },
+            ],
+            format: 'webp',
+          },
+        ],
+      })
+      .then((result: any) => {
+        resolve({ success: true, result })
+      })
+      .catch((error: any) => {
+        reject({ success: false, error })
+      })
+  })
 }
 ```
 
@@ -180,7 +242,6 @@ Finally lets create an interface to allow user to be able to select files to be 
 
 ```tsx
 'use client'
-import { useAppSelector } from '@/store/hooks'
 import ImageUpload from '@/utils/ImageUpload'
 import { useCallback, Key, useState } from 'react'
 import { useDropzone, Accept, FileRejection } from 'react-dropzone'
@@ -197,9 +258,8 @@ const FileRejectionToast = ({ file, errors }: any) => (
   </div>
 )
 
-const FileUpload = ({ formData, setFormData, index }: any) => {
-  const user: any = useAppSelector((state) => state.logged)
-  const user_id = user.user.user_id
+const FileUpload = ({ formData, setFormData }: FileUploadType) => {
+  const user_id = 'Your User ID Here' // when a user is logged the user_id is passed to here
 
   const onDrop = useCallback(
     async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
@@ -215,16 +275,7 @@ const FileUpload = ({ formData, setFormData, index }: any) => {
             toast.error(`Error uploading ${file.name}: ${error.message}`)
           }
         }
-
-        const updatedVariants = [...formData.variants]
-        updatedVariants[index] = {
-          ...updatedVariants[index],
-          assets: {
-            ...updatedVariants[index].assets,
-            images: [...updatedVariants[index].assets.images, ...paths],
-          },
-        }
-        setFormData({ ...formData, variants: updatedVariants })
+        setFormData({ ...formData, images: [...formData.images, ...paths] })
       }
 
       await uploadFiles()
@@ -233,7 +284,7 @@ const FileUpload = ({ formData, setFormData, index }: any) => {
         toast.error(<FileRejectionToast file={file} errors={errors} />)
       })
     },
-    [formData, setFormData, index]
+    [formData, setFormData]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -264,79 +315,103 @@ const FileUpload = ({ formData, setFormData, index }: any) => {
             : 'Drag & drop files here, or click to select files'}
         </p>
       </div>
-      {Array.isArray(formData.variants[index].assets.images) &&
-        formData.variants[index].assets.images.length > 0 && (
-          <ul className="mt-4 w-full flex items-center justify-start flex-wrap gap-2">
-            {formData.variants[index].assets.images.map(
-              (file: string, i: Key | null | undefined) => (
-                <li
-                  key={i}
-                  className={`w-min cursor-pointer text-center p-2 bg-white rounded shadow-sm mb-2 ${
-                    i == formData.variants[index].assets.thumbnail
-                      ? 'border-2 border-blue-600'
-                      : 'border-2 border-slate-400'
-                  }`}
-                  onClick={() => {
-                    const updatedVariants = [...formData.variants]
-                    updatedVariants[index] = {
-                      ...updatedVariants[index],
-                      assets: {
-                        ...updatedVariants[index].assets,
-                        thumbnail: i,
-                      },
-                    }
-                    setFormData({
-                      ...formData,
-                      variants: updatedVariants,
-                    })
-                  }}
-                >
-                  <div className="">
-                    <div className="max-h-[100px] w-[100px]">
-                      <img src={file} alt="" className="object-cover" />
-                    </div>
-                    <div className="">
-                      <span className="text-xs">
-                        {i == formData.variants[index].assets.thumbnail
-                          ? 'Default Thumbnail'
-                          : ''}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    className="ml-2 text-red-500 hover:text-red-700"
-                    onClick={() => {
-                      const updatedVariants = [...formData.variants]
-                      updatedVariants[index] = {
-                        ...updatedVariants[index],
-                        assets: {
-                          ...updatedVariants[index].assets,
-                          images: updatedVariants[index].assets.images.filter(
-                            (_: any, imgIndex: any) => imgIndex !== i
-                          ),
-                        },
-                      }
-                      setFormData({
-                        ...formData,
-                        variants: updatedVariants,
-                      })
-                    }}
-                  >
-                    Remove
-                  </button>
-                </li>
-              )
-            )}
-          </ul>
-        )}
+      {Array.isArray(formData.images) && formData.images.length > 0 && (
+        <ul className="mt-4 w-full flex items-center justify-start flex-wrap gap-2">
+          {formData.images.map((file: string, i: Key | null | undefined) => (
+            <li
+              key={i}
+              className={`w-min cursor-pointer text-center p-2 bg-white rounded shadow-sm mb-2`}
+            >
+              <div className="">
+                <div className="max-h-[100px] w-[100px]">
+                  {/*eslint-disable-next-line @next/next/no-img-element*/}
+                  <img src={file} alt="" className="object-cover" />
+                </div>
+              </div>
+              <button
+                className="ml-2 text-red-500 hover:text-red-700"
+                onClick={() => {
+                  setFormData({
+                    ...formData,
+                    images: formData.images.filter(
+                      (_: any, imgIndex: any) => imgIndex !== i
+                    ),
+                  })
+                }}
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
 
 export default FileUpload
+
 ```
 
 This will allow drag and drop of images and an interface to interact with.
+
+Example Usage `MyForm.tsx`
+
+```tsx
+'use client'
+import React, { FormEvent, useState } from 'react'
+import FileUpload from '@/components/FileUpload'
+import { toast } from 'react-toastify'
+
+const MyForm = () => {
+  const [formData, setFormData] = useState<Form>({
+    full_name: '',
+    email: '',
+    address: '',
+    city: '',
+    country_region: '',
+    state_province: '',
+    zip_code: '',
+    images: [],
+  })
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    toast('Edit MyForm Handle Submit To Submit the Form to the server!', {
+      type: 'success',
+    })
+  }
+
+  return (
+    <div className="h-screen w-full">
+      <div className="p-2 h-full w-full flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-mono font-bold text-center mt-14">
+          Image Upload To Cloudinary v2
+        </h1>
+        <div className="flex items-center justify-center h-full flex-1">
+          <div className="w-[90%] mx-auto sm:w-[500px]">
+            <form className="w-full" onSubmit={handleSubmit}>
+              <div className="lg:col-span-2">
+                <FileUpload formData={formData} setFormData={setFormData} />
+                <div className="md:col-span-5 text-right">
+                  <div className="inline-flex items-end">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default MyForm
+
+```
 
 ## Conclusion
 
