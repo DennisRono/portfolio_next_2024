@@ -1,0 +1,349 @@
+---
+title: "Image Upload to Cloudinary from React With Folder Management"
+description: Learn how to seamlessly integrate Cloudinary with React for efficient image uploads, including organizing your uploads into specific folders for better management and accessibility. Ideal for enhancing your web application's media handling capabilities.
+date: 2024-07-24
+tags: ["typescript", "reactjs", "cloudinary"]
+published: true
+---
+
+At some point in your application, you'll have to handle images whether it be for profile pictures, blog posts, or any other need. You'll need the images hosted somewhere and served to your application. There are many ways you can handle image uploads, from bare metal where you upload the images to your custom server, to using a third-party service.
+
+## Different Image Hosting Providers
+
+There are several image hosting providers you can use:
+
+1. **Cloudinary**
+2. **Imgur**
+3. **Amazon S3**
+4. **Firebase Storage**
+5. **Microsoft Azure Blob Storage**
+
+### Cloudinary
+
+Cloudinary is a comprehensive cloud-based service for managing images and videos. It offers powerful tools for upload, storage, manipulation, and delivery, all optimized for web performance.
+
+### Imgur
+
+Imgur is a popular image hosting service primarily known for hosting images shared on social media and online forums. It's user-friendly and free for most uses.
+
+### Amazon S3
+
+Amazon S3 is a scalable storage service provided by Amazon Web Services (AWS). It is commonly used for storing and retrieving any amount of data, including images.
+
+### Firebase Storage
+
+Firebase Storage is a part of Google’s Firebase suite. It allows you to store and serve user-generated content, such as photos and videos.
+
+### Microsoft Azure Blob Storage
+
+Azure Blob Storage is Microsoft's object storage solution for the cloud. It is optimized for storing massive amounts of unstructured data, such as text or binary data.
+
+## Advantages and Disadvantages of Using Third-Party Services
+
+### Advantages
+
+- **Scalability**: Third-party services handle scaling automatically, ensuring your application can handle a growing number of images without additional setup.
+- **Reliability**: These services often come with high uptime guarantees and data redundancy.
+- **Security**: They offer built-in security features, such as encryption and access control.
+- **Optimization**: Providers like Cloudinary offer built-in image optimization and transformations, improving performance and user experience.
+
+### Disadvantages
+
+- **Cost**: While many third-party services offer free tiers, costs can increase with higher usage.
+- **Dependence**: Your application becomes dependent on the third-party service's availability and performance.
+- **Customization**: You might be limited by the features and configurations provided by the service.
+
+## Advantages and Disadvantages of Hosting Images Manually on Your Own Server
+
+### Advantages
+
+- **Control**: Complete control over the hosting environment and configuration.
+- **Customization**: Ability to implement custom features and optimizations tailored to your specific needs.
+- **Cost**: Potentially lower costs if you have an existing infrastructure.
+
+### Disadvantages
+
+- **Scalability**: Managing scalability can be complex and resource-intensive.
+- **Maintenance**: You are responsible for maintaining the server, including updates and security patches.
+- **Performance**: Ensuring high performance and low latency may require significant effort and expertise.
+
+## Transformations and Optimizations Offered by Cloudinary
+
+Cloudinary provides a wide range of image transformation and optimization features, including:
+
+- **Resizing and Cropping**: Easily resize and crop images to fit different screen sizes and resolutions.
+- **Format Conversion**: Convert images to different formats, such as JPEG, PNG, WebP, and more.
+- **Quality Control**: Adjust image quality to balance between file size and visual quality.
+- **Watermarking**: Add watermarks to images to protect your content.
+- **Content Delivery Network (CDN)**: Deliver images quickly to users worldwide through Cloudinary's CDN.
+
+## Integrating Cloudinary with React
+
+To integrate Cloudinary with a React application, follow these steps:
+
+### 1. Install Cloudinary SDK
+
+First, you need to install the Cloudinary SDK in your React project:
+
+```tsx
+npm i cloudinary
+```
+
+create a configuration file for your environment files
+
+`config/cloudinary.ts`
+
+```tsx
+import { v2 as cloudinary } from 'cloudinary'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+export { cloudinary }
+```
+
+Lets now write some server side logic to handle uploading the image files to Cloudinary servers
+
+in our application lets create a file 
+
+`src/app/api/upload/route.ts`
+
+```tsx
+import { NextRequest, NextResponse } from 'next/server'
+import { uploadToCloudinary } from '@/utils/upload'
+
+export async function POST(req: NextRequest) {
+  const formData = await req.formData()
+  const file = formData.get('file') as File
+  const folder = formData.get('user_id') as string
+
+  const fileBuffer = await file.arrayBuffer()
+
+  const mimeType = file.type
+  const encoding = 'base64'
+  const base64Data = Buffer.from(fileBuffer).toString('base64')
+
+  // this will be used to upload the file
+  const fileUri = 'data:' + mimeType + ';' + encoding + ',' + base64Data
+
+  const res = await uploadToCloudinary(fileUri, file.name, folder)
+
+  if (res.success && res.result) {
+    return NextResponse.json({
+      message: 'success',
+      imgUrl: res.result.secure_url,
+    })
+  } else return NextResponse.json({ message: 'failure' })
+}
+```
+
+Now that we have an endpoint to hit, lets create a function to be handling sending requests to the server
+
+`utils/ImageUpload.ts`
+
+```tsx
+'use client'
+const ImageUpload = async (file: File | null, user_id: string) => {
+  if (file) {
+    try {
+      const form = new FormData()
+      form.set('file', file)
+      form.set('user_id', user_id)
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: form,
+        headers: {},
+      })
+
+      const data = await res.json()
+
+      return data.imgUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      return null
+    }
+  } else {
+    console.log('No File')
+    return null
+  }
+}
+
+export default ImageUpload
+```
+
+Finally lets create an interface to allow user to be able to select files to be uploaded. In this example once the image will be selected it will start uploading immediately and returning the live URL to be saved in a database
+
+`FileUpload.tsx`
+
+```tsx
+'use client'
+import { useAppSelector } from '@/store/hooks'
+import ImageUpload from '@/utils/ImageUpload'
+import { useCallback, Key, useState } from 'react'
+import { useDropzone, Accept, FileRejection } from 'react-dropzone'
+import { toast } from 'react-toastify'
+
+const FileRejectionToast = ({ file, errors }: any) => (
+  <div>
+    <div>{`${file.name} - ${(file.size / 1e6).toFixed(2)} Mb`}</div>
+    <ul>
+      {errors.map((e: any) => (
+        <li key={e.code}>{e.message}</li>
+      ))}
+    </ul>
+  </div>
+)
+
+const FileUpload = ({ formData, setFormData, index }: any) => {
+  const user: any = useAppSelector((state) => state.logged)
+  const user_id = user.user.user_id
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+      const uploadFiles = async (): Promise<void> => {
+        const paths: string[] | null = []
+        for (const file of acceptedFiles) {
+          try {
+            const url = await ImageUpload(file, user_id)
+            if (url) {
+              paths.push(url)
+            }
+          } catch (error: any) {
+            toast.error(`Error uploading ${file.name}: ${error.message}`)
+          }
+        }
+
+        const updatedVariants = [...formData.variants]
+        updatedVariants[index] = {
+          ...updatedVariants[index],
+          assets: {
+            ...updatedVariants[index].assets,
+            images: [...updatedVariants[index].assets.images, ...paths],
+          },
+        }
+        setFormData({ ...formData, variants: updatedVariants })
+      }
+
+      await uploadFiles()
+
+      fileRejections.forEach(({ file, errors }) => {
+        toast.error(<FileRejectionToast file={file} errors={errors} />)
+      })
+    },
+    [formData, setFormData, index]
+  )
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/png': ['.png'],
+      'image/gif': ['.gif'],
+    } as Accept,
+    multiple: true,
+    maxFiles: 20,
+    maxSize: 1e8,
+    minSize: 100,
+  })
+
+  return (
+    <div className="flex flex-col items-center p-4 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg">
+      <div
+        {...getRootProps()}
+        className={`w-full p-4 text-center cursor-pointer ${
+          isDragActive ? 'bg-gray-200' : 'bg-gray-100'
+        }`}
+      >
+        <input {...getInputProps()} />
+        <p className="text-gray-500">
+          {isDragActive
+            ? 'Drop the files here ...'
+            : 'Drag & drop files here, or click to select files'}
+        </p>
+      </div>
+      {Array.isArray(formData.variants[index].assets.images) &&
+        formData.variants[index].assets.images.length > 0 && (
+          <ul className="mt-4 w-full flex items-center justify-start flex-wrap gap-2">
+            {formData.variants[index].assets.images.map(
+              (file: string, i: Key | null | undefined) => (
+                <li
+                  key={i}
+                  className={`w-min cursor-pointer text-center p-2 bg-white rounded shadow-sm mb-2 ${
+                    i == formData.variants[index].assets.thumbnail
+                      ? 'border-2 border-blue-600'
+                      : 'border-2 border-slate-400'
+                  }`}
+                  onClick={() => {
+                    const updatedVariants = [...formData.variants]
+                    updatedVariants[index] = {
+                      ...updatedVariants[index],
+                      assets: {
+                        ...updatedVariants[index].assets,
+                        thumbnail: i,
+                      },
+                    }
+                    setFormData({
+                      ...formData,
+                      variants: updatedVariants,
+                    })
+                  }}
+                >
+                  <div className="">
+                    <div className="max-h-[100px] w-[100px]">
+                      <img src={file} alt="" className="object-cover" />
+                    </div>
+                    <div className="">
+                      <span className="text-xs">
+                        {i == formData.variants[index].assets.thumbnail
+                          ? 'Default Thumbnail'
+                          : ''}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    className="ml-2 text-red-500 hover:text-red-700"
+                    onClick={() => {
+                      const updatedVariants = [...formData.variants]
+                      updatedVariants[index] = {
+                        ...updatedVariants[index],
+                        assets: {
+                          ...updatedVariants[index].assets,
+                          images: updatedVariants[index].assets.images.filter(
+                            (_: any, imgIndex: any) => imgIndex !== i
+                          ),
+                        },
+                      }
+                      setFormData({
+                        ...formData,
+                        variants: updatedVariants,
+                      })
+                    }}
+                  >
+                    Remove
+                  </button>
+                </li>
+              )
+            )}
+          </ul>
+        )}
+    </div>
+  )
+}
+
+export default FileUpload
+```
+
+This will allow drag and drop of images and an interface to interact with.
+
+## Conclusion
+
+Integrating Cloudinary with your React application for image uploads offers a robust and efficient solution for managing your application's media. By leveraging Cloudinary's powerful features, you can handle image transformations, optimizations, and organization with ease. Whether you choose to host images on your own server or use a third-party service like Cloudinary, understanding the advantages and disadvantages will help you make an informed decision that best suits your application's needs.
+
+For the full source code of this example, check out the [GitHub repository](https://github.com/DennisRono/cloudinary-image-upload)
+
+Feel free to reach out in the comments if you have any questions or need further assistance!
+
+Happy coding!
