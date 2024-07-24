@@ -21,7 +21,9 @@ const Pre = ({ children }: any) => (
 const components = {
   Image,
   Callout,
-  h2: (props: any) => <h2 className="text-xl font-bold mb-2" {...props} />,
+  h2: (props: any) => (
+    <h2 className="text-xl font-bold font-apercu mb-2" {...props} />
+  ),
   table: (props: any) => <table className="table-auto w-full" {...props} />,
   th: (props: any) => <th className="px-4 py-2" {...props} />,
   td: (props: any) => <td className="border px-4 py-2" {...props} />,
@@ -29,6 +31,9 @@ const components = {
   p: (props: any) => <p {...props} className="text-black dark:text-white" />,
   hr: (props: any) => <p {...props} className="my-4" />,
   pre: (props: any) => <pre {...props} className="my-4 rounded-[5px]" />,
+  ul: (props: any) => <ul {...props} className="ml-4 my-2" />,
+  ol: (props: any) => <ul {...props} className="ml-4 my-2" />,
+  li: (props: any) => <li {...props} className="ml-4 !list-decimal mb-2" />,
 }
 
 interface MdxProps {
