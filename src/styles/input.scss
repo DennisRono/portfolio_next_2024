@@ -233,3 +233,10 @@ pre > code[data-theme*=' '] span {
 p {
   margin-bottom: 1rem;
 }
+
+.rc-anchor-normal-footer {
+  display: none !important;
+}
+.grecaptcha-badge {
+  visibility: hidden;
+}

@@ -1,14 +1,21 @@
 'use client'
 import { useToast } from '@/components/ui/use-toast'
 import React, { FormEvent, useState } from 'react'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const ResumeForm = () => {
   const [email, setEmail] = useState('')
   const [isloading, setIsLoading] = useState(false)
+  const [token, setToken] = useState<string | null>('')
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState<boolean>(false)
+
+  const recaptchaRef: any = React.createRef()
 
   const { toast } = useToast()
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    recaptchaRef.current.execute()
+    console.log(token)
     setIsLoading(true)
     try {
       const origin =
@@ -18,11 +25,14 @@ const ResumeForm = () => {
       if (!email) {
         throw new Error('Email is a required field')
       }
+      if (!token) {
+        throw new Error('Captcha token is required!')
+      }
       const res: any = await fetch(`${origin}/api/resume`, {
         method: 'POST',
         redirect: 'follow',
         cache: 'no-store',
-        body: JSON.stringify({ email: email }),
+        body: JSON.stringify({ email: email, token: token }),
       })
       if (!res.ok) {
         throw new Error('Failed to send request. Please Retry!')
@@ -55,12 +65,28 @@ const ResumeForm = () => {
           setEmail(e.target.value)
         }}
       />
+      <div className="absolute bottom-0 right-0">
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          size="invisible"
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_KEY! as string}
+          onChange={(value) => {
+            console.log(value)
+
+            setToken(value)
+          }}
+          asyncScriptOnLoad={() => {
+            setRecaptchaLoaded(true)
+          }}
+        />
+      </div>
       <button
         className="bg-blue-500 h-10 w-24 rounded-full text-white cursor-pointer"
         type="submit"
         style={{
           background: 'linear-gradient(90deg, #8753ff, #64a0ff)',
         }}
+        disabled={!recaptchaLoaded}
       >
         {isloading ? <div className="dot-flashing"></div> : 'request'}
       </button>

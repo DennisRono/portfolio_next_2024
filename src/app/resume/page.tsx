@@ -35,6 +35,25 @@ const page = () => {
             <p className="text-center text-lg w-[65%] text-[#2b2b2b] dark:text-[#e6e6e6]">
               Request and you&apos;ll get an email with the resume attached
             </p>
+            <p className="text-center text-xs w-[65%] text-[#2b2b2b] dark:text-[#e6e6e6]">
+              This site is protected by reCAPTCHA and the Google
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Privacy Policy
+              </a>{' '}
+              and
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Terms of Service
+              </a>{' '}
+              apply.
+            </p>
           </div>
         </div>
         <div className="hidden sm:flex items-center justify-start flex-1">
