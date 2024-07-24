@@ -2119,9 +2119,21 @@ body {
     padding-left: 2rem;
   }
 
+  .sm\:\!container{
+    width: 100% !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding-right: 2rem !important;
+    padding-left: 2rem !important;
+  }
+
   @media (min-width: 1400px){
     .sm\:container{
       max-width: 1400px;
+    }
+
+    .sm\:\!container{
+      max-width: 1400px !important;
     }
   }
 }
@@ -2627,6 +2639,16 @@ body {
 
   .sm\:text-5xl{
     font-size: 3rem;
+    line-height: 1;
+  }
+
+  .sm\:text-6xl{
+    font-size: 3.75rem;
+    line-height: 1;
+  }
+
+  .sm\:text-7xl{
+    font-size: 4.5rem;
     line-height: 1;
   }
 
