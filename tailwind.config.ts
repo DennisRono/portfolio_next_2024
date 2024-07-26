@@ -95,6 +95,7 @@ const config = {
   },
   plugins: [
     require('tailwindcss-animate'),
+    require('tailwind-scrollbar'),
     function ({ addUtilities }: any) {
       addUtilities({
         '.bg-clip-text': {
