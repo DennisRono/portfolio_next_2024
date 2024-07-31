@@ -10,7 +10,10 @@ const About = () => {
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/3 md:sticky md:top-0">
             <h1 className="text-xl font-space-mono text-gray-900 mb-8 text-center md:text-left dark:text-white">
-              About me <code>&lt;/&gt;</code>
+              About me{' '}
+              <code>
+                <span style={{ color: '#e85535' }}>&lt;/&gt;</span>
+              </code>
             </h1>
             <div className="relative w-56 h-56 mx-auto md:mx-0 mb-6">
               <div className="absolute inset-0 rounded-xl border-30 border-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-green-400 blur-md opacity-80 animate-changeBackground"></div>
