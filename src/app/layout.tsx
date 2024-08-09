@@ -3,9 +3,49 @@ import '@/styles/output.scss'
 import { Toaster } from '@/components/ui/toaster'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 
+const title = 'Dennis Kibet Rono'
+const description = `${title} is a software engineer with more than five years of experience. He has worked on nullchemy group softwares, Aerial Properties solutions and many more. He is a graduate of Machakos University and Moringa School`
+
 export const metadata: Metadata = {
-  title: 'Home - Dennis Kibet R.',
-  description: 'Dennis Kibet portfolio homepage',
+  title: title,
+  description: description,
+  generator: 'Next.js',
+  applicationName: title,
+  referrer: 'origin-when-cross-origin',
+  authors: [{ name: 'Dennis Kibet', url: 'https://denniskibet.com' }],
+  creator: 'Dennis Kibet',
+  publisher: 'Dennis Kibet',
+  formatDetection: {
+    email: true,
+    address: true,
+    telephone: true,
+  },
+  keywords: [
+    'Dennis Kibet',
+    'Dennis',
+    'Kibet',
+    'Rono',
+    'Kenya',
+    'Nairobi',
+    'Software Engineer',
+    'Software Developer',
+    'Engineer',
+    'Developer',
+    'Typescript',
+    'React.js',
+    'nullchemy',
+  ],
+  openGraph: {
+    title: title,
+    description: description,
+    type: 'website',
+    url: 'https://denniskibet.com',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: title,
+    description: description,
+  },
 }
 
 export default function RootLayout({
