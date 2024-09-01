@@ -14,7 +14,7 @@
     },
     {
       "id": 2,
-      "imageUrl": "nullchemy shop",
+      "imageUrl": "NullchemyShop",
       "stack_string": "Next.js/MongoDb",
       "stack": ["Next.js", "MongoDB"],
       "title": "nullchemy shop",
