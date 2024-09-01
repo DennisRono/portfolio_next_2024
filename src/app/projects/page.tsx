@@ -15,7 +15,7 @@ const page = () => {
         <div className="py-4">
           <Link
             href="/"
-            className="flex items-center justify-start gap-2 group"
+            className="flex items-center justify-start gap-2 group mb-2"
           >
             <FontAwesomeIcon
               icon={faArrowLeft}
@@ -25,7 +25,7 @@ const page = () => {
               Dennis Kibet
             </span>
           </Link>
-          <h1 className="text-8xl font-volte-rounded-semibold text-[#2b2b2b] dark:text-[#e6e6e6]">
+          <h1 className="text-5xl font-volte-rounded-semibold text-[#2b2b2b] dark:text-[#e6e6e6]">
             All Projects
           </h1>
         </div>
