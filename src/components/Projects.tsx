@@ -1,11 +1,15 @@
 import Image from 'next/image'
 import React from 'react'
 import NullchemyShop from '@/assets/images/nullchemy_shop.png'
+import WeCare from '@/assets/images/wecare.png'
+import NPay from '@/assets/images/n_pay.png'
+import NAnalytics from '@/assets/images/n_analytics.png'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import projects from '@/data/projects.json'
 
 const Projects = () => {
+  const projImage = [WeCare, NullchemyShop, NPay, NAnalytics]
   return (
     <>
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 py-4">
@@ -26,7 +30,7 @@ const Projects = () => {
               <div className="flex flex-col sm:flex-row items-start justify-start gap-4 mb-4 hover:bg-[#fff2] p-4 rounded-sm border border-transparent hover:border-[#fff2] hover:shadow-sm">
                 <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
                   <Image
-                    src={NullchemyShop}
+                    src={projImage[index]}
                     alt="nullchemy shop"
                     className="h-full w-full object-cover"
                   />
