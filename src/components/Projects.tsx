@@ -8,14 +8,14 @@ import projects from '@/data/projects.json'
 const Projects = () => {
   return (
     <>
-      <div className="flex items-start justify-between py-4">
-        <div className="w-1/2">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 py-4">
+        <div className="w-full sm:w-1/4">
           <h2 className="text-bold text-5xl mb-4">My Projects</h2>
           <p className="text-lg">
             Some of the Projects that i have worked on of the years
           </p>
         </div>
-        <div className="w-1/2">
+        <div className="w-full sm:w-3/4">
           {projects.data.slice(0, 4).map((project, index) => (
             <a
               href={project.external_url}
@@ -23,7 +23,7 @@ const Projects = () => {
               rel="noopener noreferrer"
               key={index}
             >
-              <div className="flex items-start justify-start gap-4 mb-4 hover:bg-[#fff2] p-4 rounded-sm border border-transparent hover:border-[#fff2] hover:shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start justify-start gap-4 mb-4 hover:bg-[#fff2] p-4 rounded-sm border border-transparent hover:border-[#fff2] hover:shadow-sm">
                 <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
                   <Image
                     src={NullchemyShop}
