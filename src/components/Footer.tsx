@@ -8,6 +8,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const Footer = () => {
   const [position, setPosition] = useState('v3')
@@ -17,7 +18,7 @@ const Footer = () => {
       <p className="text-center text-black dark:text-white">
         &copy; copyright {new Date().getFullYear()}
       </p>
-      <div className="">
+      <div className="flex items-center justify-start gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">versions</Button>
@@ -47,6 +48,7 @@ const Footer = () => {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
+        <ThemeSwitcher />
       </div>
     </div>
   )

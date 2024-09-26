@@ -11,7 +11,7 @@ const Home = () => {
         <div className="max-w-screen-2xl min-h-screen mx-auto px-2 xs:px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
           <Landing />
           <About />
-          <Projects />
+          <Projects no={4} f={false} />
           <Footer />
         </div>
       </article>

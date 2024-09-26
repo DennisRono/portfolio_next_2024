@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/output.scss'
 import { Toaster } from '@/components/ui/toaster'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 
 const title = 'Dennis Kibet Rono'
 const description = `${title} is a software engineer with more than five years of experience. He has worked on nullchemy group softwares, Aerial Properties solutions and many more. He is a graduate of Machakos University and Moringa School`
@@ -60,7 +59,6 @@ export default function RootLayout({
       >
         <main>{children}</main>
         <Toaster />
-        <ThemeSwitcher />
       </body>
     </html>
   )

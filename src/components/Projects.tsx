@@ -4,23 +4,27 @@ import NullchemyShop from '@/assets/images/nullchemy_shop.png'
 import WeCare from '@/assets/images/wecare_one.png'
 import NPay from '@/assets/images/npay_landing.png'
 import NAnalytics from '@/assets/images/analytics.png'
+import NullEMS from '@/assets/images/null_ems.png'
+import WenotiFy from '@/assets/images/wenotify.png'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import projects from '@/data/projects.json'
 
-const Projects = () => {
-  const projImage = [WeCare, NullchemyShop, NPay, NAnalytics]
+const Projects = ({ no, f }: { no: number; f: boolean }) => {
+  const projImage = [WeCare, NullchemyShop, NPay, NAnalytics, NullEMS, WenotiFy]
   return (
     <>
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 py-4">
-        <div className="w-full sm:w-1/4">
-          <h2 className="text-bold text-5xl mb-4">My Projects</h2>
-          <p className="text-lg">
-            Some of the Projects that i have worked on of the years
-          </p>
-        </div>
-        <div className="w-full sm:w-3/4">
-          {projects.data.slice(0, 4).map((project, index) => (
+        {!f ? (
+          <div className="w-full sm:w-1/4">
+            <h2 className="text-bold text-5xl mb-4">My Projects</h2>
+            <p className="text-lg">
+              Some of the Projects that i have worked on of the years
+            </p>
+          </div>
+        ) : null}
+        <div className={f ? 'w-full' : 'w-full sm:w-3/4'}>
+          {projects.data.slice(0, no).map((project, index) => (
             <a
               href={project.external_url}
               target="_blank"
@@ -57,13 +61,15 @@ const Projects = () => {
               </div>
             </a>
           ))}
-          <Link
-            href="/projects"
-            className="flex items-center justify-start gap-2 hover:underline ml-8"
-          >
-            <h2 className="font-semibold text-lg">View All Projects</h2>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          {!f ? (
+            <Link
+              href="/projects"
+              className="flex items-center justify-start gap-2 hover:underline ml-8"
+            >
+              <h2 className="font-semibold text-lg">View All Projects</h2>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          ) : null}
         </div>
       </div>
     </>
