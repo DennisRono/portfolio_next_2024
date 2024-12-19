@@ -41,18 +41,26 @@ const About = () => {
                 Background <span className="text-teal-500 text-sm">.01</span>
               </h2>
               <p className="text-lg text-gray-700 dark:text-white">
-                Hello, I am Dennis. I am currently a student at Moringa School
-                Kenya, studying Software Engineering. I love building things for
-                the internet. My native home place is Eldoret Kenya. My interest
-                in computers started back when I was in High School when I did a
-                science fair project on web development. As simple as the
-                project was it taught me a lot on how the internet works and
-                moreover gave me a little Experience on HTML & CSS.
+                Hello, I am Dennis, a Software Engineer passionate about
+                building things for the internet. I recently graduated from
+                Moringa School in Kenya, where I honed my skills in software
+                development. My journey into computers began during High School
+                when I worked on a science fair project focused on web
+                development. That simple project ignited my curiosity about how
+                the internet works and gave me foundational experience in HTML
+                and CSS.
                 <br />
                 <br />
-                Currently, I focus on finding reliable solutions for software
-                issues. I am fluent in English and accustomed to working with
-                cross-cultural, global teams.
+                Now, as a graduate, I am actively seeking a role where I can
+                contribute to solving software challenges and building reliable,
+                innovative solutions. I have a strong command of English and a
+                proven ability to collaborate with cross-cultural, global teams
+                effectively.
+                <br />
+                <br />
+                Originally from Eldoret, Kenya, I bring not only technical
+                expertise but also a dedication to continuous learning and
+                problem-solving.
               </p>
             </div>
           </div>

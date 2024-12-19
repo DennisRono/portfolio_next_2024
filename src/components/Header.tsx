@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import ThemeSwitcher from './ThemeSwitcher'
 
 const Header = () => {
   return (
@@ -30,6 +31,9 @@ const Header = () => {
             <Link href="/#about" className="hidden sm:block">
               About
             </Link>
+            <div className="ml-2">
+              <ThemeSwitcher />
+            </div>
           </div>
         </div>
       </div>
