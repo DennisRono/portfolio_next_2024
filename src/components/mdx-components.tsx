@@ -1,10 +1,7 @@
 import Image from 'next/image'
 import * as runtime from 'react/jsx-runtime'
 import { Callout } from './callout'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import CodeCopyBtn from '@/components/codeCopyBtn'
-import { cn } from '@/lib/utils'
 
 const useMDXComponent = (code: string) => {
   const fn = new Function(code)
@@ -14,8 +11,17 @@ const useMDXComponent = (code: string) => {
 const components = {
   Image,
   Callout,
+  h1: (props: any) => (
+    <h1 className="text-2xl font-bold font-apercu mb-2" {...props} />
+  ),
   h2: (props: any) => (
     <h2 className="text-2xl font-bold font-apercu mb-2" {...props} />
+  ),
+  h3: (props: any) => (
+    <h3 className="text-2xl font-bold font-apercu mb-2" {...props} />
+  ),
+  h4: (props: any) => (
+    <h4 className="text-2xl font-bold font-apercu mb-2" {...props} />
   ),
   table: (props: any) => <table className="table-auto w-full" {...props} />,
   th: (props: any) => <th className="px-4 py-2" {...props} />,
