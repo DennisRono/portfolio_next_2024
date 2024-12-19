@@ -4,7 +4,7 @@ import { Callout } from './callout'
 import CodeCopyBtn from '@/components/codeCopyBtn'
 
 const useMDXComponent = (code: string) => {
-  const fn = new Function(code)
+  const fn = new Function('components', `${code}; return MDXContent`)
   return fn({ ...runtime }).default
 }
 
