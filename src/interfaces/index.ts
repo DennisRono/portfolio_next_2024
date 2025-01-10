@@ -1,3 +1,4 @@
+import { StaticImageData } from 'next/image'
 import Mail from 'nodemailer/lib/mailer'
 import MimeNode from 'nodemailer/lib/mime-node'
 
@@ -14,6 +15,20 @@ interface Slide {
 interface ListAction {
   url: string
   comment: string
+}
+
+export interface ProjectType {
+  id: number
+  imageUrl: StaticImageData
+  stack_string: string
+  stack: string[]
+  title: string
+  preview: string
+  slug: string
+  external_url: string
+  made_at: string
+  year: string
+  client: string
 }
 
 export interface EmailOptionsType {

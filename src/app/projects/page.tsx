@@ -1,5 +1,5 @@
 import React from 'react'
-import projects from '@/data/projects.json'
+import projects from '@/data/projects'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import Projects from '@/components/Projects'

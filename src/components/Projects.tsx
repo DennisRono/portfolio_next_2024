@@ -6,12 +6,25 @@ import NPay from '@/assets/images/npay_landing.png'
 import NAnalytics from '@/assets/images/analytics.png'
 import NullEMS from '@/assets/images/null_ems.png'
 import WenotiFy from '@/assets/images/wenotify.png'
+import TenAfriq from '@/assets/images/tenafriq-landing-page.png'
+import BebeWa from '@/assets/images/bebewa-dash.png'
+import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import projects from '@/data/projects.json'
+import projects from '@/data/projects'
 
 const Projects = ({ no, f }: { no: number; f: boolean }) => {
-  const projImage = [WeCare, NullchemyShop, NPay, NAnalytics, NullEMS, WenotiFy]
+  const projImage = [
+    WeCare,
+    NullchemyShop,
+    NPay,
+    NAnalytics,
+    NullEMS,
+    WenotiFy,
+    TenAfriq,
+    BebeWa,
+    ShopYangu,
+  ]
   return (
     <>
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4 py-4">
@@ -24,29 +37,30 @@ const Projects = ({ no, f }: { no: number; f: boolean }) => {
           </div>
         ) : null}
         <div className={f ? 'w-full' : 'w-full sm:w-3/4'}>
-          {projects.data.slice(0, no).map((project, index) => (
-            <a
-              href={project.external_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              key={index}
-            >
-              <div className="flex flex-col sm:flex-row items-start justify-start gap-4 mb-4 hover:bg-[#fff2] p-4 rounded-sm border border-transparent hover:border-[#fff2] hover:shadow-sm">
-                <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
-                  <Image
-                    src={projImage[index]}
-                    alt="nullchemy shop"
-                    className="h-full w-full object-cover"
-                  />
+          {projects.slice(0, no).map((project, index) => (
+            <Link href={`/project/${project.slug}`} key={project.id}>
+              <div className="cursor-pointer flex flex-col sm:flex-row items-start justify-start gap-4 mb-4 hover:bg-[#fff2] p-4 rounded-sm border border-transparent hover:border-[#fff2] hover:shadow-sm">
+                <div className="w-1/4">
+                  <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
+                    <Image
+                      src={projImage[index]}
+                      alt="nullchemy shop"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center justify-start gap-2">
-                    <h2 className="font-bold text-3xl -mt-2">
-                      {project.title}
-                    </h2>
-                    <ExternalLink className="h-5 w-5" />
-                  </div>
-                  <p className="text-base text-gray-600">{project.preview}</p>
+                  <Link href={project.external_url}>
+                    <div className="flex items-center justify-start gap-2">
+                      <h2 className="font-bold text-3xl -mt-2">
+                        {project.title}
+                      </h2>
+                      <ExternalLink className="h-5 w-5" />
+                    </div>
+                  </Link>
+                  <p className="text-base text-gray-600 line-clamp-2 overflow-ellipsis">
+                    {project.preview}
+                  </p>
                   <div className="flex items-center justify-start gap-2">
                     {project.stack.slice(0, 6).map((stack, index) => (
                       <div
@@ -59,7 +73,7 @@ const Projects = ({ no, f }: { no: number; f: boolean }) => {
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
           {!f ? (
             <Link
