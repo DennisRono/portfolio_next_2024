@@ -7,6 +7,7 @@ import WenotiFy from '@/assets/images/wenotify.png'
 import TenAfriq from '@/assets/images/tenafriq-landing-page.png'
 import BebeWa from '@/assets/images/bebewa-dash.png'
 import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
+import ApS from '@/assets/images/aps-homepage.png'
 
 const projects = [
   {
@@ -132,6 +133,20 @@ const projects = [
     slug: 'shop-yangu',
     external_url: 'https://shopyangu-ten.vercel.app/',
     client: 'Sare Africa Assignment',
+    made_at: 'Freelance (After School)',
+    year: '2025',
+  },
+  {
+    id: 10,
+    imageUrl: ApS,
+    stack_string: 'Next.js/MongoDb/Zod',
+    stack: ['Next.js', 'MongoDB', 'Zod'],
+    title: 'Aerial Properties Solutions Limited',
+    preview:
+      'A modern and responsive website built for Aerial Properties Solutions Limited, showcasing their commitment to delivering exceptional service and value to their clients. The platform provides a seamless user experience, reflecting the company’s dedication to professionalism and customer satisfaction.',
+    slug: 'aerial-properties-solutions-limited',
+    external_url: 'https://aps.nullchemy.com/',
+    client: 'Aerial Properties Solutions Limited',
     made_at: 'Freelance (After School)',
     year: '2025',
   },
