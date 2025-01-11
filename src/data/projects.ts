@@ -2,12 +2,14 @@ import NullchemyShop from '@/assets/images/nullchemy_shop.png'
 import WeCare from '@/assets/images/wecare_one.png'
 import NPay from '@/assets/images/npay_landing.png'
 import NAnalytics from '@/assets/images/analytics.png'
-import NullEMS from '@/assets/images/null_ems.png'
+import NullEMS from '@/assets/images/nems-dash.png'
 import WenotiFy from '@/assets/images/wenotify.png'
 import TenAfriq from '@/assets/images/tenafriq-landing-page.png'
 import BebeWa from '@/assets/images/bebewa-dash.png'
 import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
 import ApS from '@/assets/images/aps-homepage.png'
+import LinkedInClone from '@/assets/images/linkedin-clone.png'
+import NullChemy from '@/assets/images/nullchemy.png'
 
 const projects = [
   {
@@ -149,6 +151,34 @@ const projects = [
     client: 'Aerial Properties Solutions Limited',
     made_at: 'Freelance (After School)',
     year: '2025',
+  },
+  {
+    id: 11,
+    imageUrl: LinkedInClone,
+    stack_string: 'React.js/ChakraUI',
+    stack: ['React.js', 'ChakraUI'],
+    title: 'LinkedIn Clone',
+    preview:
+      "A personal project replicating LinkedIn's core functionalities, built with React.js and styled using ChakraUI. This clone features user authentication, profile management, and a dynamic news feed, providing a platform to connect and share professional updates.",
+    slug: 'linkedin-clone',
+    external_url: 'https://aps.nullchemy.com/',
+    client: 'Personal Project',
+    made_at: 'Freelance (After School)',
+    year: '2024',
+  },
+  {
+    id: 12,
+    imageUrl: NullChemy,
+    stack_string: 'React.js/TailwindCSS/Express.js/MongoDB',
+    stack: ['React.js', 'TailwindCSS', 'Express.js', 'MongoDB'],
+    title: 'nullchemy.com',
+    preview:
+      'The official website for nullchemy, developed to showcase our custom software development services. Built with React.js for a dynamic user interface, styled with TailwindCSS for responsive design, and powered by Express.js and MongoDB for robust backend support.',
+    slug: 'nullchemy',
+    external_url: 'https://nullchemy.com/',
+    client: 'nullchemy',
+    made_at: 'Machakos University',
+    year: '2024',
   },
 ]
 
