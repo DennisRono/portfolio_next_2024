@@ -17,6 +17,12 @@ interface ListAction {
   comment: string
 }
 
+interface DocType {
+  type: string
+  path: string
+  file_name: string
+}
+
 export interface ProjectType {
   id: number
   imageUrl: StaticImageData
@@ -29,6 +35,7 @@ export interface ProjectType {
   made_at: string
   year: string
   client: string
+  docs?: DocType[]
 }
 
 export interface EmailOptionsType {

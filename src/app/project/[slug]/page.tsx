@@ -4,19 +4,13 @@ import Image from 'next/image'
 import { Metadata } from 'next'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
-import { Calendar, Clock } from 'lucide-react'
+import { Calendar, Clock, CloudDownload, Loader2 } from 'lucide-react'
 import projects from '@/data/projects'
 import { ProjectType } from '@/interfaces'
-import NullchemyShop from '@/assets/images/nullchemy_shop.png'
-import WeCare from '@/assets/images/wecare_one.png'
-import NPay from '@/assets/images/npay_landing.png'
-import NAnalytics from '@/assets/images/analytics.png'
-import NullEMS from '@/assets/images/null_ems.png'
-import WenotiFy from '@/assets/images/wenotify.png'
-import TenAfriq from '@/assets/images/denniskibet-landing-page.png'
-import BebeWa from '@/assets/images/bebewa-dash.png'
-import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
 import ProfileImage from '@/assets/images/profile.png'
+import { my_projects } from '#site/content'
+import { MDXContent } from '@/components/mdx-components'
+import ProjectFiles from './ProjectFiles'
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL || 'https://denniskibet.com'
 
@@ -83,6 +77,9 @@ const ProjectPage: React.FC<{ params: { slug: string } }> = async ({
 }) => {
   const { slug } = params
   const project: ProjectType | undefined = getProject(slug)
+  const project_cont = my_projects.find(
+    (project) => project.slugAsParams === slug
+  )
 
   if (!project) {
     return (
@@ -143,10 +140,16 @@ const ProjectPage: React.FC<{ params: { slug: string } }> = async ({
               <span>{calculateReadingTime(project.preview)} minutes read</span>
             </div>
           </div>
+          {project.docs && project.docs.length !== 0 && (
+            <ProjectFiles docs={project.docs} />
+          )}
 
           <blockquote className="border-l-4 my-8 text-lg border-gray-400 pl-4 italic text-gray-600 dark:text-white">
             {project.preview}
           </blockquote>
+          {project_cont && project_cont.published && (
+            <MDXContent code={project_cont.body} />
+          )}
         </article>
       </main>
       <Footer />

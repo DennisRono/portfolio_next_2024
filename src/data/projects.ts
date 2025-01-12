@@ -25,6 +25,23 @@ const projects = [
     made_at: 'Machakos University',
     year: '2024',
     client: 'Machakos University Research Project',
+    docs: [
+      {
+        type: 'pdf',
+        path: '/pdf/wecare-report.pdf',
+        file_name: 'wecare-report.pdf',
+      },
+      {
+        type: 'docx',
+        path: '/docs/wecare.docx',
+        file_name: 'wecare.docx',
+      },
+      {
+        type: 'pptx',
+        path: '/docs/wecare.pptx',
+        file_name: 'wecare.pptx',
+      },
+    ],
   },
   {
     id: 2,
