@@ -342,13 +342,18 @@ const About = () => {
                   Moringa School (Software Engineering), Nairobi
                 </h2>
                 <p className="text-lg dark:text-white">
-                  I am currently at Moringa School persuing software
-                  engineering. So far so good here.
+                  I successfully completed my software engineering program at
+                  Moringa School. During my time there, I gained comprehensive
+                  knowledge of web technologies, including backend, frontend,
+                  and database systems, which I have applied to several
+                  projects. In addition to technical skills, I also developed
+                  strong intrapersonal skills and a solid understanding of
+                  system design.
                 </p>
               </div>
               <div className="sm:w-1/4 sm:flex sm:items-start sm:justify-end">
                 <span className="text-nowrap dark:text-white">
-                  2024 June - 2024 December
+                  2024 June - 2024 November
                 </span>
               </div>
             </div>

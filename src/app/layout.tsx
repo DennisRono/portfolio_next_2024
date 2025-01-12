@@ -33,17 +33,27 @@ export const metadata: Metadata = {
     'Typescript',
     'React.js',
     'nullchemy',
+    'tenafriq',
   ],
   openGraph: {
     title: title,
     description: description,
     type: 'website',
     url: 'https://denniskibet.com',
+    images: [
+      {
+        url: `https://denniskibet.com/profile.png`,
+        width: 1200,
+        height: 630,
+        alt: 'Dennis Kibet',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: title,
     description: description,
+    images: ['https://denniskibet.com/profile.png'],
   },
 }
 

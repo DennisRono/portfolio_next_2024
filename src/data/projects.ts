@@ -57,34 +57,7 @@ const projects = [
     year: '2024',
     client: 'Internal Project',
   },
-  {
-    id: 3,
-    imageUrl: NPay,
-    stack_string: 'Flutter/Flutter/MySQL',
-    stack: ['Flutter', 'Flutter', 'MySQL'],
-    title: 'NPay',
-    preview:
-      'NPay is a state-of-the-art mobile payment solution designed to simplify transactions and empower users with actionable financial insights. It features budget planning tools, scheduled payments, and personalized analytics to help users manage their finances effectively. NPay is engineered to redefine the mobile payment ecosystem with its user-centric design and robust functionality.',
-    slug: 'npay',
-    external_url: 'https://npay.nullchemy.com',
-    made_at: 'Machakos University',
-    year: '2024',
-    client: 'Machakos University FinTech Initiative',
-  },
-  {
-    id: 4,
-    imageUrl: NAnalytics,
-    stack_string: 'React Native/Express.js/MySQL',
-    stack: ['React Native', 'Express.js', 'MySQL'],
-    title: 'N-Analytics',
-    preview:
-      'N-Analytics is a comprehensive business intelligence tool tailored for enterprises seeking data-driven insights. It facilitates advanced analytics for supply chain management, performance tracking, and decision-making. With its intuitive dashboards and robust backend, N-Analytics empowers businesses to optimize operations and enhance productivity.',
-    slug: 'n-analytics',
-    external_url: 'https://analytics.nullchemy.com',
-    made_at: '',
-    year: '2024',
-    client: 'Internal Development Team',
-  },
+
   {
     id: 5,
     imageUrl: NullEMS,
@@ -196,6 +169,34 @@ const projects = [
     client: 'nullchemy',
     made_at: 'Machakos University',
     year: '2024',
+  },
+  {
+    id: 3,
+    imageUrl: NPay,
+    stack_string: 'Flutter/Flutter/MySQL',
+    stack: ['Flutter', 'Flutter', 'MySQL'],
+    title: 'NPay',
+    preview:
+      'NPay is a state-of-the-art mobile payment solution designed to simplify transactions and empower users with actionable financial insights. It features budget planning tools, scheduled payments, and personalized analytics to help users manage their finances effectively. NPay is engineered to redefine the mobile payment ecosystem with its user-centric design and robust functionality.',
+    slug: 'npay',
+    external_url: 'https://npay.nullchemy.com',
+    made_at: 'Machakos University',
+    year: '2024',
+    client: 'Machakos University FinTech Initiative',
+  },
+  {
+    id: 4,
+    imageUrl: NAnalytics,
+    stack_string: 'React Native/Express.js/MySQL',
+    stack: ['React Native', 'Express.js', 'MySQL'],
+    title: 'N-Analytics',
+    preview:
+      'N-Analytics is a comprehensive business intelligence tool tailored for enterprises seeking data-driven insights. It facilitates advanced analytics for supply chain management, performance tracking, and decision-making. With its intuitive dashboards and robust backend, N-Analytics empowers businesses to optimize operations and enhance productivity.',
+    slug: 'n-analytics',
+    external_url: 'https://analytics.nullchemy.com',
+    made_at: '',
+    year: '2024',
+    client: 'Internal Development Team',
   },
 ]
 
