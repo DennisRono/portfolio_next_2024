@@ -1,0 +1,137 @@
+---
+title: Deploying Your Express.js App on AWS EC2 with NGINX and a Custom Domain A Professional Guide
+description: Deploying your web application can be a daunting task, but with AWS EC2, NGINX, and a custom domain, you can achieve a robust and scalable deployment. This guide will walk you through the entire process step by step.
+date: 2024-07-23
+tags: ["aws", "ec2", "express.js", "ssh", "nginx"]
+published: true
+---
+
+## Prerequisites
+
+Before we begin, ensure you have the following:
+
+- An AWS account
+- A registered domain name
+- Node.js and NPM installed locally
+- Basic knowledge of SSH and the terminal
+
+## Step 1: Setting Up Your AWS EC2 Instance
+
+1. **Launch an EC2 Instance**:
+    - Log in to your AWS Management Console.
+    - Navigate to EC2 Dashboard and click "Launch Instance".
+    - Choose an Amazon Machine Image (AMI). We recommend the latest Ubuntu Server AMI.
+    - Select an instance type. The `t2.micro` is a good starting point as it is part of the free tier.
+    - Configure instance details and add storage as needed.
+    - Add a tag (e.g., Name: MyExpressApp).
+    - Configure the security group. Allow HTTP (port 80) and SSH (port 22) traffic.
+2. **Connect to Your Instance**:
+    - Once your instance is running, click on "Connect".
+    - Use SSH to connect to your instance:
+        
+        ```bash
+        ssh -i /path/to/your-key-pair.pem ubuntu@your-ec2-public-dns
+        ```
+        
+
+## Step 2: Setting Up Node.js on EC2
+
+1. **Update your package lists**:
+    
+    ```bash
+    sudo apt update
+    ```
+    
+2. **Install Node.js and NPM**:
+    
+    ```bash
+    sudo apt install nodejs npm -y
+    ```
+    
+3. **Verify the installation**:
+    
+    ```bash
+    node -v
+    npm -v
+    ```
+    
+
+## Step 3: Deploying Your Express.js Application
+
+1. **Transfer your application to the EC2 instance**:
+    
+    You can use SCP to transfer files:
+    
+    ```bash
+    scp -i /path/to/your-key-pair.pem -r /path/to/your-app ubuntu@your-ec2-public-dns:/home/ubuntu
+    ```
+    
+2. **Install dependencies and start the application**:
+    
+    ```bash
+    cd /home/ubuntu/your-app
+    npm install
+    node app.js
+    ```
+    
+    Replace `app.js` with the entry point of your application.
+    
+
+## Step 4: Setting Up NGINX as a Reverse Proxy
+
+1. **Install NGINX**:
+    
+    ```bash
+    sudo apt install nginx -y
+    ```
+    
+2. **Configure NGINX**:
+    - Open the default NGINX configuration file:
+        
+        ```bash
+        sudo nano /etc/nginx/sites-available/default
+        ```
+        
+    - Replace the contents with the following:
+        
+        ```json
+        server {
+            listen 80;
+        
+            server_name your-domain.com;
+        
+            location / {
+                proxy_pass <http://localhost:3000>;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+            }
+        }
+        
+        ```
+        
+    
+    Replace `your-domain.com` with your actual domain and ensure your Express.js app is running on port 3000.
+    
+3. **Restart NGINX**:
+    
+    ```
+    sudo systemctl restart nginx
+    ```
+    
+
+## Step 5: Setting Up Your Custom Domain
+
+1. **Configure DNS Settings**:
+    - Go to your domain registrar's website and find the DNS settings.
+    - Add an A record pointing to your EC2 instance’s public IP address.
+2. **Verify the DNS Configuration**:
+    - It might take a few minutes for DNS changes to propagate. You can use tools like `dig` or `nslookup` to verify your domain points to your EC2 instance.
+
+## Conclusion
+
+Congratulations! Your Express.js application is now deployed on an AWS EC2 instance, served by NGINX, and accessible via your custom domain. This setup not only provides a professional and scalable solution but also leverages the power of AWS for reliable hosting.
+
+Feel free to leave comments or questions if you need further assistance. Happy coding!

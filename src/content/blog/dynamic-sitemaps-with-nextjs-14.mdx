@@ -1,0 +1,58 @@
+---
+title: "Dynamic Sitemaps With Next.js 14"
+description: Dynamic sitemaps in Next.js 14 allow developers to automatically generate and update sitemaps based on the current state of their application. This feature is particularly useful for large websites or applications with frequently changing content. By dynamically creating sitemaps, you can ensure that search engines always have the most up-to-date information about the pages on your site, improving your SEO efforts.
+date: 2024-07-24
+tags: ["typescript", "nextjs", "sitemap"]
+published: true
+---
+
+To create a sitemap in next.js 14 create a `sitemap.ts` file inside the `app` Folder
+
+```tsx
+import type { MetadataRoute } from 'next'
+import { posts } from '#site/content'
+
+import { getBaseUrl } from '@/lib/Helpers'
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const siteobj = {
+    url: `${getBaseUrl()}/`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: 0.7,
+  }
+  const dynamicPages: any[] = Array.isArray(posts)
+    ? posts.map((item: any) => {
+        return {
+          ...siteobj,
+          url: `${getBaseUrl()}/${item.slug}`,
+          lastModified: item.updatedAt,
+        }
+      })
+    : []
+
+  return [
+    {
+      url: `${getBaseUrl()}/`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
+      url: `${getBaseUrl()}/resume`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${getBaseUrl()}/projects`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...dynamicPages,
+  ]
+}
+```
+
+By leveraging the dynamic sitemap feature in Next.js 14, developers can significantly enhance their site's search engine visibility and ensure that all pages are indexed accurately. This automated approach not only saves time but also helps maintain the SEO health of large and dynamic websites. Implementing dynamic sitemaps is a straightforward yet powerful way to keep your site's content fresh and accessible to search engines, ultimately driving more traffic and improving user experience.

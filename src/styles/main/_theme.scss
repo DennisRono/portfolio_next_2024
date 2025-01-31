@@ -1,0 +1,31 @@
+// Light theme
+:root {
+  --background-color-one: #e3e1ff;
+  --background-color-two: #e3edff;
+  --background-color-three: #e3e1ff;
+  --text-color: #2b2b2b;
+  --text-color-inv: #e6e6e6;
+  --background-modals: #d4d1fe8d;
+  --background-header: #ffffffcc;
+  --bg-overlay-color: #eef4ff;
+  --box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+    rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  --start-color: #db2777;
+  --end-color: #9333ea;
+  --radius: 15px;
+}
+
+//dark theme
+[class='dark'] {
+  --background-color-one: #000000;
+  --background-color-two: #090c14;
+  --background-color-three: #171c28;
+  --text-color: #e6e6e6;
+  --text-color-inv: #2b2b2b;
+  --background-modals: #40404072;
+  --background-header: #2e2e2ecc;
+  --bg-overlay-color: #0e121b;
+  --box-shadow: rgba(255, 255, 255, 0.19) 0px 10px 20px,
+    rgba(255, 255, 255, 0.23) 0px 6px 6px;
+  --radius: 15px;
+}

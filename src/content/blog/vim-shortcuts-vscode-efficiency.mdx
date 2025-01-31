@@ -1,0 +1,234 @@
+---
+title: 'Mastering Vim Shortcuts in VSCode: Boost Your Coding Efficiency with These Essential Tips'
+description: Learn how to enhance your VSCode experience with Vim shortcuts, boosting efficiency and streamlining your coding workflow.
+date: 2024-08-16
+tags: ["vim", "vscode", "shortcuts", "productivity", "shortcuts"]
+published: true
+---
+
+## Introduction
+
+Enhancing your coding efficiency in Visual Studio Code (VSCode) can be achieved by mastering Vim shortcuts. Vim’s modal editing and powerful commands can transform how you interact with your code, making it faster and more intuitive. This blog will guide you through essential Vim shortcuts and keybindings tailored for VSCode, helping you streamline your workflow and boost productivity.
+
+## Prerequisites
+
+Before diving into Vim shortcuts, ensure you have the following:
+
+- **Vim Extension in VSCode:** Install the Vim extension to enable Vim keybindings and modes within VSCode.
+- **Basic Understanding of Vim:** Familiarity with Vim’s fundamental concepts and shortcuts will be beneficial.
+- **Visual Studio Code Interface:** Basic knowledge of VSCode’s interface and features.
+
+## Essential Vim Shortcuts
+
+Here is a list of essential Vim shortcuts to enhance your coding experience:
+
+1. **`i`** - Enter Insert mode at the cursor.
+2. **`I`** - Enter Insert mode at the beginning of the line.
+3. **`a`** - Enter Insert mode after the cursor.
+4. **`A`** - Enter Insert mode at the end of the line.
+5. **`o`** - Open a new line below and enter Insert mode.
+6. **`O`** - Open a new line above and enter Insert mode.
+7. **`h`** - Move the cursor left.
+8. **`j`** - Move the cursor down.
+9. **`k`** - Move the cursor up.
+10. **`l`** - Move the cursor right.
+11. **`w`** - Move to the start of the next word.
+12. **`b`** - Move to the beginning of the previous word.
+13. **`e`** - Move to the end of the next word.
+14. **`gg`** - Go to the beginning of the file.
+15. **`G`** - Go to the end of the file.
+16. **`0`** - Move to the beginning of the line.
+17. **`$`** - Move to the end of the line.
+18. **`dd`** - Delete the current line.
+19. **`dw`** - Delete from the cursor to the end of the word.
+20. **`d$`** - Delete from the cursor to the end of the line.
+21. **`yy`** - Yank (copy) the current line.
+22. **`p`** - Paste after the cursor.
+23. **`P`** - Paste before the cursor.
+24. **`u`** - Undo the last action.
+25. **`Ctrl + r`** - Redo the undone action.
+26. **`x`** - Delete the character under the cursor.
+27. **`r`** - Replace the character under the cursor.
+28. **`/`** - Search forward for a pattern.
+29. **`?`** - Search backward for a pattern.
+30. **`n`** - Repeat the last search in the same direction.
+31. **`N`** - Repeat the last search in the opposite direction.
+32. **`:w`** - Save the file.
+33. **`:q`** - Quit Vim.
+34. **`:wq`** - Save the file and quit Vim.
+35. **`:q!`** - Quit without saving.
+36. **`:x`** - Save the file and quit (same as `:wq`).
+37. **`v`** - Enter Visual mode for character-wise selection.
+38. **`V`** - Enter Visual mode for line-wise selection.
+39. **`Ctrl + v`** - Enter Visual Block mode for column-wise selection.
+40. **`y`** - Yank (copy) selected text in Visual mode.
+41. **`d`** - Delete selected text in Visual mode.
+42. **`:s/old/new/g`** - Substitute all occurrences of "old" with "new" in the current line.
+43. **`:%s/old/new/g`** - Substitute all occurrences of "old" with "new" in the entire file.
+44. **`:noh`** - Clear search highlighting.
+
+## Customizing Keybindings
+
+**Keybindings** allow you to customize how Vim commands and shortcuts behave in VSCode. By configuring keybindings, you can tailor the editor to fit your coding style and improve your efficiency. Below is an example of a `keybindings.json` configuration to enhance your Vim experience:
+
+### Sample `keybindings.json`
+
+```json
+[
+    {
+        "key": "cmd+k",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.previousEditor"
+    },
+    {
+        "key": "cmd+ctrl+j",
+        "command": "moveActiveEditor",
+        "args": { "to": "left" }
+    },
+    {
+        "key": "cmd+ctrl+k",
+        "command": "moveActiveEditor",
+        "args": { "to": "right" }
+    },
+    {
+        "key": "cmd+j",
+        "command": "selectNextSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "cmd+k",
+        "command": "selectPrevSuggestion",
+        "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.quickOpenSelectNext",
+        "when": "inQuickOpen"
+    },
+    {
+        "key": "cmd+k",
+        "command": "workbench.action.quickOpenSelectPrevious",
+        "when": "inQuickOpen"
+    },
+    {
+        "key": "cmd+n",
+        "command": "workbench.action.terminal.newInActiveWorkspace"
+    },
+    {
+        "key": "cmd+enter",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "cmd+ctrl+enter",
+        "command": "workbench.action.toggleMaximizedPanel"
+    },
+    {
+        "key": "cmd+d",
+        "command": "workbench.action.terminal.split",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+\\",
+        "command": "-workbench.action.terminal.split",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+k",
+        "command": "workbench.action.terminal.focusNextPane",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "alt+cmd+down",
+        "command": "-workbench.action.terminal.focusNextPane",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+j",
+        "command": "workbench.action.terminal.focusPreviousPane",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "alt+cmd+up",
+        "command": "-workbench.action.terminal.focusPreviousPane",
+        "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+w",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "tab",
+        "command": "tab",
+        "when": "editorTextFocus && !editorTabMovesFocus"
+    },
+    {
+        "key": "shift+tab",
+        "command": "outdent",
+        "when": "editorTextFocus && !editorTabMovesFocus"
+    }
+]
+```
+
+## Enabling Tab in Read-Only Mode
+
+To customize Vim settings in VSCode, add the following configuration to your `settings.json` file:
+
+### Sample `settings.json`
+
+```json
+{
+    "vim.timeout": 200,
+    "vim.useSystemClipboard": true,
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["k", "j"],
+            "after": ["<Esc>", "l"]
+        }
+    ],
+    "vim.useCtrlKeys": true,
+    "vim.handleKeys": {
+        "<C-f>": true,
+        "<C-a>": false
+    },
+    "vim.normalModeKeyBindings": [
+        {
+            "before": ["v", "n"],
+            "after": ["v", "g", "_", "y"]
+        },
+        {
+            "before": ["f", "d"],
+            "commands": ["typescript.goToSourceDefinition"]
+        },
+        {
+            "before": ["d", "f"],
+            "after": ["g", "d"]
+        },
+        {
+            "before": ["d", "n"],
+            "after": ["d", "g", "_"]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<C-n>"],
+            "commands": [":nohl"]
+        }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["p"],
+            "commands": ["editor.action.clipboardPasteAction"]
+        }
+    ]
+}
+```
+
+## Conclusion
+
+By leveraging Vim shortcuts and customizing keybindings in VSCode, you can significantly improve your coding efficiency and streamline your workflow. Experiment with these configurations and shortcuts to find
+
+ what best suits your needs, and enjoy a more productive coding experience with Vim in VSCode.

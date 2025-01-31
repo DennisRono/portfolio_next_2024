@@ -1,0 +1,305 @@
+---
+title: State Management with Redux in Next.js 14
+description: State management can become increasingly complex in sophisticated JavaScript applications. Redux, a widely used state management library, provides a relatively straightforward approach to handling state in these applications. Let's explore the realm of state management with Redux, examining its benefits and how it streamlines state management in your projects.
+date: 2024-07-26
+tags: ["redux", "typescript", "next.js"]
+published: true
+---
+
+## What is Redux?
+
+Redux is a predictable state management library for JavaScript applications, commonly used with libraries like React for building user interfaces. It helps manage the state of an application in a centralized manner, making it easier to develop, maintain, and debug. Redux simplifies state management by providing a structured approach to handling state changes, making applications more predictable and easier to understand.
+
+## Why Use Redux
+
+As your application grows more complex, managing state for various features can become increasingly challenging, often surpassing the capabilities of simpler methods like context. React Redux addresses this issue by offering a centralized store to house all application state. This centralization simplifies state management, ensures predictable state changes, and enhances the overall maintainability and scalability of your application.
+
+## Key Concepts in Redux
+
+1. **Store**: The store is a JavaScript object that holds the entire application state, serving as the single source of truth. Created using Redux's `createStore()` function, it provides methods to dispatch actions, retrieve the current state, and subscribe to state changes.
+2. **Actions**: These are plain JavaScript objects that signify an intention to change the state. Each action contains a `type` property describing the action and any necessary additional data. Actions are dispatched to initiate state changes.
+3. **Reducers**: Reducers define how the application's state changes in response to actions. They are pure functions that take the current state and an action, returning a new state. Reducers update specific parts of the application state.
+4. **Middleware**: Middleware extends Redux's functionality by sitting between dispatching an action and reaching the reducer. It allows for custom logic, async operations, and modifications to actions or state. Middleware enables features like logging, routing, and API integration.
+5. **Immutable State**: Redux promotes immutability, meaning state should not be directly mutated. Instead, reducers create new state objects with the necessary updates. This ensures predictable behavior and aids in debugging and performance optimization.
+
+## Implementing Redux in Your Next.js 14 Application
+
+### Setting Up
+
+let us start by installing the required dependencies to be able to use Redux in our Next.js Application
+
+```tsx
+npm i react-redux @reduxjs/toolkit
+```
+
+## Store
+
+inside the `src` folder lets create a centralized folder for handling redux code.
+
+create a folder called `state` and inside the folder lets now create our first redux file and it will be the store `src/state/store.ts`
+
+```tsx
+import { configureStore } from '@reduxjs/toolkit'
+import loggedReducer from './slices/loggedSlice'
+import { combineReducers } from 'redux'
+
+const allReducers = combineReducers({
+  logged: loggedReducer,
+})
+
+const store = configureStore({
+  reducer: allReducers,
+  devTools: process.env.NODE_ENV !== 'production',
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+})
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
+export default store
+```
+
+## Provider
+
+for redux to be applied to our application well need to wrap the application with a redux provider.
+
+Still in the `src/state` create the provider file `redux-provider.tsx` 
+
+```tsx
+'use client'
+import { Provider } from 'react-redux'
+import store from 'store'
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <Provider store={store}>
+        {children}
+    </Provider>
+  )
+}
+
+export default Providers
+```
+
+to utilize the Provider, you need to add it in the `src/app/layout.tsx` file
+
+```tsx
+import type { Metadata } from 'next'
+import '@/styles/output.scss'
+import '@/styles/globals.scss'
+import Provider from '@/store/redux-provider'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Redux in Next.js 14',
+    template: `%s | Redux in Next.js 14`,
+  }
+}
+
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <html lang="en">
+	    <Provider>
+	      <body>
+	        {children}
+	      </body>
+      </Provider>
+    </html>
+  )
+}
+
+export default RootLayout
+```
+
+## Hooks
+
+lets create hooks to make our life easier when consuming our state and dispatching state
+
+create `src/state/hooks.ts`
+
+```tsx
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from './store'
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+export const useAppSelector = useSelector.withTypes<RootState>()
+```
+
+## Slices (Reducers & Actions)
+
+For this tutorial well create a slice for managing the state of a login system that is your application will be able to maintain login state of a user.
+
+Lets create our first slice `src/store/slices/loggedSlice.ts`
+
+```tsx
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+
+interface User {
+  name?: string
+  user_id?: string
+  state?: string
+  [key: string]: any
+}
+
+interface LoggedState {
+  islogged: boolean
+  user: {}
+}
+
+const initialState: LoggedState = {
+  islogged: false,
+  user: {},
+}
+
+const loggedSlice = createSlice({
+  name: 'logged',
+  initialState,
+  reducers: {
+    setIsLogged: (
+      state,
+      action: PayloadAction<{
+        islogged: boolean
+        user: User
+      }>
+    ) => {
+      return { ...state, ...action.payload }
+    },
+  },
+})
+
+export const { setIsLogged } = loggedSlice.actions
+export default loggedSlice.reducer
+```
+
+The exported `setIsLogged()` function will be used to dispatch the action setting the state
+
+And with that you have Redux installed to your application, easy right! Now we just need to use it setting state and consuming state in the application.
+
+## Setting and Consuming State in Our Application
+
+in our example we’ll have the case when a user is logging in to the system and you need to set the state the user is logged.
+
+`src/app/(auth)/LoginForm.tsx`
+
+```tsx
+'use client'
+import api from '@/api/api'
+import { Input } from '@/components/ui/input'
+import { useAppDispatch } from '@/store/hooks'
+import { setIsLogged } from '@/store/slices/loggedSlice'
+import { useRouter } from 'next/navigation'
+import React, { FormEvent, useState } from 'react'
+import { toast } from 'react-toastify'
+
+const LoginForm = () => {
+  const [formData, setFormData] = useState<LoginType>({
+    email: '',
+    password: '',
+  })
+  const [isloading, setIsLoading] = useState<boolean>(false)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const login = async (e: FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    const res: any = await api('POST', 'client/login', formData, {
+      'Content-Type': 'application/json',
+    })
+    setIsLoading(false)
+    const response = await res.json()
+    if (res.ok) {
+      dispatch(
+        setIsLogged({
+          islogged: true,
+          user: { ...response.user },
+        })
+      )
+      toast(response.message, { type: 'success' })
+      router.push('/', { scroll: true })
+    } else {
+      toast(response.message, { type: 'error' })
+    }
+  }
+  return (
+    <form onSubmit={login}>
+      <div className="mb-4">
+        <label
+          className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 sr-only text-base"
+          htmlFor="email"
+        >
+          Email
+        </label>
+        <Input
+          id="email"
+          placeholder="name@email.com"
+          type="email"
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect="off"
+          onChange={(e) => {
+            setFormData({ ...formData, email: e.target.value })
+          }}
+        />
+      </div>
+      <div className="mb-4">
+        <label
+          className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 sr-only text-base"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <Input
+          id="password"
+          placeholder="••••••••"
+          type="password"
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect="off"
+          onChange={(e) => {
+            setFormData({ ...formData, password: e.target.value })
+          }}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className={`py-2 px-4 bg-sky-500 text-white rounded-md w-full my-4 h-10 ${
+          formData.email === '' && formData.password === ''
+            ? 'opacity-[0.4] cursor-not-allowed'
+            : ''
+        }`}
+      >
+        {isloading ? <div className="dot-flashing"></div> : 'Sign in'}
+      </button>
+    </form>
+  )
+}
+
+export default LoginForm
+```
+
+Now that we have seen how to set the state, lets see how to consume the state.
+
+```tsx
+'use client'
+import { useAppSelector } from '@/store/hooks'
+
+const Header = () => {
+	const logged: any = useAppSelector((state: any) => state.logged)
+	return (
+		<div>{logged.islogged?<span>{`Welcome ${logged.user.name}`}</span>
+		:<span>You are not Logged in</span>}</div>
+	)
+}
+```
+
+## What we have not covered
+
+You will notice that when you refresh the page in your browser, the state is not persisted and the user is logged out. To fix that you will need to add `redux-persist` to your application which you can check it out here. [Redux With Redux Persist](https://denniskibet.com/blog/dynamic-sitemaps-with-nextjs-14)
+
+# Conclusion
+
+Incorporating Redux into your JavaScript applications provides a structured and efficient way to manage state as your projects grow in complexity. By centralizing the state in a single store, ensuring immutability, and leveraging the power of actions, reducers, and middleware, Redux simplifies state management and enhances the predictability, maintainability, and scalability of your applications. Embracing Redux allows for clearer state transitions, easier debugging, and a more robust overall development process.
