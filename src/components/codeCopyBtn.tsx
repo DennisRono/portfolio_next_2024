@@ -3,27 +3,25 @@ import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 
-export default function CodeCopyBtn({ children }: any) {
+export default function CodeCopyBtn({ children }: { children: string }) {
   const [copyOk, setCopyOk] = React.useState(false)
   const iconColor = copyOk ? '#0af20a !important' : '#ddd !important'
 
-  const handleClick = (e: any) => {
-    const textToCopy = children
-
-    console.log(textToCopy)
-    console.log(children)
+  const handleClick = () => {
+    // Clean up the text to copy by removing any extra whitespace
+    const textToCopy = typeof children === 'string' ? children.trim() : ''
 
     if (textToCopy) {
       navigator.clipboard.writeText(textToCopy)
       setCopyOk(true)
       setTimeout(() => {
         setCopyOk(false)
-      }, 500)
+      }, 1500)
     }
   }
 
   return (
-    <div className="code-copy-btn !text-white">
+    <div className="code-copy-btn !text-white absolute top-2 right-2 cursor-pointer p-2 rounded hover:bg-gray-700/50">
       {copyOk ? (
         <FontAwesomeIcon
           icon={faCheck}
