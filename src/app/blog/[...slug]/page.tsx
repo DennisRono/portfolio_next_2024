@@ -23,7 +23,7 @@ interface PostPageProps {
 
 async function getPostFromParams(params: PostPageProps['params']) {
   const slug = params?.slug?.join('/')
-  const post = posts.find((post) => post.slugAsParams === slug)
+  const post: any = posts.find((post) => post.slugAsParams === slug)
 
   return post
 }
@@ -125,7 +125,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 </h1>
 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags?.map((tag) => (
+                  {post.tags?.map((tag: any) => (
                     <Tag tag={tag} key={tag} />
                   ))}
                 </div>

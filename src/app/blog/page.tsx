@@ -4,9 +4,11 @@ import Header from '@/components/Header'
 import { PostItem } from '@/components/post-item'
 import { QueryPagination } from '@/components/query-pagination'
 import { Tag } from '@/components/tag'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { getAllTags, sortPosts, sortTagsByCount } from '@/lib/utils'
+import { cn, getAllTags, sortPosts, sortTagsByCount } from '@/lib/utils'
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'My blog',
@@ -45,9 +47,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             </h1>
           </div>
         </div>
-        <div className="grid grid-cols-6 sm:grid-cols-12 gap-12 mt-8">
+        <div className="grid grid-cols-6 sm:grid-cols-12 gap-12 mt-8 min-h-screen">
           <div className="col-span-6 sm:grid-cols-12 col-start-1 sm:col-span-8">
-            <hr />
             {displayPosts?.length > 0 ? (
               <ul className="flex flex-col">
                 {displayPosts.map((post) => {
@@ -73,14 +74,22 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               className="justify-end mt-4"
             />
           </div>
-          <Card className="col-span-6 sm:grid-cols-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1 rounded-sm">
+          <Card className="sticky top-20 col-span-6 sm:grid-cols-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1 rounded-sm border border-[#2e2e2e]">
             <CardHeader>
               <CardTitle>Tags</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              {sortedTags?.map((tag) => (
-                <Tag tag={tag} key={tag} count={tags[tag]} />
-              ))}
+              {Array.isArray(sortedTags)
+                ? sortedTags
+                    ?.slice(0, 33)
+                    .map((tag) => <Tag tag={tag} key={tag} count={tags[tag]} />)
+                : null}
+              <Link
+                href="/tags"
+                className={cn(buttonVariants({ variant: 'link' }), 'py-0')}
+              >
+                More Tags →
+              </Link>
             </CardContent>
           </Card>
         </div>

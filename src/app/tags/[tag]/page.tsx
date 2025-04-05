@@ -50,9 +50,8 @@ export default function TagPage({ params }: TagPageProps) {
             </h1>
           </div>
         </div>
-        <div className="grid grid-cols-6 sm:grid-cols-12 gap-12 mt-8">
+        <div className="grid grid-cols-6 sm:grid-cols-12 gap-12 mt-8 min-h-screen">
           <div className="col-span-6 sm:grid-cols-12 col-start-1 sm:col-span-8">
-            <hr />
             {displayPosts?.length > 0 ? (
               <ul className="flex flex-col">
                 {displayPosts.map((post) => {
@@ -74,7 +73,7 @@ export default function TagPage({ params }: TagPageProps) {
               <p>Nothing to see here yet</p>
             )}
           </div>
-          <Card className="col-span-6 sm:grid-cols-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1 rounded-sm">
+          <Card className="sticky top-20 col-span-6 sm:grid-cols-12 row-start-3 h-fit sm:col-span-4 sm:col-start-9 sm:row-start-1 rounded-sm border border-[#2e2e2e]">
             <CardHeader>
               <CardTitle>Tags</CardTitle>
             </CardHeader>

@@ -23,7 +23,7 @@ export function PostItem({
   image,
 }: PostItemProps) {
   return (
-    <article className="flex flex-col gap-2 border-border border-b py-6 w-full">
+    <article className="flex flex-col gap-2 border-b border-[#2e2e2e] py-6 w-full">
       <div
         className={cn(
           'grid grid-cols-1 gap-6',
