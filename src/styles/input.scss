@@ -183,13 +183,10 @@ code:not(pre code) {
   margin: 0;
 }
 
-pre {
-  @apply my-4;
-}
-
 pre > code {
   counter-reset: line;
-  @apply border border-slate-800 rounded-[10px] !py-4 overflow-auto scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent max-h-[31rem];
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  @apply border border-slate-800 !py-4 overflow-auto scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent max-h-[31rem];
 }
 
 pre > code > [data-line]::before {

@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import * as runtime from 'react/jsx-runtime'
 import { Callout } from './callout'
-import CodeCopyBtn from '@/components/codeCopyBtn'
 import type { Toc } from '@stefanprobst/rehype-extract-toc'
+import React from 'react'
+import CodeBlockHeader from '@/components/code-block-header'
 
 const useMDXComponent = (code: string) => {
   const fn = new Function('components', `${code}; return MDXContent`)
@@ -51,8 +52,8 @@ const components = {
   pre: ({ children, ...props }: any) => {
     return (
       <div className="relative">
-        <pre {...props}>{children}</pre>
-        <CodeCopyBtn>{children?.props?.children}</CodeCopyBtn>
+        <CodeBlockHeader>{children?.props?.children}</CodeBlockHeader>
+        <pre className='!my-0' {...props}>{children}</pre>
       </div>
     )
   },
@@ -64,7 +65,7 @@ const components = {
       </code>
     ) : (
       <code
-        className="bg-muted px-1.5 py-0.5 rounded-sm font-mono text-sm"
+        className="bg-[#0a0a0a] px-1.5 py-0.5 rounded-b-[7px] font-mono text-sm border-[#2e2e2e]"
         {...props}
       >
         {children}

@@ -198,7 +198,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <aside className="hidden md:block">
               <div className="sticky top-20">
                 {tableOfContents.length !== 0 && (
-                  <div className="rounded-lg border bg-card p-4">
+                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4">
                     <h3 className="font-medium mb-3">Table of Contents</h3>
                     <TableOfContents toc={tableOfContents} />
                   </div>
@@ -212,7 +212,7 @@ export default async function PostPage({ params }: PostPageProps) {
                       p.tags?.some((tag) => post.tags?.includes(tag))
                   )
                   .slice(0, 3).length > 0 && (
-                  <div className="rounded-lg border bg-card p-4 mt-6">
+                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 mt-6">
                     <h3 className="font-medium mb-3">Related Posts</h3>
                     <div className="space-y-4">
                       {posts
