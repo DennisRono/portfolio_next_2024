@@ -51,7 +51,7 @@ const components = {
   ),
   pre: ({ children, ...props }: any) => {
     return (
-      <div className="relative">
+      <div className="relative my-4">
         <CodeBlockHeader>{children?.props?.children}</CodeBlockHeader>
         <pre className='!my-0' {...props}>{children}</pre>
       </div>

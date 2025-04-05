@@ -995,6 +995,30 @@ video {
   max-height: 100vh;
 }
 
+.max-h-\[40rem\]{
+  max-height: 40rem;
+}
+
+.max-h-\[20rem\]{
+  max-height: 20rem;
+}
+
+.max-h-\[10rem\]{
+  max-height: 10rem;
+}
+
+.\!max-h-\[10rem\]{
+  max-height: 10rem !important;
+}
+
+.\!max-h-\[30rem\]{
+  max-height: 30rem !important;
+}
+
+.\!max-h-\[28rem\]{
+  max-height: 28rem !important;
+}
+
 .min-h-\[50vh\]{
   min-height: 50vh;
 }
@@ -1314,6 +1338,14 @@ video {
 
 .overflow-hidden{
   overflow: hidden;
+}
+
+.overflow-scroll{
+  overflow: scroll;
+}
+
+.overflow-y-scroll{
+  overflow-y: scroll;
 }
 
 .truncate{
@@ -2422,6 +2454,64 @@ video {
 
 .ease-in-out{
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scrollbar-thin::-webkit-scrollbar-track{
+  background-color: var(--scrollbar-track);
+  border-radius: var(--scrollbar-track-radius);
+}
+
+.scrollbar-thin::-webkit-scrollbar-track:hover{
+  background-color: var(--scrollbar-track-hover, var(--scrollbar-track));
+}
+
+.scrollbar-thin::-webkit-scrollbar-track:active{
+  background-color: var(--scrollbar-track-active, var(--scrollbar-track-hover, var(--scrollbar-track)));
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb{
+  background-color: var(--scrollbar-thumb);
+  border-radius: var(--scrollbar-thumb-radius);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover{
+  background-color: var(--scrollbar-thumb-hover, var(--scrollbar-thumb));
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:active{
+  background-color: var(--scrollbar-thumb-active, var(--scrollbar-thumb-hover, var(--scrollbar-thumb)));
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner{
+  background-color: var(--scrollbar-corner);
+  border-radius: var(--scrollbar-corner-radius);
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner:hover{
+  background-color: var(--scrollbar-corner-hover, var(--scrollbar-corner));
+}
+
+.scrollbar-thin::-webkit-scrollbar-corner:active{
+  background-color: var(--scrollbar-corner-active, var(--scrollbar-corner-hover, var(--scrollbar-corner)));
+}
+
+.scrollbar-thin{
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, initial) var(--scrollbar-track, initial);
+}
+
+.scrollbar-thin::-webkit-scrollbar{
+  display: block;
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-track-transparent{
+  --scrollbar-track: transparent !important;
+}
+
+.scrollbar-thumb-gray-900{
+  --scrollbar-thumb: #111827 !important;
 }
 
 .bg-clip-text{

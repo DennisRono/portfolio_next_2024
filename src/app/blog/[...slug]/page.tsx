@@ -198,7 +198,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <aside className="hidden md:block">
               <div className="sticky top-20">
                 {tableOfContents.length !== 0 && (
-                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4">
+                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 !max-h-[28rem] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent">
                     <h3 className="font-medium mb-3">Table of Contents</h3>
                     <TableOfContents toc={tableOfContents} />
                   </div>
