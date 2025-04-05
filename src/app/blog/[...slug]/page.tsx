@@ -1,18 +1,19 @@
-import { posts } from "#site/content"
-import { MDXContent } from "@/components/mdx-components"
-import { notFound } from "next/navigation"
-import type { Metadata } from "next"
-import { siteConfig } from "@/config/site"
-import { Tag } from "@/components/tag"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
-import { CalendarDays, Clock, ChevronLeft, Share2 } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { formatDate } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Image from "next/image"
+import { posts } from '#site/content'
+import { MDXContent, MDXToC } from '@/components/mdx-components'
+import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import { siteConfig } from '@/config/site'
+import { Tag } from '@/components/tag'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { CalendarDays, Clock, ChevronLeft, Share2 } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { formatDate } from '@/lib/utils'
+import { Separator } from '@/components/ui/separator'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import Image from 'next/image'
+import { TableOfContents } from '@/components/table-of-contents'
 
 interface PostPageProps {
   params: {
@@ -20,14 +21,16 @@ interface PostPageProps {
   }
 }
 
-async function getPostFromParams(params: PostPageProps["params"]) {
-  const slug = params?.slug?.join("/")
+async function getPostFromParams(params: PostPageProps['params']) {
+  const slug = params?.slug?.join('/')
   const post = posts.find((post) => post.slugAsParams === slug)
 
   return post
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PostPageProps): Promise<Metadata> {
   const post = await getPostFromParams(params)
 
   if (!post) {
@@ -35,17 +38,18 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   }
 
   const ogSearchParams = new URLSearchParams()
-  ogSearchParams.set("title", post.title)
+  ogSearchParams.set('title', post.title)
   console.log(ogSearchParams.toString())
 
   return {
+    metadataBase: new URL('https://denniskibet.com'),
     title: post.title,
     description: post.description,
     authors: { name: siteConfig.author },
     openGraph: {
       title: post.title,
       description: post.description,
-      type: "article",
+      type: 'article',
       url: post.slug,
       images: [
         {
@@ -57,7 +61,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: post.title,
       description: post.description,
       images: [`/api/og?${ogSearchParams.toString()}`],
@@ -65,11 +69,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   }
 }
 
-export async function generateStaticParams(): Promise<PostPageProps["params"][]> {
+export async function generateStaticParams(): Promise<
+  PostPageProps['params'][]
+> {
   return posts.map((post) => ({ slug: [post.slug] }))
 }
 
-// Function to estimate reading time
 function getReadingTime(content: string) {
   const wordsPerMinute = 200
   const words = content.split(/\s+/).length
@@ -83,8 +88,9 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound()
   }
 
-  // Calculate reading time
   const readingTime = getReadingTime(post.body)
+
+  const tableOfContents = MDXToC({ code: post.body });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -106,37 +112,40 @@ export default async function PostPage({ params }: PostPageProps) {
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
                   <Image
-                    src={post.image || "/placeholder.svg"}
+                    src={post.image || '/placeholder.svg'}
                     alt={post.title}
                     className="w-full h-auto object-cover aspect-[16/9]"
                   />
                 </div>
               )}
 
-              {/* Title and metadata */}
               <div className="mb-8">
-                <h1 className="mb-4 mt-0 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">{post.title}</h1>
+                <h1 className="mb-4 mt-0 text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                  {post.title}
+                </h1>
 
-                {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags?.map((tag) => (
                     <Tag tag={tag} key={tag} />
                   ))}
                 </div>
 
-                {/* Description */}
                 {post.description && (
                   <p className="text-xl text-muted-foreground font-normal mt-4 mb-6 leading-relaxed">
                     {post.description}
                   </p>
                 )}
 
-                {/* Author and metadata */}
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={siteConfig?.avatar_url || ""} alt={siteConfig.author} />
-                      <AvatarFallback>{siteConfig.author?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarImage
+                        src={siteConfig?.avatar_url || ''}
+                        alt={siteConfig.author}
+                      />
+                      <AvatarFallback>
+                        {siteConfig.author?.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <span>{siteConfig.author}</span>
                   </div>
@@ -161,12 +170,10 @@ export default async function PostPage({ params }: PostPageProps) {
 
               <Separator className="my-8" />
 
-              {/* MDX Content */}
               <div className="mdx-content !max-w-4xl overflow-hidden">
                 <MDXContent code={post.body} />
               </div>
 
-              {/* Share buttons */}
               <div className="mt-12 pt-6 border-t">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <h3 className="text-lg font-medium">Share this article</h3>
@@ -190,16 +197,19 @@ export default async function PostPage({ params }: PostPageProps) {
 
             <aside className="hidden md:block">
               <div className="sticky top-20">
-                <div className="rounded-lg border bg-card p-4">
-                  <h3 className="font-medium mb-3">Table of Contents</h3>
-                </div>
+                {tableOfContents.length !== 0 && (
+                  <div className="rounded-lg border bg-card p-4">
+                    <h3 className="font-medium mb-3">Table of Contents</h3>
+                    <TableOfContents toc={tableOfContents} />
+                  </div>
+                )}
 
                 {posts
                   .filter(
                     (p) =>
                       p.published &&
                       p.slugAsParams !== post.slugAsParams &&
-                      p.tags?.some((tag) => post.tags?.includes(tag)),
+                      p.tags?.some((tag) => post.tags?.includes(tag))
                   )
                   .slice(0, 3).length > 0 && (
                   <div className="rounded-lg border bg-card p-4 mt-6">
@@ -210,12 +220,15 @@ export default async function PostPage({ params }: PostPageProps) {
                           (p) =>
                             p.published &&
                             p.slugAsParams !== post.slugAsParams &&
-                            p.tags?.some((tag) => post.tags?.includes(tag)),
+                            p.tags?.some((tag) => post.tags?.includes(tag))
                         )
                         .slice(0, 3)
                         .map((relatedPost) => (
                           <div key={relatedPost.slugAsParams} className="group">
-                            <Link href={`/blog/${relatedPost.slugAsParams}`} className="no-underline">
+                            <Link
+                              href={`/blog/${relatedPost.slugAsParams}`}
+                              className="no-underline"
+                            >
                               <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
                                 {relatedPost.title}
                               </h4>
@@ -235,9 +248,16 @@ export default async function PostPage({ params }: PostPageProps) {
           </article>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {posts.findIndex((p) => p.slugAsParams === post.slugAsParams) > 0 && (
+            {posts.findIndex((p) => p.slugAsParams === post.slugAsParams) >
+              0 && (
               <Link
-                href={`/blog/${posts[posts.findIndex((p) => p.slugAsParams === post.slugAsParams) - 1].slugAsParams}`}
+                href={`/blog/${
+                  posts[
+                    posts.findIndex(
+                      (p) => p.slugAsParams === post.slugAsParams
+                    ) - 1
+                  ].slugAsParams
+                }`}
                 className="group p-4 border rounded-lg hover:bg-accent transition-colors"
               >
                 <div className="text-sm text-muted-foreground mb-2 flex items-center">
@@ -245,14 +265,27 @@ export default async function PostPage({ params }: PostPageProps) {
                   Previous Post
                 </div>
                 <h3 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
-                  {posts[posts.findIndex((p) => p.slugAsParams === post.slugAsParams) - 1].title}
+                  {
+                    posts[
+                      posts.findIndex(
+                        (p) => p.slugAsParams === post.slugAsParams
+                      ) - 1
+                    ].title
+                  }
                 </h3>
               </Link>
             )}
 
-            {posts.findIndex((p) => p.slugAsParams === post.slugAsParams) < posts.length - 1 && (
+            {posts.findIndex((p) => p.slugAsParams === post.slugAsParams) <
+              posts.length - 1 && (
               <Link
-                href={`/blog/${posts[posts.findIndex((p) => p.slugAsParams === post.slugAsParams) + 1].slugAsParams}`}
+                href={`/blog/${
+                  posts[
+                    posts.findIndex(
+                      (p) => p.slugAsParams === post.slugAsParams
+                    ) + 1
+                  ].slugAsParams
+                }`}
                 className="group p-4 border rounded-lg hover:bg-accent transition-colors md:ml-auto"
               >
                 <div className="text-sm text-muted-foreground mb-2 flex items-center justify-end">
@@ -260,7 +293,13 @@ export default async function PostPage({ params }: PostPageProps) {
                   <ChevronLeft className="ml-1 h-4 w-4 rotate-180" />
                 </div>
                 <h3 className="font-medium group-hover:text-primary transition-colors text-right line-clamp-2">
-                  {posts[posts.findIndex((p) => p.slugAsParams === post.slugAsParams) + 1].title}
+                  {
+                    posts[
+                      posts.findIndex(
+                        (p) => p.slugAsParams === post.slugAsParams
+                      ) + 1
+                    ].title
+                  }
                 </h3>
               </Link>
             )}
@@ -271,4 +310,3 @@ export default async function PostPage({ params }: PostPageProps) {
     </div>
   )
 }
-

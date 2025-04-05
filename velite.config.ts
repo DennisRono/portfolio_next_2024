@@ -2,6 +2,8 @@ import { defineConfig, defineCollection, s } from 'velite'
 import rehypeSlug from 'rehype-slug'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeToc from '@stefanprobst/rehype-extract-toc'
+import rehypeTocExtract from '@stefanprobst/rehype-extract-toc/mdx'
 
 const computedFields = <T extends { slug: string }>(data: T) => ({
   ...data,
@@ -31,9 +33,9 @@ const my_projects = defineCollection({
   schema: s
     .object({
       slug: s.path(),
-      title: s.string().max(99).optional(), // Add title field
-      description: s.string().max(999).optional(), // Add description field
-      date: s.isodate().optional(), // Add date field
+      title: s.string().max(99).optional(),
+      description: s.string().max(999).optional(),
+      date: s.isodate().optional(),
       published: s.boolean().default(true),
       body: s.mdx(),
     })
@@ -74,6 +76,8 @@ export default defineConfig({
           },
         },
       ],
+      rehypeToc,
+      [rehypeTocExtract, { name: 'toc' }],
     ],
     remarkPlugins: [],
   },

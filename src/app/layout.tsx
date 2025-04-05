@@ -6,6 +6,7 @@ const title = 'Dennis Kibet Rono'
 const description = `${title} is a software engineer with more than five years of experience. He has worked on nullchemy group softwares, Aerial Properties solutions and many more. He is a graduate of Machakos University and Moringa School`
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://denniskibet.com'),
   title: title,
   description: description,
   generator: 'Next.js',
@@ -14,6 +15,13 @@ export const metadata: Metadata = {
   authors: [{ name: 'Dennis Kibet', url: 'https://denniskibet.com' }],
   creator: 'Dennis Kibet',
   publisher: 'Dennis Kibet',
+  alternates: {
+    canonical: '/',
+    languages: {
+      'en-US': '/en-US',
+      'de-DE': '/de-DE',
+    },
+  },
   formatDetection: {
     email: true,
     address: true,
