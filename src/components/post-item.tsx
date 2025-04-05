@@ -65,7 +65,7 @@ export function PostItem({
               className="block overflow-hidden rounded-lg aspect-[16/9]"
             >
               <Image
-                src={image || '/placeholder.svg'}
+                src={image}
                 alt={title}
                 width={400}
                 height={225}

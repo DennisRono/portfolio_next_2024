@@ -112,7 +112,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
                   <Image
-                    src={post.image || '/placeholder.svg'}
+                    src={post.image}
                     alt={post.title}
                     className="w-full h-auto object-cover aspect-[16/9]"
                   />

@@ -4,7 +4,7 @@ export const siteConfig = {
   description:
     "Dennis Kibet is a Full Stack Software Engineer from Nairobi, Kenya, with a Bachelor's degree in Computer Science from Machakos University and further training from Moringa School. He has over three years of experience developing innovative digital solutions for business and consumer applications. Proficient in both front-end and back-end technologies, Dennis has worked on projects including WeCare, Nullchemy Shop, NPay, and N-Analytics. He is skilled in JavaScript, PHP, Python, and various frameworks, with a strong background in AI, Machine Learning, and UI/UX design. Dennis is known for his commitment to continuous learning and problem-solving, and his ability to collaborate effectively with cross-cultural, global teams.",
   author: 'Dennis Kibet Rono',
-  avatar_url: 'https://res.cloudinary.com/dkazrhnxq/image/upload/v1737713316/Screenshot_2025-01-24_130619-removebg-preview_bwlpbo.png',
+  avatar_url: 'https://denniskibet.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fprofile.1e0ccb8c.png&w=750&q=75',
   links: {
     twitter: 'https://twitter.com/dennisrkibet',
     github: 'https://github.com/DennisRono',

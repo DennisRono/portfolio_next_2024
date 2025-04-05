@@ -30,7 +30,7 @@ const About = () => {
                   className="w-full h-full object-cover"
                   key="profile-picture"
                   alt="my profile picture"
-                  src={ProfileImage || '/placeholder.svg'}
+                  src={ProfileImage}
                 />
               </div>
             </div>
