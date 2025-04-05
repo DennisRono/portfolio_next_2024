@@ -1,0 +1,8 @@
+{
+    "languages": ["PHP", "Node.js", "Java", "C#", "Python", "Javascript (ES6+)"],
+    "frameworks": ["React.js", "Next.js", "React Native", "Electron", "Django & Flask", "Flutter"],
+    "aiAndMl": ["TensorFlow", "PyTorch", "sklearn", "Pandas", "Numpy"],
+    "design": ["Adobe XD", "Figma", "Sketch", "Webflow"]
+  }
+  
+  

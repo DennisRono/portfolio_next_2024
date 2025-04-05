@@ -1,0 +1,24 @@
+[
+    {
+      "title": "Web Apps & APIs",
+      "description": "I develop both front-end & back-end of websites using Express.js, React.js, Python Flask/Django, Node.js and Go-lang"
+    },
+    {
+      "title": "Machine Learning",
+      "description": "With knowledge in AI & Machine learning, I create effective models for complex business challenges using Tensorflow/Keras & Scikit-learn."
+    },
+    {
+      "title": "Mobile Development",
+      "description": "I build cross-platform mobile apps using React Native & Flutter, delivering seamless user experiences on both iOS and Android."
+    },
+    {
+      "title": "UI/UX",
+      "description": "I design user-centered digital experiences emphasizing functionality, usability, and aesthetics, ensuring user-friendly products."
+    },
+    {
+      "title": "DevOps",
+      "description": "I use CI/CD practices to automate deployment and testing processes, ensuring robust and stable releases, while leveraging Docker & Kubernetes for scalability."
+    }
+  ]
+  
+  

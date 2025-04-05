@@ -1,0 +1,46 @@
+[
+    {
+      "id": 1,
+      "institution": "Samoei Boys Secondary School, Nandi Hills",
+      "description": "At Samoei I learned a lot of life skills and career developing skills through my four years there. This is where I had my first interest in computers.",
+      "period": "2016 Jan - 2019 Dec",
+      "logo": null
+    },
+    {
+      "id": 2,
+      "institution": "Alphax College (Web Development), Eldoret",
+      "description": "Here I took a practical course on web development where I gained skills in HTML, CSS, JavaScript and PHP. I also got certified in web development.",
+      "period": "2020 Jan - 2020 April",
+      "logo": null
+    },
+    {
+      "id": 3,
+      "institution": "Machakos University (Computer Science), Machakos",
+      "description": "At Machakos University, I gained a deep understanding of the theoretical foundations of computing technologies. I had the opportunity to collaborate with many peers on various school projects over the four years. This experience was incredibly rewarding, allowing me to forge lifelong connections and acquire a range of skills that enhanced my personal development and advanced my career.",
+      "period": "2020 Sept - 2024 April",
+      "logo": "MKSU"
+    },
+    {
+      "id": 4,
+      "institution": "Water Resources Authority (Attaché), Nairobi",
+      "description": "As an Attaché at WRA, I adeptly applied ICT expertise, enhancing tech solutions, workflow efficiency, and communication. Adept in tech advancements, I boosted organizational proficiency and innovation.",
+      "period": "2023 May - 2023 August",
+      "logo": "WRA"
+    },
+    {
+      "id": 5,
+      "institution": "Moringa School (Software Engineering), Nairobi",
+      "description": "I successfully completed my software engineering program at Moringa School. During my time there, I gained comprehensive knowledge of web technologies, including backend, frontend, and database systems, which I have applied to several projects. In addition to technical skills, I also developed strong intrapersonal skills and a solid understanding of system design.",
+      "period": "2024 June - 2024 November",
+      "logo": "Moringa"
+    },
+    {
+      "id": 6,
+      "institution": "Innovex Solutions Ltd (Full Stack Software Engineer Intern), Nairobi",
+      "description": "I'm currently serving as a Full Stack Software Developer Intern at Innovex Solutions in Nairobi, Kenya, where I've been actively involved in developing backend systems, optimizing database structures, and enhancing application performance. My responsibilities include writing clean reproducible code, comprehensive tests, backend systems, upgrading legacy codebases, designing intuitive user interfaces, and participating in code reviews. I'm proud to have contributed to a large-scale, multi-module software project that has significantly improved functionality and system performance. All is going very well in my internship, and I'm gaining valuable experience while making meaningful contributions to the team.",
+      "period": "2025 Feb - present",
+      "logo": "Innovex"
+    }
+  ]
+  
+  
