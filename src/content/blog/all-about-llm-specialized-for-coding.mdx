@@ -3712,35 +3712,9 @@ Here's an incorrect or incomplete solution:
 The solution fails these test cases:
 {self._format_test_failures(feedback['bad_evaluation'])}
 
-Improve the solution to fix these issues.
-
-```python
-"""
-            
-            improvement_examples.append({
-                "prompt": improvement_prompt,
-                "completion": feedback['good_solution'] + "\n```"
-            })
-            
-            # Create example for explaining the improvement
-            explanation_prompt = f"""Here's a coding problem:
-{feedback['problem']['description']}
-
-Here's a solution with issues:
-```python
-{feedback['bad_solution']}
-```
-
-Here's an improved solution:
-
-```python
-{feedback['good_solution']}
-```
-
 Explain what was wrong with the first solution and how the second solution fixes it.
-"""
 
-```plaintext
+```python
         # Generate explanation
         inputs = self.tokenizer(explanation_prompt, return_tensors="pt").to(self.model.device)
         
@@ -3889,8 +3863,6 @@ def _evaluate_improvement(self, problems):
     print(f"Current performance: {passed_tests}/{total_tests} tests passed ({success_rate:.2%})")
 ```
 
-```plaintext
-
 ## 21. Conclusion and Final Thoughts
 
 Building a specialized LLM for coding is a complex, multi-faceted endeavor that requires expertise across numerous domains. This comprehensive guide has covered the entire process from data collection and preparation to model architecture design, training, evaluation, optimization, and deployment.
@@ -3910,7 +3882,6 @@ The field of AI for code generation is rapidly evolving, with new techniques and
 The most successful coding LLMs will be those that effectively combine neural approaches with software engineering principles, creating systems that not only generate code but understand its structure, purpose, and constraints. By following the techniques and best practices outlined in this guide, you'll be well-equipped to build a state-of-the-art coding LLM that pushes the boundaries of what's possible in AI-assisted software development.
 
 As the field continues to advance, we can expect to see even more sophisticated approaches that combine the strengths of neural networks with symbolic reasoning, retrieval-based methods, and human feedback loops. The future of coding LLMs lies in creating systems that are not just assistants but true collaborators in the software development process.
-```
 
 
 ## 22. Specialized Training Techniques for Code Understanding
@@ -3920,182 +3891,182 @@ As the field continues to advance, we can expect to see even more sophisticated 
 Pretraining on AST structures can significantly improve code understanding:
 
 ```python
-import ast
-import json
-import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
-from transformers import AutoTokenizer, AutoModelForMaskedLM
+    import ast
+    import json
+    import torch
+    import torch.nn as nn
+    from torch.utils.data import Dataset, DataLoader
+    from transformers import AutoTokenizer, AutoModelForMaskedLM
 
-class ASTPretrainingDataset(Dataset):
-    def __init__(self, code_samples, tokenizer, max_length=512):
-        self.tokenizer = tokenizer
-        self.max_length = max_length
-        self.examples = []
-        
-        for code in code_samples:
-            try:
-                # Parse code to AST
-                tree = ast.parse(code)
-                
-                # Convert AST to serialized format
-                ast_serialized = self._serialize_ast(tree)
-                
-                # Create examples
-                self.examples.append({
-                    "code": code,
-                    "ast": ast_serialized
-                })
-            except SyntaxError:
-                # Skip samples with syntax errors
-                continue
-    
-    def __len__(self):
-        return len(self.examples)
-    
-    def __getitem__(self, idx):
-        example = self.examples[idx]
-        
-        # Tokenize code
-        code_tokens = self.tokenizer(
-            example["code"],
-            max_length=self.max_length,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt"
-        )
-        
-        # Tokenize AST
-        ast_tokens = self.tokenizer(
-            example["ast"],
-            max_length=self.max_length,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt"
-        )
-        
-        return {
-            "code_input_ids": code_tokens.input_ids.squeeze(),
-            "code_attention_mask": code_tokens.attention_mask.squeeze(),
-            "ast_input_ids": ast_tokens.input_ids.squeeze(),
-            "ast_attention_mask": ast_tokens.attention_mask.squeeze()
-        }
-    
-    def _serialize_ast(self, node):
-        """Serialize AST node to string representation"""
-        if isinstance(node, ast.AST):
-            fields = {}
-            for name, value in ast.iter_fields(node):
-                fields[name] = self._serialize_ast(value)
+    class ASTPretrainingDataset(Dataset):
+        def __init__(self, code_samples, tokenizer, max_length=512):
+            self.tokenizer = tokenizer
+            self.max_length = max_length
+            self.examples = []
             
-            return f"({node.__class__.__name__} {json.dumps(fields)})"
+            for code in code_samples:
+                try:
+                    # Parse code to AST
+                    tree = ast.parse(code)
+                    
+                    # Convert AST to serialized format
+                    ast_serialized = self._serialize_ast(tree)
+                    
+                    # Create examples
+                    self.examples.append({
+                        "code": code,
+                        "ast": ast_serialized
+                    })
+                except SyntaxError:
+                    # Skip samples with syntax errors
+                    continue
         
-        elif isinstance(node, list):
-            return "[" + ", ".join(self._serialize_ast(x) for x in node) + "]"
+        def __len__(self):
+            return len(self.examples)
         
-        else:
-            return str(node)
-
-class ASTPretrainingModel(nn.Module):
-    def __init__(self, base_model):
-        super().__init__()
-        self.base_model = base_model
-        self.hidden_size = base_model.config.hidden_size
-        
-        # Projection heads
-        self.code_projection = nn.Linear(self.hidden_size, self.hidden_size)
-        self.ast_projection = nn.Linear(self.hidden_size, self.hidden_size)
-    
-    def forward(self, code_input_ids, code_attention_mask, ast_input_ids, ast_attention_mask):
-        # Get code embeddings
-        code_outputs = self.base_model(
-            input_ids=code_input_ids,
-            attention_mask=code_attention_mask,
-            output_hidden_states=True
-        )
-        code_embeddings = code_outputs.hidden_states[-1][:, 0]  # CLS token
-        
-        # Get AST embeddings
-        ast_outputs = self.base_model(
-            input_ids=ast_input_ids,
-            attention_mask=ast_attention_mask,
-            output_hidden_states=True
-        )
-        ast_embeddings = ast_outputs.hidden_states[-1][:, 0]  # CLS token
-        
-        # Project embeddings
-        code_projected = self.code_projection(code_embeddings)
-        ast_projected = self.ast_projection(ast_embeddings)
-        
-        # Normalize
-        code_projected = nn.functional.normalize(code_projected, p=2, dim=1)
-        ast_projected = nn.functional.normalize(ast_projected, p=2, dim=1)
-        
-        return code_projected, ast_projected
-
-def ast_contrastive_loss(code_embeddings, ast_embeddings, temperature=0.1):
-    """Contrastive loss between code and AST embeddings"""
-    batch_size = code_embeddings.shape[0]
-    
-    # Compute similarity matrix
-    similarity = torch.matmul(code_embeddings, ast_embeddings.T) / temperature
-    
-    # Labels are the diagonal elements (matching code-AST pairs)
-    labels = torch.arange(batch_size, device=similarity.device)
-    
-    # Compute loss in both directions
-    loss_code_to_ast = nn.CrossEntropyLoss()(similarity, labels)
-    loss_ast_to_code = nn.CrossEntropyLoss()(similarity.T, labels)
-    
-    return (loss_code_to_ast + loss_ast_to_code) / 2
-
-def pretrain_with_ast(model, code_samples, tokenizer, batch_size=16, num_epochs=3, learning_rate=5e-5):
-    """Pretrain model with AST understanding"""
-    # Create dataset
-    dataset = ASTPretrainingDataset(code_samples, tokenizer)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    
-    # Create model
-    ast_model = ASTPretrainingModel(model)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    ast_model.to(device)
-    
-    # Setup optimizer
-    optimizer = torch.optim.AdamW(ast_model.parameters(), lr=learning_rate)
-    
-    # Training loop
-    ast_model.train()
-    for epoch in range(num_epochs):
-        print(f"Epoch {epoch+1}/{num_epochs}")
-        total_loss = 0
-        
-        for batch in dataloader:
-            # Move batch to device
-            batch = {k: v.to(device) for k, v in batch.items()}
+        def __getitem__(self, idx):
+            example = self.examples[idx]
             
-            # Forward pass
-            code_embeddings, ast_embeddings = ast_model(
-                batch["code_input_ids"],
-                batch["code_attention_mask"],
-                batch["ast_input_ids"],
-                batch["ast_attention_mask"]
+            # Tokenize code
+            code_tokens = self.tokenizer(
+                example["code"],
+                max_length=self.max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt"
             )
             
-            # Calculate loss
-            loss = ast_contrastive_loss(code_embeddings, ast_embeddings)
+            # Tokenize AST
+            ast_tokens = self.tokenizer(
+                example["ast"],
+                max_length=self.max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt"
+            )
             
-            # Backward pass
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            
-            total_loss += loss.item()
+            return {
+                "code_input_ids": code_tokens.input_ids.squeeze(),
+                "code_attention_mask": code_tokens.attention_mask.squeeze(),
+                "ast_input_ids": ast_tokens.input_ids.squeeze(),
+                "ast_attention_mask": ast_tokens.attention_mask.squeeze()
+            }
         
-        avg_loss = total_loss / len(dataloader)
-        print(f"  Average loss: {avg_loss:.4f}")
-    
-    # Return base model with improved code understanding
-    return ast_model.base_model
+        def _serialize_ast(self, node):
+            """Serialize AST node to string representation"""
+            if isinstance(node, ast.AST):
+                fields = {}
+                for name, value in ast.iter_fields(node):
+                    fields[name] = self._serialize_ast(value)
+                
+                return f"({node.__class__.__name__} {json.dumps(fields)})"
+            
+            elif isinstance(node, list):
+                return "[" + ", ".join(self._serialize_ast(x) for x in node) + "]"
+            
+            else:
+                return str(node)
+
+    class ASTPretrainingModel(nn.Module):
+        def __init__(self, base_model):
+            super().__init__()
+            self.base_model = base_model
+            self.hidden_size = base_model.config.hidden_size
+            
+            # Projection heads
+            self.code_projection = nn.Linear(self.hidden_size, self.hidden_size)
+            self.ast_projection = nn.Linear(self.hidden_size, self.hidden_size)
+        
+        def forward(self, code_input_ids, code_attention_mask, ast_input_ids, ast_attention_mask):
+            # Get code embeddings
+            code_outputs = self.base_model(
+                input_ids=code_input_ids,
+                attention_mask=code_attention_mask,
+                output_hidden_states=True
+            )
+            code_embeddings = code_outputs.hidden_states[-1][:, 0]  # CLS token
+            
+            # Get AST embeddings
+            ast_outputs = self.base_model(
+                input_ids=ast_input_ids,
+                attention_mask=ast_attention_mask,
+                output_hidden_states=True
+            )
+            ast_embeddings = ast_outputs.hidden_states[-1][:, 0]  # CLS token
+            
+            # Project embeddings
+            code_projected = self.code_projection(code_embeddings)
+            ast_projected = self.ast_projection(ast_embeddings)
+            
+            # Normalize
+            code_projected = nn.functional.normalize(code_projected, p=2, dim=1)
+            ast_projected = nn.functional.normalize(ast_projected, p=2, dim=1)
+            
+            return code_projected, ast_projected
+
+    def ast_contrastive_loss(code_embeddings, ast_embeddings, temperature=0.1):
+        """Contrastive loss between code and AST embeddings"""
+        batch_size = code_embeddings.shape[0]
+        
+        # Compute similarity matrix
+        similarity = torch.matmul(code_embeddings, ast_embeddings.T) / temperature
+        
+        # Labels are the diagonal elements (matching code-AST pairs)
+        labels = torch.arange(batch_size, device=similarity.device)
+        
+        # Compute loss in both directions
+        loss_code_to_ast = nn.CrossEntropyLoss()(similarity, labels)
+        loss_ast_to_code = nn.CrossEntropyLoss()(similarity.T, labels)
+        
+        return (loss_code_to_ast + loss_ast_to_code) / 2
+
+    def pretrain_with_ast(model, code_samples, tokenizer, batch_size=16, num_epochs=3, learning_rate=5e-5):
+        """Pretrain model with AST understanding"""
+        # Create dataset
+        dataset = ASTPretrainingDataset(code_samples, tokenizer)
+        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+        
+        # Create model
+        ast_model = ASTPretrainingModel(model)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        ast_model.to(device)
+        
+        # Setup optimizer
+        optimizer = torch.optim.AdamW(ast_model.parameters(), lr=learning_rate)
+        
+        # Training loop
+        ast_model.train()
+        for epoch in range(num_epochs):
+            print(f"Epoch {epoch+1}/{num_epochs}")
+            total_loss = 0
+            
+            for batch in dataloader:
+                # Move batch to device
+                batch = {k: v.to(device) for k, v in batch.items()}
+                
+                # Forward pass
+                code_embeddings, ast_embeddings = ast_model(
+                    batch["code_input_ids"],
+                    batch["code_attention_mask"],
+                    batch["ast_input_ids"],
+                    batch["ast_attention_mask"]
+                )
+                
+                # Calculate loss
+                loss = ast_contrastive_loss(code_embeddings, ast_embeddings)
+                
+                # Backward pass
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                
+                total_loss += loss.item()
+            
+            avg_loss = total_loss / len(dataloader)
+            print(f"  Average loss: {avg_loss:.4f}")
+        
+        # Return base model with improved code understanding
+        return ast_model.base_model
 ```
 
 ### 22.2 Code Execution Pretraining
