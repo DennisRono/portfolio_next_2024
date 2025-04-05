@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/output.scss'
+import "katex/dist/katex.min.css"
 import { Toaster } from '@/components/ui/toaster'
 
 const title = 'Dennis Kibet Rono'

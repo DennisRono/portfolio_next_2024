@@ -4,6 +4,7 @@ import { Callout } from './callout'
 import type { Toc } from '@stefanprobst/rehype-extract-toc'
 import React from 'react'
 import CodeBlockHeader from '@/components/code-block-header'
+import "katex/dist/katex.min.css"
 
 const useMDXComponent = (code: string) => {
   const fn = new Function('components', `${code}; return MDXContent`)

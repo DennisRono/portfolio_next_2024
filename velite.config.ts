@@ -4,6 +4,8 @@ import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeToc from '@stefanprobst/rehype-extract-toc'
 import rehypeTocExtract from '@stefanprobst/rehype-extract-toc/mdx'
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
 
 const computedFields = <T extends { slug: string }>(data: T) => ({
   ...data,
@@ -78,7 +80,8 @@ export default defineConfig({
       ],
       rehypeToc,
       [rehypeTocExtract, { name: 'toc' }],
+      rehypeKatex
     ],
-    remarkPlugins: [],
+    remarkPlugins: [remarkMath,],
   },
 })

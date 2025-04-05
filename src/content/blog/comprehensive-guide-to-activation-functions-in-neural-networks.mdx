@@ -43,12 +43,14 @@ In neural networks, activation functions determine the output of a neuron given 
 
 **Definition**: The linear activation function is defined as:
 
+$$
 f(x) = x
+$$
 
 **Characteristics**:
 
-- **Range**: (-∞, ∞)
-- **Derivative**: Constant (does not depend on input x)
+- **Range**: $(-\infty, \infty)$  
+- **Derivative**: Constant (does not depend on input $x$)  
 - **Use Cases**: Rarely used in hidden layers due to the lack of non-linearity; sometimes used in output layers for regression tasks.
 
 **Python Implementation**:
@@ -74,12 +76,14 @@ model = nn.Sequential(
 
 **Definition**: The sigmoid function is defined as:
 
-f(x) = 1 / (1 + e^(-x))
+$$
+f(x) = \frac{1}{1 + e^{-x}}
+$$
 
 **Characteristics**:
 
-- **Range**: (0, 1)
-- **Derivative**: f'(x) = f(x) × (1 - f(x))
+- **Range**: $(0, 1)$  
+- **Derivative**: $f'(x) = f(x) \cdot (1 - f(x))$  
 - **Use Cases**: Commonly used in binary classification problems; however, it can suffer from vanishing gradient issues in deep networks.
 
 **Python Implementation**:
@@ -106,12 +110,14 @@ model = nn.Sequential(
 
 **Definition**: The tanh function is defined as:
 
-f(x) = tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+$$
+f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+$$
 
 **Characteristics**:
 
-- **Range**: (-1, 1)
-- **Derivative**: f'(x) = 1 - f(x)^2
+- **Range**: $(-1, 1)$  
+- **Derivative**: $f'(x) = 1 - f(x)^2$  
 - **Use Cases**: Often preferred over the sigmoid function as it centers the data around zero, leading to faster convergence in training.
 
 **Python Implementation**:
@@ -138,12 +144,14 @@ model = nn.Sequential(
 
 **Definition**: The ReLU function is defined as:
 
-f(x) = max(0, x)
+$$
+f(x) = \max(0, x)
+$$
 
 **Characteristics**:
 
-- **Range**: [0, ∞)
-- **Derivative**: f'(x) = 1 for x > 0; f'(x) = 0 for x ≤ 0
+- **Range**: $[0, \infty)$  
+- **Derivative**: $f'(x) = 1$ for $x > 0$; $f'(x) = 0$ for $x \leq 0$  
 - **Use Cases**: Widely used in hidden layers of deep neural networks due to its computational efficiency and reduced likelihood of vanishing gradients.
 
 **Python Implementation**:
@@ -168,17 +176,20 @@ model = nn.Sequential(
 
 **Definition**: The Leaky ReLU function introduces a small slope for negative inputs:
 
+$$
 f(x) =
+\begin{cases}
+x & \text{if } x > 0 \\
+\alpha x & \text{if } x \leq 0
+\end{cases}
+$$
 
-- x if x > 0
-- αx if x ≤ 0
-
-where α is a small constant (e.g., 0.01).
+Where $\alpha$ is a small constant (e.g., 0.01).
 
 **Characteristics**:
 
-- **Range**: (-∞, ∞)
-- **Derivative**: f'(x) = 1 for x > 0; f'(x) = α for x ≤ 0
+- **Range**: $(-\infty, \infty)$  
+- **Derivative**: $f'(x) = 1$ for $x > 0$; $f'(x) = \alpha$ for $x \leq 0$  
 - **Use Cases**: Addresses the "dying ReLU" problem by allowing a small, non-zero gradient when the unit is not active.
 
 **Python Implementation**:
