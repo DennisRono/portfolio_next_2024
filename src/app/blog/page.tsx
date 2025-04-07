@@ -39,7 +39,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <div className="">
       <Header />
-      <div className="px-2 sm:container max-w-8xl py-6 lg:py-10 w-full">
+      <div className="px-2 sm:container max-w-9xl py-6 lg:py-10 w-full">
         <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
           <div className="flex-1 space-y-4">
             <h1 className="inline-block font-black text-4xl lg:text-5xl">

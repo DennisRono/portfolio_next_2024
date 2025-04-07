@@ -96,7 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 pb-12">
-        <div className="container px-4 md:px-8 max-w-6xl mx-auto">
+        <div className="max-w-screen-2xl min-h-screen mx-auto px-4 sm:px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
           <div className="py-4">
             <Link
               href="/blog"
@@ -107,8 +107,8 @@ export default async function PostPage({ params }: PostPageProps) {
             </Link>
           </div>
 
-          <article className="grid grid-cols-1 md:grid-cols-[1fr_250px] gap-8">
-            <div className="prose dark:prose-invert max-w-none">
+          <article className="grid grid-cols-6 sm:grid-cols-12 gap-8">
+            <div className="prose dark:prose-invert max-w-none col-span-6 sm:grid-cols-12 col-start-1 sm:col-span-8">
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
                   <Image
@@ -195,7 +195,7 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </div>
 
-            <aside className="hidden md:block">
+            <aside className="hidden md:block col-span-6 sm:grid-cols-12 sm:col-span-4 sm:col-start-9">
               <div className="sticky top-20">
                 {tableOfContents.length !== 0 && (
                   <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 !max-h-[28rem] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent">
