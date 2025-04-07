@@ -6,7 +6,13 @@ import { siteConfig } from '@/config/site'
 import { Tag } from '@/components/tag'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { CalendarDays, Clock, ChevronLeft, Share2 } from 'lucide-react'
+import {
+  CalendarDays,
+  Clock,
+  ChevronLeft,
+  Share2,
+  ListFilter,
+} from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
@@ -14,6 +20,16 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Image from 'next/image'
 import { TableOfContents } from '@/components/table-of-contents'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from '@/components/ui/sheet'
+import Instagram from '@/assets/images/instagram.png'
+import Linkedin from '@/assets/images/linkedin.png'
+import Twitter from '@/assets/images/twitter.png'
+import Facebook from '@/assets/images/facebook.png'
 
 interface PostPageProps {
   params: {
@@ -97,7 +113,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <Header />
       <main className="flex-1 pb-12">
         <div className="max-w-screen-2xl min-h-screen mx-auto px-4 sm:px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
-          <div className="py-4">
+          <div className="py-4 flex justify-between items-center">
             <Link
               href="/blog"
               className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -105,11 +121,78 @@ export default async function PostPage({ params }: PostPageProps) {
               <ChevronLeft className="mr-1 h-4 w-4" />
               Back to all posts
             </Link>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ListFilter className="h-4 w-4" />
+                  <span>Contents</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-[85vw] sm:max-w-md overflow-y-auto bg-black">
+                <div className="space-y-6 py-6">
+                  {tableOfContents.length !== 0 && (
+                    <div>
+                      <h3 className="font-medium text-lg mb-3">
+                        Table of Contents
+                      </h3>
+                      <TableOfContents toc={tableOfContents} />
+                    </div>
+                  )}
+
+                  {posts
+                    .filter(
+                      (p) =>
+                        p.published &&
+                        p.slugAsParams !== post.slugAsParams &&
+                        p.tags?.some((tag) => post.tags?.includes(tag))
+                    )
+                    .slice(0, 3).length > 0 && (
+                    <div className="pt-6 border-t">
+                      <h3 className="font-medium text-lg mb-3">
+                        Related Posts
+                      </h3>
+                      <div className="space-y-4">
+                        {posts
+                          .filter(
+                            (p) =>
+                              p.published &&
+                              p.slugAsParams !== post.slugAsParams &&
+                              p.tags?.some((tag) => post.tags?.includes(tag))
+                          )
+                          .slice(0, 3)
+                          .map((relatedPost) => (
+                            <div
+                              key={relatedPost.slugAsParams}
+                              className="group"
+                            >
+                              <SheetClose asChild>
+                                <Link
+                                  href={`/blog/${relatedPost.slugAsParams}`}
+                                  className="no-underline block"
+                                >
+                                  <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
+                                    {relatedPost.title}
+                                  </h4>
+                                  {relatedPost.description && (
+                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                      {relatedPost.description}
+                                    </p>
+                                  )}
+                                </Link>
+                              </SheetClose>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
 
-          <article className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            {/* Main read area of the blog */}
-            <div className="prose dark:prose-invert max-w-none col-span-1 md:col-span-8">
+          <article className="grid grid-cols-1 gap-8">
+            {/* Main read area of the blog - full width for all screen sizes */}
+            <div className="prose dark:prose-invert max-w-none">
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
                   <Image
@@ -179,73 +262,28 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <h3 className="text-lg font-medium">Share this article</h3>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                      <Share2 className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                      <div className="h-8 w-8">
+                        <Image src={Twitter} alt={'twitter icon'} />
+                      </div>
                       <span className="sr-only">Share on Twitter</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                      <Share2 className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                      <div className="h-8 w-8">
+                        <Image src={Facebook} alt={'facebook icon'} />
+                      </div>
                       <span className="sr-only">Share on Facebook</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0">
-                      <Share2 className="h-4 w-4" />
+                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                      <div className="h-8 w-8">
+                        <Image src={Linkedin} alt={'Linkedin icon'} />
+                      </div>
                       <span className="sr-only">Share on LinkedIn</span>
                     </Button>
                   </div>
                 </div>
               </div>
             </div>
-
-            <aside className="col-span-1 md:col-span-4">
-              <div className="sticky top-20 space-y-6">
-                {tableOfContents.length !== 0 && (
-                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 !max-h-[28rem] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent">
-                    <h3 className="font-medium mb-3">Table of Contents</h3>
-                    <TableOfContents toc={tableOfContents} />
-                  </div>
-                )}
-
-                {posts
-                  .filter(
-                    (p) =>
-                      p.published &&
-                      p.slugAsParams !== post.slugAsParams &&
-                      p.tags?.some((tag) => post.tags?.includes(tag))
-                  )
-                  .slice(0, 3).length > 0 && (
-                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4">
-                    <h3 className="font-medium mb-3">Related Posts</h3>
-                    <div className="space-y-4">
-                      {posts
-                        .filter(
-                          (p) =>
-                            p.published &&
-                            p.slugAsParams !== post.slugAsParams &&
-                            p.tags?.some((tag) => post.tags?.includes(tag))
-                        )
-                        .slice(0, 3)
-                        .map((relatedPost) => (
-                          <div key={relatedPost.slugAsParams} className="group">
-                            <Link
-                              href={`/blog/${relatedPost.slugAsParams}`}
-                              className="no-underline"
-                            >
-                              <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
-                                {relatedPost.title}
-                              </h4>
-                              {relatedPost.description && (
-                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                  {relatedPost.description}
-                                </p>
-                              )}
-                            </Link>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </aside>
           </article>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
