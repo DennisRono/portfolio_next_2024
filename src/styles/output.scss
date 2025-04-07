@@ -697,6 +697,14 @@ video {
   grid-column: span 6 / span 6;
 }
 
+.col-span-4{
+  grid-column: span 4 / span 4;
+}
+
+.col-span-8{
+  grid-column: span 8 / span 8;
+}
+
 .col-start-1{
   grid-column-start: 1;
 }
@@ -3519,6 +3527,10 @@ p {
     grid-column: span 8 / span 8;
   }
 
+  .sm\:col-span-3{
+    grid-column: span 3 / span 3;
+  }
+
   .sm\:col-start-9{
     grid-column-start: 9;
   }
@@ -3549,6 +3561,10 @@ p {
 
   .sm\:grid-cols-12{
     grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .sm\:grid-cols-10{
+    grid-template-columns: repeat(10, minmax(0, 1fr));
   }
 
   .sm\:flex-row{
