@@ -117,11 +117,11 @@ export default async function ProjectPage({
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 md:gap-8 w-full mb-6 py-2 border-y">
+          <div className="flex flex-wrap items-center gap-4 md:gap-8 w-full mb-6 py-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
                 <Image 
-                  src={ProfileImage || "/placeholder.svg"} 
+                  src={ProfileImage} 
                   alt="Dennis Kibet" 
                   width={48} 
                   height={48}
@@ -133,7 +133,7 @@ export default async function ProjectPage({
               </div>
             </div>
             
-            <span className="border border-gray-400 rounded-md py-1 px-3 text-sm md:text-base capitalize">
+            <span className="border border-gray-400 rounded-sm py-1 px-3 text-sm md:text-base capitalize">
               {project.stack_string || 'Technology'}
             </span>
             

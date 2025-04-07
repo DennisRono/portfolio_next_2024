@@ -254,7 +254,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
               <Separator className="my-8" />
 
-              <div className="mdx-content !max-w-4xl overflow-hidden">
+              <div className="mdx-content overflow-hidden">
                 <MDXContent code={post.body} />
               </div>
 
