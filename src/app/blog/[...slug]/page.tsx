@@ -90,7 +90,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
   const readingTime = getReadingTime(post.body)
 
-  const tableOfContents = MDXToC({ code: post.body });
+  const tableOfContents = MDXToC({ code: post.body })
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -107,12 +107,13 @@ export default async function PostPage({ params }: PostPageProps) {
             </Link>
           </div>
 
-          <article className="grid grid-cols-6 sm:grid-cols-12 gap-8">
-            <div className="prose dark:prose-invert max-w-none col-span-6 sm:grid-cols-12 col-start-1 sm:col-span-8">
+          <article className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            {/* Main read area of the blog */}
+            <div className="prose dark:prose-invert max-w-none col-span-1 md:col-span-8">
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
                   <Image
-                    src={post.image}
+                    src={post.image || '/placeholder.svg'}
                     alt={post.title}
                     className="w-full h-auto object-cover aspect-[16/9]"
                   />
@@ -195,8 +196,8 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </div>
 
-            <aside className="hidden md:block col-span-4 sm:grid-cols-10 sm:col-span-3 sm:col-start-9">
-              <div className="sticky top-20">
+            <aside className="col-span-1 md:col-span-4">
+              <div className="sticky top-20 space-y-6">
                 {tableOfContents.length !== 0 && (
                   <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 !max-h-[28rem] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-transparent">
                     <h3 className="font-medium mb-3">Table of Contents</h3>
@@ -212,7 +213,7 @@ export default async function PostPage({ params }: PostPageProps) {
                       p.tags?.some((tag) => post.tags?.includes(tag))
                   )
                   .slice(0, 3).length > 0 && (
-                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4 mt-6">
+                  <div className="rounded-lg border border-[#2e2e2e] bg-card p-4">
                     <h3 className="font-medium mb-3">Related Posts</h3>
                     <div className="space-y-4">
                       {posts
