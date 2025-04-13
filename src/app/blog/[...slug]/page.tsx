@@ -112,7 +112,7 @@ export default async function PostPage({ params }: PostPageProps) {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 pb-12">
-        <div className="max-w-screen-2xl min-h-screen mx-auto px-4 sm:px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
+        <div className="max-w-screen-xl min-h-screen mx-auto px-4 sm:px-6 py-12 md:px-12 md:py-20 lg:px-24 lg:py-0">
           <div className="py-4 flex justify-between items-center">
             <Link
               href="/blog"
