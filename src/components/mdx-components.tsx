@@ -34,16 +34,16 @@ const components = {
   td: (props: any) => <td className="border px-4 py-2" {...props} />,
   br: (props: any) => <br {...props} />,
   p: (props: any) => (
-    <p {...props} className="text-black dark:text-white text-[1.2rem] mb-4" />
+    <p {...props} className="text-black dark:text-white text-[1.1rem] mb-4" />
   ),
   hr: (props: any) => <hr {...props} className="my-4" />,
   ul: (props: any) => (
-    <ul {...props} className="ml-4 my-2 text-[1.2rem] list-disc" />
+    <ul {...props} className="ml-4 my-2 text-[1.1rem] list-disc" />
   ),
   ol: (props: any) => (
-    <ol {...props} className="ml-4 my-2 text-[1.2rem] list-decimal" />
+    <ol {...props} className="ml-4 my-2 text-[1.1rem] list-decimal" />
   ),
-  li: (props: any) => <li {...props} className="ml-4 mb-2 text-[1.2rem]" />,
+  li: (props: any) => <li {...props} className="ml-4 mb-2 text-[1.1rem]" />,
   aside: (props: any) => (
     <aside
       {...props}
