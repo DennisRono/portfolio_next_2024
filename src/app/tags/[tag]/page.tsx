@@ -59,7 +59,7 @@ export default function TagPage({ params }: TagPageProps) {
                   return (
                     <li key={slug}>
                       <PostItem
-                        slug={slug}
+                        slug={'../'+slug}
                         date={date}
                         title={title}
                         description={description}
