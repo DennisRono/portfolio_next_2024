@@ -119,46 +119,6 @@ export default async function PostPage({ params }: PostPageProps) {
                   <TableOfContents toc={tableOfContents} />
                 </div>
               )}
-
-              {posts
-                .filter(
-                  (p) =>
-                    p.published &&
-                    p.slugAsParams !== post.slugAsParams &&
-                    p.tags?.some((tag) => post.tags?.includes(tag))
-                )
-                .slice(0, 3).length > 0 && (
-                <div className="pt-6 border-t">
-                  <h3 className="font-medium text-lg mb-3">Related Posts</h3>
-                  <div className="space-y-4">
-                    {posts
-                      .filter(
-                        (p) =>
-                          p.published &&
-                          p.slugAsParams !== post.slugAsParams &&
-                          p.tags?.some((tag) => post.tags?.includes(tag))
-                      )
-                      .slice(0, 3)
-                      .map((relatedPost) => (
-                        <div key={relatedPost.slugAsParams} className="group">
-                          <Link
-                            href={`/blog/${relatedPost.slugAsParams}`}
-                            className="no-underline block"
-                          >
-                            <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
-                              {relatedPost.title}
-                            </h4>
-                            {relatedPost.description && (
-                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                {relatedPost.description}
-                              </p>
-                            )}
-                          </Link>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
