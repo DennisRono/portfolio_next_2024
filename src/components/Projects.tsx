@@ -28,7 +28,7 @@ const Projects = ({ no, f }: { no: number; f: boolean }) => {
                 router.push(`/project/${project.slug}`)
               }}
             >
-              <div className="w-1/4">
+              <div className="w-1/2">
                 <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
                   <Image
                     src={project.imageUrl}
