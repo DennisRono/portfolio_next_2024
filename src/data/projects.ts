@@ -1,5 +1,6 @@
 import NullchemyShop from '@/assets/images/nullchemy_shop.png'
 import WeCare from '@/assets/images/wecare_one.png'
+import TqErp from '@/assets/images/tq_erp.png'
 import NPay from '@/assets/images/npay_landing.png'
 import NAnalytics from '@/assets/images/analytics.png'
 import NullEMS from '@/assets/images/nems-dash.png'
@@ -12,6 +13,46 @@ import LinkedInClone from '@/assets/images/linkedin-clone.png'
 import NullChemy from '@/assets/images/nullchemy.png'
 
 const projects = [
+  {
+    id: 0,
+    imageUrl: TqErp,
+    stack_string: 'Next.js/FastAPI/Redis/PostreSQL/SQLAlchemy/Pydantic',
+    stack: [
+      'Next.js',
+      'FastAPI',
+      'Redis',
+      'PostreSQL',
+      'SQLAlchemy',
+      'Pydantic',
+      'Microservice'
+    ],
+    title: 'TQ-ERP',
+    preview:
+      'TQ-ERP is a comprehensive business management platform built for the distributed workplace. It streamlines operations across finance, HR, inventory, sales, and more with real-time analytics, automation, and 100+ integrations. Flexible deployment options and pricing plans make it ideal for businesses of all sizes.',
+    slug: 'tq-erp',
+    external_url:
+      'https://tq.tenafriq.com/login?username=demo@gmail.com&email=DemoPass123',
+    made_at: 'NBO Tech Labs',
+    year: '2025',
+    client: 'NBO Tech Labs',
+    docs: [
+      {
+        type: 'pdf',
+        path: '/pdf/tq-erp-report.pdf',
+        file_name: 'tq-erp-report.pdf',
+      },
+      {
+        type: 'docx',
+        path: '/docs/tq-erp.docx',
+        file_name: 'tq-erp.docx',
+      },
+      {
+        type: 'pptx',
+        path: '/docs/tq-erp.pptx',
+        file_name: 'tq-erp.pptx',
+      },
+    ],
+  },
   {
     id: 1,
     imageUrl: WeCare,
