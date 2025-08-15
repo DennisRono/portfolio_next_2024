@@ -1,0 +1,1188 @@
+---
+title: 'Npay Payment System - PRD v1.0'
+description: 'Product Requirements for the Npay Payment System, detailing its features, workflows, technical specifications, and integration requirements to ensure a secure, scalable, and user-friendly payment experience.'
+date: 2025-8-15
+tags: ['PRD']
+published: true
+---
+
+# Npay Payment System - PRD v1.0
+
+## Executive Summary
+
+Building upon the established foundation, this enhanced PRD expands the Npay payment system with advanced geofencing capabilities, detailed implementation roadmaps, and comprehensive system architecture guides. The system is designed to scale from 80 million to 1 billion users while maintaining sub-second response times and bank-grade security.
+
+## Table of Contents
+
+1. [System Architecture](#enhanced-system-architecture)
+2. [Geofencing Features & Implementation](#geofencing-features--implementation)
+3. [Detailed Implementation Guides](#detailed-implementation-guides)
+4. [Advanced Security Framework](#advanced-security-framework)
+5. [Performance & Scalability Deep Dive](#performance--scalability-deep-dive)
+6. [API Specifications](#api-specifications)
+7. [Data Architecture & Management](#data-architecture--management)
+8. [Monitoring & Observability](#monitoring--observability)
+9. [Compliance & Regulatory Framework](#compliance--regulatory-framework)
+10. [Implementation Phases & Timeline](#implementation-phases--timeline)
+
+## Enhanced System Architecture
+
+### Core Architecture Principles
+
+**Microservices Design Patterns**
+
+- **Domain-Driven Design (DDD)**: Each service owns its domain and data
+- **Event Sourcing**: Complete audit trail with event replay capabilities
+- **CQRS (Command Query Responsibility Segregation)**: Separate read/write models for optimal performance
+- **Saga Pattern**: Distributed transaction management across services
+
+**Service Mesh Architecture**
+
+```plaintext
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   User Service  │    │ Payment Service │    │Geofence Service │
+│                 │    │                 │    │                 │
+│ - Authentication│    │ - Transactions  │    │ - Location      │
+│ - Profile Mgmt  │    │ - Settlements   │    │ - Boundaries    │
+│ - KYC/AML       │    │ - Fraud Check   │    │ - Notifications │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │  Service Mesh   │
+                    │   (Istio/Envoy) │
+                    │                 │
+                    │ - Load Balance  │
+                    │ - Circuit Break │
+                    │ - Rate Limiting │
+                    │ - Observability │
+                    └─────────────────┘
+```
+
+### Enhanced Service Breakdown
+
+**Core Payment Services**
+
+1. **Account Management Service**
+
+1. Primary account operations
+1. Savings account management
+1. Account linking and verification
+1. Balance management and reconciliation
+
+1. **Transaction Processing Service**
+
+1. Real-time payment processing
+1. International transfers
+1. Batch processing for settlements
+1. Transaction state management
+
+1. **Fraud Detection Service**
+
+1. ML-based anomaly detection
+1. Real-time risk scoring
+1. Behavioral analysis
+1. Geofencing-based fraud prevention
+
+1. **Analytics Service**
+
+1. Spending pattern analysis
+1. Financial insights generation
+1. Merchant categorization
+1. Predictive analytics
+
+1. **Overdraft Service**
+
+1. Credit scoring algorithms
+1. Risk assessment models
+1. Automated approval workflows
+1. Repayment tracking
+
+---
+
+## Geofencing Features & Implementation
+
+### Core Geofencing Capabilities
+
+**1. Location-Based Security**
+
+- **Trusted Location Management**: Users can define trusted locations (home, work, frequent merchants)
+- **Anomaly Detection**: Transactions outside normal geographic patterns trigger additional verification
+- **Travel Mode**: Temporary expansion of trusted zones for travel periods
+- **Emergency Lockdown**: Automatic account freeze for transactions in high-risk areas
+
+**2. Merchant & ATM Geofencing**
+
+- **Proximity-Based Offers**: Location-triggered promotions and cashback offers
+- **ATM Locator**: Real-time ATM availability and fee information
+- **Merchant Verification**: Location-based merchant authenticity checks
+- **Dynamic Fee Adjustment**: Location-based fee structures
+
+**3. Regulatory Compliance Geofencing**
+
+- **Jurisdiction Enforcement**: Automatic compliance with local financial regulations
+- **Cross-Border Transaction Controls**: Enhanced verification for international transfers
+- **Sanctions Screening**: Real-time location-based sanctions compliance
+- **Tax Reporting**: Automatic tax jurisdiction determination
+
+### Geofencing Technical Architecture
+
+**Location Data Pipeline**
+
+```plaintext
+Mobile App → Location Service → Geofence Engine → Risk Engine → Decision Engine
+     ↓              ↓               ↓              ↓              ↓
+GPS/Network → Coordinate → Boundary Check → Risk Score → Allow/Block/Verify
+```
+
+**Geofencing Service Components**
+
+1. **Location Ingestion Service**
+
+```python
+# Pseudo-implementation structure
+class LocationIngestionService:
+    - validate_location_data()
+    - normalize_coordinates()
+    - store_location_history()
+    - trigger_geofence_checks()
+```
+
+2. **Geofence Management Service**
+
+```python
+class GeofenceManager:
+    - create_geofence(user_id, coordinates, radius, type)
+    - update_geofence_boundaries()
+    - check_point_in_polygon()
+    - manage_dynamic_geofences()
+```
+
+3. **Risk Assessment Engine**
+
+```python
+class LocationRiskEngine:
+    - calculate_location_risk_score()
+    - analyze_travel_patterns()
+    - detect_location_anomalies()
+    - generate_risk_recommendations()
+```
+
+### Geofencing Implementation Guide
+
+**Phase 1: Basic Location Services (Weeks 1-4)**
+
+1. **Location Data Collection**
+
+1. Implement GPS and network-based location services
+1. Create location permission management
+1. Build location data validation and sanitization
+1. Establish location data retention policies
+
+1. **Basic Geofence Engine**
+
+1. Implement point-in-polygon algorithms
+1. Create circular and polygonal geofence support
+1. Build geofence storage and retrieval systems
+1. Implement real-time geofence checking
+
+**Phase 2: Security Integration (Weeks 5-8)**
+
+1. **Fraud Prevention Integration**
+
+1. Connect geofencing to fraud detection systems
+1. Implement location-based risk scoring
+1. Create anomaly detection algorithms
+1. Build automated response mechanisms
+
+1. **User Experience Features**
+
+1. Develop trusted location management UI
+1. Create travel mode functionality
+1. Implement location-based notifications
+1. Build location history and analytics
+
+**Phase 3: Advanced Features (Weeks 9-12)**
+
+1. **Merchant & Offer Integration**
+
+1. Implement proximity-based offer engine
+1. Create merchant location verification
+1. Build dynamic pricing based on location
+1. Develop location-based loyalty programs
+
+1. **Regulatory Compliance**
+
+1. Implement jurisdiction detection
+1. Create compliance rule engine
+1. Build sanctions screening integration
+1. Develop tax reporting automation
+
+### Geofencing Data Models
+
+**Location Data Structure**
+
+```json
+{
+  "user_id": "uuid",
+  "location": {
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "accuracy": 10,
+    "timestamp": "2025-01-15T10:30:00Z",
+    "source": "gps|network|manual"
+  },
+  "context": {
+    "transaction_id": "uuid",
+    "merchant_id": "uuid",
+    "device_id": "uuid"
+  }
+}
+```
+
+**Geofence Configuration**
+
+```json
+{
+  "geofence_id": "uuid",
+  "user_id": "uuid",
+  "name": "Home",
+  "type": "trusted|restricted|merchant|regulatory",
+  "geometry": {
+    "type": "circle|polygon",
+    "center": { "lat": 40.7128, "lng": -74.006 },
+    "radius": 500,
+    "vertices": [{ "lat": 40.7128, "lng": -74.006 }]
+  },
+  "rules": {
+    "transaction_limit": 10000,
+    "requires_verification": false,
+    "notification_enabled": true
+  },
+  "active": true,
+  "created_at": "2025-01-15T10:30:00Z"
+}
+```
+
+---
+
+## Detailed Implementation Guides
+
+### Database Implementation Guide
+
+**PostgreSQL Sharding Strategy**
+
+1. **Horizontal Sharding by User ID**
+
+```sql
+-- Shard function
+CREATE OR REPLACE FUNCTION get_shard_id(user_id UUID)
+RETURNS INTEGER AS $$
+BEGIN
+    RETURN (hashtext(user_id::text) % 16) + 1;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Shard routing table
+CREATE TABLE shard_routing (
+    shard_id INTEGER PRIMARY KEY,
+    database_host VARCHAR(255),
+    database_name VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'active'
+);
+```
+
+2. **Time-Based Partitioning for Transactions**
+
+```sql
+-- Parent table
+CREATE TABLE transactions (
+    transaction_id UUID PRIMARY KEY,
+    user_id UUID NOT NULL,
+    amount DECIMAL(15,2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+) PARTITION BY RANGE (created_at);
+
+-- Monthly partitions
+CREATE TABLE transactions_2025_01 PARTITION OF transactions
+FOR VALUES FROM ('2025-01-01') TO ('2025-02-01');
+```
+
+**Redis Caching Implementation**
+
+1. **Multi-Layer Cache Strategy**
+
+```python
+class CacheManager:
+    def __init__(self):
+        self.l1_cache = Redis(host='redis-l1', decode_responses=True)  # Hot data
+        self.l2_cache = Redis(host='redis-l2', decode_responses=True)  # Warm data
+        self.l3_cache = Redis(host='redis-l3', decode_responses=True)  # Cold data
+
+    async def get_user_balance(self, user_id: str):
+        # L1 Cache (TTL: 30 seconds)
+        balance = await self.l1_cache.get(f"balance:{user_id}")
+        if balance:
+            return float(balance)
+
+        # L2 Cache (TTL: 5 minutes)
+        balance = await self.l2_cache.get(f"balance:{user_id}")
+        if balance:
+            await self.l1_cache.setex(f"balance:{user_id}", 30, balance)
+            return float(balance)
+
+        # Database fallback
+        balance = await self.get_balance_from_db(user_id)
+        await self.l1_cache.setex(f"balance:{user_id}", 30, balance)
+        await self.l2_cache.setex(f"balance:{user_id}", 300, balance)
+        return balance
+```
+
+### Microservices Communication Guide
+
+**Event-Driven Architecture with Kafka**
+
+1. **Event Schema Registry**
+
+```json
+{
+  "namespace": "com.npay.events",
+  "type": "record",
+  "name": "TransactionCreated",
+  "fields": [
+    { "name": "transaction_id", "type": "string" },
+    { "name": "user_id", "type": "string" },
+    { "name": "amount", "type": "double" },
+    { "name": "currency", "type": "string" },
+    { "name": "merchant_id", "type": ["null", "string"] },
+    {
+      "name": "location",
+      "type": {
+        "type": "record",
+        "name": "Location",
+        "fields": [
+          { "name": "latitude", "type": "double" },
+          { "name": "longitude", "type": "double" }
+        ]
+      }
+    },
+    { "name": "timestamp", "type": "long" }
+  ]
+}
+```
+
+2. **Saga Pattern Implementation**
+
+```python
+class PaymentSaga:
+    def __init__(self):
+        self.steps = [
+            self.validate_account,
+            self.check_fraud,
+            self.verify_geofence,
+            self.process_payment,
+            self.update_balance,
+            self.send_notification
+        ]
+
+    async def execute(self, transaction_data):
+        saga_id = str(uuid.uuid4())
+        compensation_stack = []
+
+        try:
+            for step in self.steps:
+                result = await step(transaction_data)
+                compensation_stack.append(result.compensation)
+
+            return {"status": "success", "saga_id": saga_id}
+        except Exception as e:
+            await self.compensate(compensation_stack)
+            return {"status": "failed", "error": str(e)}
+```
+
+### API Gateway Implementation
+
+**Rate Limiting & Security**
+
+```yaml
+# Kong Gateway Configuration
+services:
+  - name: payment-service
+    url: http://payment-service:8000
+    plugins:
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: redis
+      - name: jwt
+        config:
+          secret_is_base64: false
+      - name: request-validator
+        config:
+          body_schema: |
+            {
+              "type": "object",
+              "properties": {
+                "amount": {"type": "number", "minimum": 0.01},
+                "currency": {"type": "string", "pattern": "^[A-Z]{3}$"}
+              },
+              "required": ["amount", "currency"]
+            }
+```
+
+---
+
+## Advanced Security Framework
+
+### Zero-Trust Architecture Implementation
+
+**Identity & Access Management**
+
+1. **Multi-Factor Authentication (MFA)**
+
+1. TOTP (Time-based One-Time Password)
+1. SMS/Email verification
+1. Biometric authentication
+1. Hardware security keys (FIDO2/WebAuthn)
+
+1. **Adaptive Authentication**
+
+```python
+class AdaptiveAuthEngine:
+    def calculate_risk_score(self, user_context):
+        factors = {
+            'device_trust': self.check_device_fingerprint(user_context.device),
+            'location_risk': self.geofence_service.get_location_risk(user_context.location),
+            'behavioral_score': self.analyze_user_behavior(user_context.user_id),
+            'transaction_pattern': self.check_transaction_patterns(user_context)
+        }
+
+        risk_score = sum(factors.values()) / len(factors)
+
+        if risk_score > 0.8:
+            return AuthAction.BLOCK
+        elif risk_score > 0.6:
+            return AuthAction.STEP_UP_AUTH
+        else:
+            return AuthAction.ALLOW
+```
+
+### Encryption & Tokenization
+
+**Field-Level Encryption**
+
+```python
+class FieldEncryption:
+    def __init__(self, key_management_service):
+        self.kms = key_management_service
+
+    def encrypt_pii(self, data: dict) -> dict:
+        encrypted_data = data.copy()
+        sensitive_fields = ['account_number', 'ssn', 'phone', 'email']
+
+        for field in sensitive_fields:
+            if field in data:
+                key = self.kms.get_encryption_key(f"field_{field}")
+                encrypted_data[field] = self.encrypt_field(data[field], key)
+
+        return encrypted_data
+```
+
+**Tokenization Service**
+
+```python
+class TokenizationService:
+    def tokenize_card(self, card_number: str) -> str:
+        # Generate format-preserving token
+        token = self.generate_fpf_token(card_number)
+
+        # Store mapping in secure vault
+        self.vault.store_mapping(token, card_number)
+
+        return token
+
+    def detokenize(self, token: str) -> str:
+        return self.vault.retrieve_original(token)
+```
+
+---
+
+## Performance & Scalability Deep Dive
+
+### Load Testing & Performance Benchmarks
+
+**Target Performance Metrics**
+
+- **Response Time**: P95 < 200ms, P99 < 500ms
+- **Throughput**: 15,000 TPS sustained, 25,000 TPS burst
+- **Availability**: 99.99% uptime (52.6 minutes downtime/year)
+- **Data Consistency**: Strong consistency for financial data
+
+**Auto-Scaling Configuration**
+
+```yaml
+# Kubernetes HPA Configuration
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: payment-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: payment-service
+  minReplicas: 10
+  maxReplicas: 100
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Pods
+      pods:
+        metric:
+          name: requests_per_second
+        target:
+          type: AverageValue
+          averageValue: '1000'
+```
+
+### Database Performance Optimization
+
+**Connection Pooling Strategy**
+
+```python
+# SQLAlchemy Configuration
+DATABASE_CONFIG = {
+    'pool_size': 20,
+    'max_overflow': 30,
+    'pool_pre_ping': True,
+    'pool_recycle': 3600,
+    'echo': False,
+    'connect_args': {
+        'connect_timeout': 10,
+        'command_timeout': 30,
+        'server_settings': {
+            'application_name': 'npay_payment_service',
+            'jit': 'off'  # Disable JIT for consistent performance
+        }
+    }
+}
+```
+
+**Query Optimization Guidelines**
+
+1. **Index Strategy**
+
+```sql
+-- Composite indexes for common query patterns
+CREATE INDEX CONCURRENTLY idx_transactions_user_date
+ON transactions (user_id, created_at DESC)
+WHERE status = 'completed';
+
+-- Partial indexes for specific conditions
+CREATE INDEX CONCURRENTLY idx_transactions_pending
+ON transactions (created_at)
+WHERE status = 'pending';
+```
+
+2. **Read Replicas Configuration**
+
+```python
+class DatabaseRouter:
+    def db_for_read(self, model, **hints):
+        if model._meta.app_label == 'analytics':
+            return 'analytics_replica'
+        return 'read_replica'
+
+    def db_for_write(self, model, **hints):
+        return 'primary'
+```
+
+---
+
+## API Specifications
+
+### RESTful API Design
+
+**Payment Processing API**
+
+```yaml
+openapi: 3.0.0
+info:
+  title: Npay Payment API
+  version: 2.0.0
+  description: Comprehensive payment processing API with geofencing
+
+paths:
+  /api/v2/payments:
+    post:
+      summary: Process payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  minimum: 0.01
+                  maximum: 1000000
+                currency:
+                  type: string
+                  pattern: '^[A-Z]{3}$'
+                recipient:
+                  type: object
+                  properties:
+                    account_id:
+                      type: string
+                      format: uuid
+                    routing_number:
+                      type: string
+                location:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                      minimum: -90
+                      maximum: 90
+                    longitude:
+                      type: number
+                      minimum: -180
+                      maximum: 180
+                    accuracy:
+                      type: number
+                      minimum: 0
+              required: [amount, currency, recipient]
+      responses:
+        '200':
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [completed, pending, failed]
+                  geofence_status:
+                    type: string
+                    enum: [trusted, verified, blocked]
+```
+
+**Geofencing API**
+
+```yaml
+/api/v2/geofences:
+  post:
+    summary: Create geofence
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                maxLength: 100
+              type:
+                type: string
+                enum: [trusted, restricted, merchant]
+              geometry:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [circle, polygon]
+                  center:
+                    type: object
+                    properties:
+                      latitude:
+                        type: number
+                      longitude:
+                        type: number
+                  radius:
+                    type: number
+                    minimum: 10
+                    maximum: 50000
+              rules:
+                type: object
+                properties:
+                  transaction_limit:
+                    type: number
+                  requires_verification:
+                    type: boolean
+            required: [name, type, geometry]
+```
+
+### GraphQL API for Analytics
+
+```plaintext
+type Query {
+  userAnalytics(userId: ID!, timeRange: TimeRange!): UserAnalytics
+  transactionHistory(
+    userId: ID!
+    filters: TransactionFilters
+    pagination: PaginationInput
+  ): TransactionConnection
+  geofenceAnalytics(userId: ID!): GeofenceAnalytics
+}
+
+type UserAnalytics {
+  spendingByCategory: [CategorySpending!]!
+  monthlyTrends: [MonthlySpending!]!
+  locationInsights: LocationInsights
+  riskScore: Float
+}
+
+type LocationInsights {
+  frequentLocations: [Location!]!
+  travelPatterns: [TravelPattern!]!
+  anomalousTransactions: [Transaction!]!
+}
+
+type GeofenceAnalytics {
+  trustedZoneUsage: [ZoneUsage!]!
+  securityEvents: [SecurityEvent!]!
+  recommendations: [GeofenceRecommendation!]!
+}
+```
+
+---
+
+## Data Architecture & Management
+
+### Data Lake Architecture
+
+**Data Pipeline Flow**
+
+```plaintext
+Transactional Data → Kafka → Stream Processing → Data Lake → Analytics
+                                    ↓
+                              Real-time ML → Fraud Detection
+                                    ↓
+                              Batch Processing → Reports & Insights
+```
+
+**Data Retention Policies**
+
+```python
+DATA_RETENTION_POLICIES = {
+    'transaction_data': {
+        'hot_storage': '90_days',      # SSD storage for recent data
+        'warm_storage': '2_years',     # Standard storage
+        'cold_storage': '7_years',     # Archive storage
+        'deletion': '10_years'         # Regulatory requirement
+    },
+    'location_data': {
+        'hot_storage': '30_days',
+        'warm_storage': '1_year',
+        'cold_storage': '3_years',
+        'deletion': '5_years'
+    },
+    'audit_logs': {
+        'hot_storage': '1_year',
+        'warm_storage': '5_years',
+        'cold_storage': '10_years',
+        'deletion': 'never'            # Permanent retention
+    }
+}
+```
+
+### Data Privacy & GDPR Compliance
+
+**Data Anonymization Pipeline**
+
+```python
+class DataAnonymizer:
+    def anonymize_user_data(self, user_id: str):
+        # Replace PII with anonymized tokens
+        anonymized_data = {
+            'user_id': self.generate_anonymous_id(user_id),
+            'location_data': self.anonymize_locations(user_id),
+            'transaction_patterns': self.anonymize_transactions(user_id)
+        }
+
+        # Maintain referential integrity
+        self.update_cross_references(user_id, anonymized_data['user_id'])
+
+        return anonymized_data
+
+    def right_to_be_forgotten(self, user_id: str):
+        # Complete data deletion across all systems
+        deletion_tasks = [
+            self.delete_transactional_data(user_id),
+            self.delete_location_history(user_id),
+            self.delete_ml_model_data(user_id),
+            self.delete_backup_data(user_id)
+        ]
+
+        return asyncio.gather(*deletion_tasks)
+```
+
+---
+
+## Monitoring & Observability
+
+### Comprehensive Monitoring Stack
+
+**Metrics Collection**
+
+```yaml
+# Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - 'payment_rules.yml'
+  - 'geofence_rules.yml'
+
+scrape_configs:
+  - job_name: 'payment-service'
+    static_configs:
+      - targets: ['payment-service:8080']
+    metrics_path: /metrics
+    scrape_interval: 5s
+
+  - job_name: 'geofence-service'
+    static_configs:
+      - targets: ['geofence-service:8080']
+    metrics_path: /metrics
+    scrape_interval: 10s
+```
+
+**Custom Metrics**
+
+```python
+from prometheus_client import Counter, Histogram, Gauge
+
+# Business Metrics
+TRANSACTION_COUNTER = Counter(
+    'npay_transactions_total',
+    'Total number of transactions',
+    ['status', 'payment_method', 'geofence_status']
+)
+
+TRANSACTION_AMOUNT = Histogram(
+    'npay_transaction_amount',
+    'Transaction amounts',
+    buckets=[1, 10, 50, 100, 500, 1000, 5000, 10000]
+)
+
+GEOFENCE_VIOLATIONS = Counter(
+    'npay_geofence_violations_total',
+    'Geofence violations detected',
+    ['violation_type', 'user_risk_level']
+)
+
+# System Metrics
+ACTIVE_USERS = Gauge(
+    'npay_active_users',
+    'Number of active users'
+)
+
+DATABASE_CONNECTIONS = Gauge(
+    'npay_db_connections_active',
+    'Active database connections',
+    ['database', 'shard']
+)
+```
+
+**Alerting Rules**
+
+```yaml
+# payment_rules.yml
+groups:
+  - name: payment_alerts
+    rules:
+      - alert: HighTransactionFailureRate
+        expr: rate(npay_transactions_total{status="failed"}[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'High transaction failure rate detected'
+          description: 'Transaction failure rate is {{ $value }} over the last 5 minutes'
+
+      - alert: GeofenceViolationSpike
+        expr: rate(npay_geofence_violations_total[5m]) > 10
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Unusual geofence violation activity'
+          description: 'Geofence violations: {{ $value }} per second'
+
+      - alert: DatabaseConnectionExhaustion
+        expr: npay_db_connections_active / npay_db_connections_max > 0.9
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Database connection pool nearly exhausted'
+```
+
+### Distributed Tracing
+
+**OpenTelemetry Implementation**
+
+```python
+from opentelemetry import trace
+from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+# Configure tracing
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+
+jaeger_exporter = JaegerExporter(
+    agent_host_name="jaeger-agent",
+    agent_port=6831,
+)
+
+span_processor = BatchSpanProcessor(jaeger_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+# Usage in payment processing
+async def process_payment(payment_request):
+    with tracer.start_as_current_span("process_payment") as span:
+        span.set_attribute("payment.amount", payment_request.amount)
+        span.set_attribute("payment.currency", payment_request.currency)
+
+        # Validate account
+        with tracer.start_as_current_span("validate_account"):
+            account_valid = await validate_account(payment_request.account_id)
+            span.set_attribute("account.valid", account_valid)
+
+        # Check geofence
+        with tracer.start_as_current_span("check_geofence"):
+            geofence_result = await check_geofence(
+                payment_request.user_id,
+                payment_request.location
+            )
+            span.set_attribute("geofence.status", geofence_result.status)
+
+        # Process transaction
+        with tracer.start_as_current_span("execute_transaction"):
+            result = await execute_transaction(payment_request)
+            span.set_attribute("transaction.id", result.transaction_id)
+            span.set_attribute("transaction.status", result.status)
+
+        return result
+```
+
+---
+
+## Compliance & Regulatory Framework
+
+### Multi-Jurisdiction Compliance
+
+**Regulatory Mapping**
+
+```python
+REGULATORY_REQUIREMENTS = {
+    'US': {
+        'frameworks': ['PCI_DSS', 'SOX', 'GLBA', 'FFIEC'],
+        'data_residency': 'required',
+        'encryption_standards': ['FIPS_140_2'],
+        'audit_frequency': 'annual',
+        'breach_notification': '72_hours'
+    },
+    'EU': {
+        'frameworks': ['GDPR', 'PSD2', 'EBA_Guidelines'],
+        'data_residency': 'required',
+        'encryption_standards': ['Common_Criteria'],
+        'audit_frequency': 'annual',
+        'breach_notification': '72_hours'
+    },
+    'UK': {
+        'frameworks': ['FCA_Rules', 'UK_GDPR', 'PCI_DSS'],
+        'data_residency': 'preferred',
+        'encryption_standards': ['CESG_Guidelines'],
+        'audit_frequency': 'annual',
+        'breach_notification': '72_hours'
+    }
+}
+```
+
+**Automated Compliance Monitoring**
+
+```python
+class ComplianceMonitor:
+    def __init__(self):
+        self.compliance_rules = self.load_compliance_rules()
+        self.audit_logger = AuditLogger()
+
+    async def monitor_transaction(self, transaction):
+        jurisdiction = self.determine_jurisdiction(transaction.location)
+        rules = self.compliance_rules[jurisdiction]
+
+        compliance_checks = [
+            self.check_transaction_limits(transaction, rules),
+            self.verify_kyc_status(transaction.user_id, rules),
+            self.screen_sanctions(transaction, rules),
+            self.validate_data_residency(transaction, rules)
+        ]
+
+        results = await asyncio.gather(*compliance_checks)
+
+        if not all(results):
+            await self.handle_compliance_violation(transaction, results)
+
+        await self.audit_logger.log_compliance_check(transaction, results)
+```
+
+### AML/KYC Implementation
+
+**Risk-Based Customer Due Diligence**
+
+```python
+class KYCRiskAssessment:
+    def calculate_customer_risk(self, customer_data):
+        risk_factors = {
+            'geographic_risk': self.assess_geographic_risk(customer_data.location),
+            'transaction_risk': self.assess_transaction_patterns(customer_data.transactions),
+            'identity_risk': self.assess_identity_verification(customer_data.identity),
+            'behavioral_risk': self.assess_behavioral_patterns(customer_data.behavior)
+        }
+
+        weighted_score = sum(
+            factor * weight for factor, weight in zip(
+                risk_factors.values(),
+                [0.3, 0.3, 0.25, 0.15]  # Risk factor weights
+            )
+        )
+
+        if weighted_score > 0.8:
+            return RiskLevel.HIGH
+        elif weighted_score > 0.5:
+            return RiskLevel.MEDIUM
+        else:
+            return RiskLevel.LOW
+
+    def determine_kyc_requirements(self, risk_level):
+        requirements = {
+            RiskLevel.LOW: ['basic_identity', 'address_verification'],
+            RiskLevel.MEDIUM: ['enhanced_identity', 'income_verification', 'source_of_funds'],
+            RiskLevel.HIGH: ['comprehensive_kyc', 'ongoing_monitoring', 'senior_approval']
+        }
+        return requirements[risk_level]
+```
+
+---
+
+## Implementation Phases & Timeline
+
+### Phase 1: Foundation (Months 1-3)
+
+**Core Infrastructure Setup**
+
+- Week 1-2: Kubernetes cluster setup and CI/CD pipeline
+- Week 3-4: Database sharding implementation
+- Week 5-6: Basic microservices architecture
+- Week 7-8: API gateway and service mesh
+- Week 9-10: Security framework implementation
+- Week 11-12: Basic monitoring and logging
+
+**Deliverables:**
+
+- Scalable infrastructure foundation
+- Core payment processing capability
+- Basic security and monitoring
+- Development and staging environments
+
+### Phase 2: Core Features (Months 4-6)
+
+**Payment System Implementation**
+
+- Week 13-14: Account management service
+- Week 15-16: Transaction processing engine
+- Week 17-18: Fraud detection system
+- Week 19-20: Analytics service foundation
+- Week 21-22: Basic mobile and web applications
+- Week 23-24: Integration testing and optimization
+
+**Deliverables:**
+
+- Complete payment processing system
+- Basic fraud detection
+- User-facing applications
+- Core analytics capabilities
+
+### Phase 3: Geofencing & Advanced Features (Months 7-9)
+
+**Geofencing Implementation**
+
+- Week 25-26: Location services and data pipeline
+- Week 27-28: Geofence engine and risk assessment
+- Week 29-30: Security integration and fraud prevention
+- Week 31-32: User experience features
+- Week 33-34: Merchant and offer integration
+- Week 35-36: Regulatory compliance features
+
+**Deliverables:**
+
+- Complete geofencing system
+- Location-based security features
+- Enhanced fraud prevention
+- Regulatory compliance automation
+
+### Phase 4: Scale & Optimization (Months 10-12)
+
+**Performance & Scalability**
+
+- Week 37-38: Performance optimization and load testing
+- Week 39-40: Advanced caching and database optimization
+- Week 41-42: Auto-scaling and disaster recovery
+- Week 43-44: Advanced analytics and ML models
+- Week 45-46: Overdraft services implementation
+- Week 47-48: Final testing and production deployment
+
+**Deliverables:**
+
+- Production-ready system at scale
+- Advanced ML-powered features
+- Complete disaster recovery
+- Comprehensive monitoring and alerting
+
+### Success Metrics & KPIs
+
+**Technical Performance**
+
+- Transaction processing: 15,000 TPS sustained
+- Response time: P95 < 200ms
+- System availability: 99.99%
+- Data consistency: 100% for financial transactions
+
+**Business Metrics**
+
+- User acquisition: 80M+ users by end of Phase 4
+- Transaction volume: $10B+ monthly by end of Phase 4
+- Fraud rate: < 0.1% of transaction volume
+- Customer satisfaction: > 4.5/5.0 rating
+
+**Security & Compliance**
+
+- Zero critical security incidents
+- 100% compliance with applicable regulations
+- < 72 hours for security patch deployment
+- Complete audit trail for all transactions
+
+This PRD provides a comprehensive roadmap for implementing the Npay payment system with advanced geofencing capabilities, detailed implementation guides, and a clear path to scale from 80 million to 1 billion users while maintaining the highest standards of security, performance, and regulatory compliance.

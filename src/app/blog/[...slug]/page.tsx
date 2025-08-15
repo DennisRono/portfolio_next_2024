@@ -6,13 +6,7 @@ import { siteConfig } from '@/config/site'
 import { Tag } from '@/components/tag'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import {
-  CalendarDays,
-  Clock,
-  ChevronLeft,
-  Share2,
-  ListFilter,
-} from 'lucide-react'
+import { CalendarDays, Clock, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
@@ -20,12 +14,6 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Image from 'next/image'
 import { TableOfContents } from '@/components/table-of-contents'
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from '@/components/ui/sheet'
 import Instagram from '@/assets/images/instagram.png'
 import Linkedin from '@/assets/images/linkedin.png'
 import Twitter from '@/assets/images/twitter.png'
@@ -121,77 +109,60 @@ export default async function PostPage({ params }: PostPageProps) {
               <ChevronLeft className="mr-1 h-4 w-4" />
               Back to all posts
             </Link>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <ListFilter className="h-4 w-4" />
-                  <span>Contents</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="w-[85vw] sm:max-w-md overflow-y-auto bg-black">
-                <div className="space-y-6 py-6">
-                  {tableOfContents.length !== 0 && (
-                    <div>
-                      <h3 className="font-medium text-lg mb-3">
-                        Table of Contents
-                      </h3>
-                      <TableOfContents toc={tableOfContents} />
-                    </div>
-                  )}
 
-                  {posts
-                    .filter(
-                      (p) =>
-                        p.published &&
-                        p.slugAsParams !== post.slugAsParams &&
-                        p.tags?.some((tag) => post.tags?.includes(tag))
-                    )
-                    .slice(0, 3).length > 0 && (
-                    <div className="pt-6 border-t">
-                      <h3 className="font-medium text-lg mb-3">
-                        Related Posts
-                      </h3>
-                      <div className="space-y-4">
-                        {posts
-                          .filter(
-                            (p) =>
-                              p.published &&
-                              p.slugAsParams !== post.slugAsParams &&
-                              p.tags?.some((tag) => post.tags?.includes(tag))
-                          )
-                          .slice(0, 3)
-                          .map((relatedPost) => (
-                            <div
-                              key={relatedPost.slugAsParams}
-                              className="group"
-                            >
-                              <SheetClose asChild>
-                                <Link
-                                  href={`/blog/${relatedPost.slugAsParams}`}
-                                  className="no-underline block"
-                                >
-                                  <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
-                                    {relatedPost.title}
-                                  </h4>
-                                  {relatedPost.description && (
-                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                      {relatedPost.description}
-                                    </p>
-                                  )}
-                                </Link>
-                              </SheetClose>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  )}
+            <div className="space-y-6 py-6">
+              {tableOfContents.length !== 0 && (
+                <div>
+                  <h3 className="font-medium text-lg mb-3">
+                    Table of Contents
+                  </h3>
+                  <TableOfContents toc={tableOfContents} />
                 </div>
-              </SheetContent>
-            </Sheet>
+              )}
+
+              {posts
+                .filter(
+                  (p) =>
+                    p.published &&
+                    p.slugAsParams !== post.slugAsParams &&
+                    p.tags?.some((tag) => post.tags?.includes(tag))
+                )
+                .slice(0, 3).length > 0 && (
+                <div className="pt-6 border-t">
+                  <h3 className="font-medium text-lg mb-3">Related Posts</h3>
+                  <div className="space-y-4">
+                    {posts
+                      .filter(
+                        (p) =>
+                          p.published &&
+                          p.slugAsParams !== post.slugAsParams &&
+                          p.tags?.some((tag) => post.tags?.includes(tag))
+                      )
+                      .slice(0, 3)
+                      .map((relatedPost) => (
+                        <div key={relatedPost.slugAsParams} className="group">
+                          <Link
+                            href={`/blog/${relatedPost.slugAsParams}`}
+                            className="no-underline block"
+                          >
+                            <h4 className="text-sm font-medium group-hover:text-primary transition-colors line-clamp-2">
+                              {relatedPost.title}
+                            </h4>
+                            {relatedPost.description && (
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                {relatedPost.description}
+                              </p>
+                            )}
+                          </Link>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <article className="grid grid-cols-1 gap-8">
-            {/* Main read area of the blog - full width for all screen sizes */}
             <div className="prose dark:prose-invert max-w-none">
               {post.image && (
                 <div className="mb-8 rounded-lg overflow-hidden">
@@ -262,19 +233,31 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <h3 className="text-lg font-medium">Share this article</h3>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 w-9 p-0 border-none"
+                    >
                       <div className="h-8 w-8">
                         <Image src={Twitter} alt={'twitter icon'} />
                       </div>
                       <span className="sr-only">Share on Twitter</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 w-9 p-0 border-none"
+                    >
                       <div className="h-8 w-8">
                         <Image src={Facebook} alt={'facebook icon'} />
                       </div>
                       <span className="sr-only">Share on Facebook</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9 w-9 p-0 border-none"
+                    >
                       <div className="h-8 w-8">
                         <Image src={Linkedin} alt={'Linkedin icon'} />
                       </div>
