@@ -49,26 +49,25 @@ const About = () => {
                 Background <span className="text-teal-500 text-sm">.01</span>
               </h2>
               <p className="text-lg text-gray-700 dark:text-white">
-                Hello, I am Dennis, a Software Engineer passionate about
-                building things for the internet. I recently graduated from
-                Moringa School in Kenya, where I honed my skills in software
-                development. My journey into computers began during High School
-                when I worked on a science fair project focused on web
-                development. That simple project ignited my curiosity about how
-                the internet works and gave me foundational experience in HTML
-                and CSS.
+                Hello, I’m Dennis — a Software Engineer passionate about
+                building impactful solutions for the web. My journey began at
+                Samoei Boys Secondary School, where I first got curious about
+                tech, and grew through studies at Alphax College, Machakos
+                University, and later Moringa School, where I honed my software
+                engineering skills.
                 <br />
                 <br />
-                Now, as a graduate, I am actively seeking a role where I can
-                contribute to solving software challenges and building reliable,
-                innovative solutions. I have a strong command of English and a
-                proven ability to collaborate with cross-cultural, global teams
-                effectively.
+                I’ve gained hands-on experience at the Water Resources Authority
+                and Innovex Solutions Ltd, where I worked on backend systems,
+                databases, and user-focused applications. Today, I’m also a
+                co-founder of{' '}
+                <span className="font-semibold">NBO Tech Labs</span>, where we
+                explore innovations in AI, software development, and robotics.
                 <br />
                 <br />
-                Originally from Eldoret, Kenya, I bring not only technical
-                expertise but also a dedication to continuous learning and
-                problem-solving.
+                Originally from Eldoret, Kenya, I’m driven by continuous
+                learning and problem-solving, and I’m eager to keep contributing
+                to projects that create real impact.
               </p>
             </div>
           </div>
