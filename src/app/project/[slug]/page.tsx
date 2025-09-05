@@ -100,67 +100,70 @@ export default async function ProjectPage({
   return (
     <>
       <Header />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
+      <main className="px-4 sm:px-6 lg:px-8 pt-16 pb-24">
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold my-6 mb-8 leading-tight">
-            {project.title}
-          </h1>
-
-          <div className="relative mb-8 aspect-video overflow-hidden rounded-lg shadow-md">
+          <div className="mb-8 h-min mx-auto overflow-hidden rounded-lg shadow-md">
             <Image
-              src={project.imageUrl || "/placeholder.svg"}
+              src={project.imageUrl || '/placeholder.svg'}
               alt={project.title}
-              fill
               priority
-              className="object-cover"
+              className="object-contain mx-auto"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 md:gap-8 w-full mb-6 py-2">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
-                <Image 
-                  src={ProfileImage} 
-                  alt="Dennis Kibet" 
-                  width={48} 
-                  height={48}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h3 className="font-bold text-sm md:text-base">Dennis Kibet</h3>
-              </div>
-            </div>
-            
-            <span className="border border-gray-400 rounded-sm py-1 px-3 text-sm md:text-base capitalize">
-              {project.stack_string || 'Technology'}
-            </span>
-            
-            <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
-              <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-              <span>{project.year}</span>
-            </div>
-            
-            <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
-              <Clock className="w-4 h-4 md:w-5 md:h-5" />
-              <span>{readingTime} min read</span>
-            </div>
-          </div>
-          
-          {project.docs && project.docs.length > 0 && (
-            <ProjectFiles docs={project.docs} />
-          )}
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold my-6 mb-8 leading-tight">
+              {project.title}
+            </h1>
 
-          <blockquote className="border-l-4 my-8 text-lg border-primary/50 pl-4 italic text-muted-foreground">
-            {project.preview}
-          </blockquote>
-          
-          {project_content && project_content.published && (
-            <div className="mt-8">
-              <MDXContent code={project_content.body} />
+            <div className="flex flex-wrap items-center gap-4 md:gap-8 w-full mb-6 py-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden">
+                  <Image
+                    src={ProfileImage}
+                    alt="Dennis Kibet"
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm md:text-base">
+                    Dennis Kibet
+                  </h3>
+                </div>
+              </div>
+
+              <span className="border border-gray-400 rounded-sm py-1 px-3 text-sm md:text-base capitalize">
+                {project.stack_string || 'Technology'}
+              </span>
+
+              <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
+                <Calendar className="w-4 h-4 md:w-5 md:h-5" />
+                <span>{project.year}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
+                <Clock className="w-4 h-4 md:w-5 md:h-5" />
+                <span>{readingTime} min read</span>
+              </div>
             </div>
-          )}
+
+            {project.docs && project.docs.length > 0 && (
+              <ProjectFiles docs={project.docs} />
+            )}
+
+            <blockquote className="border-l-4 my-8 text-lg border-primary/50 pl-4 italic text-muted-foreground">
+              {project.preview}
+            </blockquote>
+
+            {project_content && project_content.published && (
+              <div className="mt-8">
+                <MDXContent code={project_content.body} />
+              </div>
+            )}
+          </div>
         </article>
       </main>
       <Footer />

@@ -28,12 +28,12 @@ const Projects = ({ no, f }: { no: number; f: boolean }) => {
                 router.push(`/project/${project.slug}`)
               }}
             >
-              <div className="w-1/2">
+              <div className="w-1/4">
                 <div className="h-28 overflow-hidden rounded-[5px] border-4 border-slate-400">
                   <Image
                     src={project.imageUrl}
-                    alt="nullchemy shop"
-                    className="h-full w-full object-cover"
+                    alt={project.title}
+                    className="h-full w-full object-contain"
                   />
                 </div>
               </div>
