@@ -5,7 +5,7 @@ import NPay from '@/assets/images/npay_landing.png'
 import NAnalytics from '@/assets/images/analytics.png'
 import NullEMS from '@/assets/images/nems-dash.png'
 import WenotiFy from '@/assets/images/wenotify.png'
-import TenAfriq from '@/assets/images/tenafriq-landing-page.png'
+import NBOTechLabs from '@/assets/images/tenafriq-landing-page.png'
 import BebeWa from '@/assets/images/bebewa-dash.png'
 import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
 import ApS from '@/assets/images/aps-homepage.png'
@@ -26,10 +26,10 @@ const projects = [
       'Pydantic',
       'Microservice'
     ],
-    title: 'TQ-ERP',
+    title: 'TQ-ANALYTICS',
     preview:
-      'TQ-ERP is a comprehensive business management platform built for the distributed workplace. It streamlines operations across finance, HR, inventory, sales, and more with real-time analytics, automation, and 100+ integrations. Flexible deployment options and pricing plans make it ideal for businesses of all sizes.',
-    slug: 'tq-erp',
+      'TQ-ANALYTICS is a comprehensive business management platform built for the distributed workplace. It streamlines operations across finance, HR, inventory, sales, and more with real-time analytics, automation, and 100+ integrations. Flexible deployment options and pricing plans make it ideal for businesses of all sizes.',
+    slug: 'tq-analytics',
     external_url:
       'https://tq.tenafriq.com/login?username=demo@gmail.com&email=DemoPass123',
     made_at: 'NBO Tech Labs',
@@ -38,18 +38,18 @@ const projects = [
     docs: [
       {
         type: 'pdf',
-        path: '/pdf/tq-erp-report.pdf',
-        file_name: 'tq-erp-report.pdf',
+        path: '/pdf/tq-analytics-report.pdf',
+        file_name: 'tq-analytics-report.pdf',
       },
       {
         type: 'docx',
-        path: '/docs/tq-erp.docx',
-        file_name: 'tq-erp.docx',
+        path: '/docs/tq-analytics.docx',
+        file_name: 'tq-analytics.docx',
       },
       {
         type: 'pptx',
-        path: '/docs/tq-erp.pptx',
-        file_name: 'tq-erp.pptx',
+        path: '/docs/tq-analytics.pptx',
+        file_name: 'tq-analytics.pptx',
       },
     ],
   },
@@ -129,14 +129,14 @@ const projects = [
   },
   {
     id: 7,
-    imageUrl: TenAfriq,
+    imageUrl: NBOTechLabs,
     stack_string: 'Next.js/Postgres/Prisma',
     stack: ['Next.js', 'Postgres', 'Prisma'],
-    title: 'Tenafriq',
+    title: 'NBO Tech Labs',
     preview:
-      'Tenafriq is a leading provider of AI-powered solutions, specializing in software development and robotics integration. With a mission to revolutionize industries, Tenafriq delivers innovative technologies that drive efficiency, growth, and competitive advantage for businesses across Africa. The platform represents the forefront of digital transformation in the region.',
-    slug: 'tenafriq',
-    external_url: 'https://tenafriq.com',
+      'NBO Tech Labs is a leading provider of AI-powered solutions, specializing in software development and robotics integration. With a mission to revolutionize industries, Tenafriq delivers innovative technologies that drive efficiency, growth, and competitive advantage for businesses across Africa. The platform represents the forefront of digital transformation in the region.',
+    slug: 'nbotechlabs',
+    external_url: 'https://nbotechlabs.com/',
     made_at: 'Freelance (After School)',
     year: '2025',
     client: 'Freelance Client',
