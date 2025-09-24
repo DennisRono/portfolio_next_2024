@@ -2,4 +2,50 @@
 published: true
 ---
 
-Activation functions are a fundamental component of neural networks, introducing non-linearities that enable the modeling of complex patterns. This guide provides an extensive overview of various activation functions, their characteristics, and practical Python code examples to illustrate their implementation.
+Mental health is one of those topics that everyone acknowledges is important, yet in many parts of the world—including Kenya—it often doesn’t get the attention or resources it deserves. According to the World Health Organization, more than 4 million people in Kenya are living with some form of mental disorder, and about 10% of the population is affected. Despite this, access to professional care is still limited. Stigma, high costs, and a shortage of mental health professionals often leave people struggling in silence. That gap in accessibility is what inspired me to create **WeCare**, an AI-powered chatbot designed to detect signs of depression and suicidal intent while offering timely support and resources.
+
+#### The Problem I Set Out to Solve
+
+I started with a very simple question: *What if technology could provide someone with help in the exact moment they needed it?* In Kenya, where smartphones are widespread, young people often turn to the internet when they feel overwhelmed. Unfortunately, online spaces can sometimes make things worse rather than better. I wanted to see whether a chatbot, available 24/7, could become a safe space—one that not only listens but also understands and responds appropriately when someone expresses distress.
+
+The challenge, of course, was creating a system that could reliably detect suicidal language and differentiate between ordinary conversations and high-risk ones. Humans can do this through intuition and empathy, but machines need structured data, models, and training. That’s where machine learning and natural language processing (NLP) came in.
+
+#### Building the Solution
+
+The core of WeCare is built on **ELECTRA**, a transformer-based machine learning model released by Google. I evaluated other approaches too—Convolutional Neural Networks (CNNs), LSTMs, and even BERT—but ELECTRA stood out for its efficiency and accuracy in handling text classification tasks. It uses a clever method called *Replaced Token Detection* to learn language patterns faster and with less computational power, making it ideal for this project.
+
+For training, I used a dataset of over 230,000 posts collected from Reddit. Posts from the “SuicideWatch” subreddit were labeled as suicidal, while posts from the “teenagers” subreddit were labeled as non-suicidal. After cleaning and preprocessing the data (removing noise like URLs, numbers, emojis, and repeated characters), I trained the model to classify messages into two categories: **suicidal** or **non-suicidal**. I focused on evaluation metrics like precision, recall, and F1-score to minimize false negatives, since missing a suicidal intent could be critical.
+
+Once the suicidal detection model was ready, I integrated it into a chatbot system. For normal conversations, the chatbot uses **DialogGPT** to generate human-like, empathetic responses. But when suicidal intent is detected, the tone shifts—the chatbot provides comforting support and shares helpline numbers or resources for professional help.
+
+#### Technical Implementation
+
+The full system was designed with scalability and accessibility in mind. The backend was built using **Python Flask**, which handles API requests and integrates directly with the machine learning model. The **frontend** is powered by **React with TypeScript**, ensuring a smooth, responsive user interface for web users. For mobile, I implemented a **Flutter** version to make WeCare accessible on smartphones. All conversations are stored securely in **MongoDB**, giving the system the ability to track interactions and improve responses over time.
+
+I followed an **Agile methodology** throughout the development process, iterating through design, training, integration, and testing in short cycles. This allowed me to refine the chatbot continuously based on feedback and performance metrics.
+
+#### Overcoming Challenges
+
+Like any meaningful project, WeCare came with its fair share of challenges. The dataset, while large, wasn’t perfect—it was mostly in English and lacked cultural nuances specific to Kenya. Training such a large model was also compute-intensive, and with limited hardware, I had to make trade-offs in terms of speed and accuracy. Another issue was balancing sensitivity and false positives; sometimes the chatbot might over-flag non-suicidal messages, which could frustrate users.
+
+Still, even with these limitations, the model performed impressively well in testing. It consistently recognized suicidal language and provided supportive responses, proving the concept that AI-driven tools can be valuable in suicide prevention.
+
+#### Why This Project Matters
+
+What excites me most about WeCare isn’t just the technical achievement—it’s the **human impact**. A chatbot will never replace a trained therapist, but it can provide something almost equally important: accessibility. WeCare is always available, stigma-free, and judgment-free. Someone who might hesitate to reach out to a counselor or even a friend can still talk to the chatbot, receive emotional support, and be guided toward professional resources if needed.
+
+It’s also about **destigmatizing conversations around mental health**. When people see that technology can normalize discussions about depression and suicide, it encourages a culture where asking for help isn’t seen as weakness. In a country where suicide is still shrouded in silence, that cultural shift could save lives.
+
+#### Future Directions
+
+WeCare is just the beginning. There are several areas I’d love to expand on in the future:
+
+* **Multilingual support:** Right now, the chatbot only works in English. Adding Swahili and other local languages would make it far more inclusive.
+* **Emoji and context detection:** Emojis often carry emotional weight, and teaching the model to interpret them could improve accuracy.
+* **Scalability:** Hosting the model on distributed servers with load balancing would allow it to handle many users simultaneously.
+* **Integration with real services:** Imagine if WeCare could connect users directly to mental health professionals or hotlines within their region.
+
+#### Final Thoughts
+
+When I look back at this project, what stands out most is how much it reinforced the idea that technology isn’t just about code, algorithms, or interfaces—it’s about **people**. WeCare was born out of a desire to use my technical skills to address a deeply human problem. While it’s not a perfect solution, it represents hope: the hope that even in moments of despair, help can be just a message away.
+
