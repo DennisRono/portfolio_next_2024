@@ -75,7 +75,7 @@ const posts = defineCollection({
       ...computedFields(data),
       files: data.files.map((path) => {
         const match = path.match(/([^/\\]+)\.([^.]+)$/)
-        const file_name = match ? match[1] : path
+        const file_name = (match ? match[1] : path).replace(/[^a-zA-Z0-9\s.-]/g, '').replace(/[_-]+/g, ' ').trim()
         const ext = match ? match[2].toLowerCase() : 'unknown'
 
         return {

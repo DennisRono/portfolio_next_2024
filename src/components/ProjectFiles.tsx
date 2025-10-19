@@ -122,7 +122,7 @@ export default function ProjectFiles({ docs }: { docs: DocType[] }) {
                           <div className="opacity-80 group-hover:opacity-100 transition-opacity flex-shrink-0" title='Download'>
                             <DownloadButton
                               url={doc.path}
-                              filename={doc.file_name}
+                              filename={`${doc.file_name}.${doc.type}`}
                               label=""
                               loadingLabel=""
                               className="h-5 w-5 p-0 text-foreground hover:text-primary"
