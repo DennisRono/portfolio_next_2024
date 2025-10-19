@@ -33,6 +33,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "github-slugger": "^2.0.0",
+    "ioredis": "^5.8.1",
     "katex": "^0.16.21",
     "lucide-react": "^0.400.0",
     "next": "14.2.4",

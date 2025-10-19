@@ -73,7 +73,7 @@ export default function AnalyticsDashboard() {
       setVisitors(data.visitors)
       setLoading(false)
     } catch (error) {
-      console.error('[v0] Failed to fetch analytics:', error)
+      console.error('Failed to fetch analytics:', error)
     }
   }
 

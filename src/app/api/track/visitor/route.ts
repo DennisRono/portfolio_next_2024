@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
-    console.error("[v0] Visitor tracking error:", error)
+    console.error("Visitor tracking error:", error)
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

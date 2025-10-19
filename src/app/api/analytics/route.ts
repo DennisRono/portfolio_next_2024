@@ -13,7 +13,7 @@ export async function GET() {
       pages: allPages,
     })
   } catch (error) {
-    console.error("[v0] Analytics error:", error)
+    console.error("Analytics error:", error)
     return NextResponse.json({ error: "Failed to fetch analytics" }, { status: 500 })
   }
 }

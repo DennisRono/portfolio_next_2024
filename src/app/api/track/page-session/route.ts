@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
-    console.error("[v0] Page session tracking error:", error)
+    console.error("Page session tracking error:", error)
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }
