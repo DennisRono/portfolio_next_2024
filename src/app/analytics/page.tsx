@@ -61,7 +61,7 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     fetchAnalytics()
-    const interval = setInterval(fetchAnalytics, 5000) // Refresh every 5 seconds
+    const interval = setInterval(fetchAnalytics, 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -69,11 +69,16 @@ export default function AnalyticsDashboard() {
     try {
       const response = await fetch('/api/analytics')
       const data = await response.json()
-      setAnalytics(data.analytics)
-      setVisitors(data.visitors)
+
+      const safeAnalytics = data?.analytics ?? null
+      const safeVisitors = Array.isArray(data?.visitors) ? data.visitors : []
+
+      setAnalytics(safeAnalytics)
+      setVisitors(safeVisitors)
       setLoading(false)
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
+      setLoading(false)
     }
   }
 
@@ -95,33 +100,47 @@ export default function AnalyticsDashboard() {
     )
   }
 
-  const browserData = Object.entries(analytics.browsers).map(
+  // Defensive data mapping
+  const browserData = Object.entries(analytics?.browsers ?? {}).map(
     ([name, count]) => ({
       name,
-      value: count,
+      value: count ?? 0,
     })
   )
 
-  const osData = Object.entries(analytics.oses).map(([name, count]) => ({
+  const osData = Object.entries(analytics?.oses ?? {}).map(([name, count]) => ({
     name,
-    value: count,
+    value: count ?? 0,
   }))
 
-  const deviceData = Object.entries(analytics.devices).map(([name, count]) => ({
-    name,
-    value: count,
+  const deviceData = Object.entries(analytics?.devices ?? {}).map(
+    ([name, count]) => ({
+      name,
+      value: count ?? 0,
+    })
+  )
+
+  const utmData = Object.entries(analytics?.utmSources ?? {}).map(
+    ([name, count]) => ({
+      name,
+      value: count ?? 0,
+    })
+  )
+
+  const pageArray = Array.isArray(analytics?.pages) ? analytics.pages : []
+  const pageData = pageArray.map((p) => ({
+    page: p?.page || '/',
+    sessions: p?.sessions ?? 0,
+    visitors: p?.uniqueVisitors ?? 0,
   }))
 
-  const utmData = Object.entries(analytics.utmSources).map(([name, count]) => ({
-    name,
-    value: count,
-  }))
+  const totalVisitors = analytics?.totalVisitors ?? 0
+  const totalSessions = analytics?.totalSessions ?? 0
+  const pagesCount = pageArray.length
+  const avgSessionsPerVisitor =
+    totalVisitors > 0 ? (totalSessions / totalVisitors).toFixed(2) : '0.00'
 
-  const pageData = analytics.pages.map((p) => ({
-    page: p.page || '/',
-    sessions: p.sessions,
-    visitors: p.uniqueVisitors,
-  }))
+  const visitorsArray = Array.isArray(visitors) ? visitors : []
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -145,9 +164,7 @@ export default function AnalyticsDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
-                {analytics.totalVisitors}
-              </div>
+              <div className="text-3xl font-bold">{totalVisitors}</div>
             </CardContent>
           </Card>
 
@@ -158,9 +175,7 @@ export default function AnalyticsDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
-                {analytics.totalSessions}
-              </div>
+              <div className="text-3xl font-bold">{totalSessions}</div>
             </CardContent>
           </Card>
 
@@ -171,7 +186,7 @@ export default function AnalyticsDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{analytics.pages.length}</div>
+              <div className="text-3xl font-bold">{pagesCount}</div>
             </CardContent>
           </Card>
 
@@ -182,13 +197,7 @@ export default function AnalyticsDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">
-                {analytics.totalVisitors > 0
-                  ? (analytics.totalSessions / analytics.totalVisitors).toFixed(
-                      2
-                    )
-                  : 0}
-              </div>
+              <div className="text-3xl font-bold">{avgSessionsPerVisitor}</div>
             </CardContent>
           </Card>
         </div>
@@ -320,7 +329,7 @@ export default function AnalyticsDashboard() {
           </Card>
 
           {/* UTM Sources */}
-          {utmData.length > 0 && (
+          {(utmData?.length ?? 0) > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Traffic Sources (UTM)</CardTitle>
@@ -356,18 +365,19 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {visitors.slice(0, 10).map((visitor) => (
+                {visitorsArray.slice(0, 10).map((visitor) => (
                   <div
-                    key={visitor.visitorId}
+                    key={visitor?.visitorId ?? Math.random().toString()}
                     className="p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
                     onClick={() => setSelectedVisitor(visitor)}
                   >
                     <div className="font-mono text-sm text-foreground truncate">
-                      {visitor.visitorId}
+                      {visitor?.visitorId ?? 'Unknown Visitor'}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      {visitor.data.browser} on {visitor.data.os} •{' '}
-                      {visitor.data.deviceType}
+                      {visitor?.data?.browser ?? 'Unknown'} on{' '}
+                      {visitor?.data?.os ?? 'Unknown'} •{' '}
+                      {visitor?.data?.deviceType ?? 'Unknown'}
                     </div>
                   </div>
                 ))}
@@ -383,21 +393,22 @@ export default function AnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {analytics.pages
-                  .sort((a, b) => b.sessions - a.sessions)
+                {pageArray
+                  .slice()
+                  .sort((a, b) => (b?.sessions ?? 0) - (a?.sessions ?? 0))
                   .slice(0, 10)
                   .map((page) => (
                     <div
-                      key={page.page}
+                      key={page?.page ?? Math.random().toString()}
                       className="p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-                      onClick={() => setSelectedPage(page.page)}
+                      onClick={() => setSelectedPage(page?.page ?? null)}
                     >
                       <div className="font-mono text-sm text-foreground truncate">
-                        {page.page || '/'}
+                        {page?.page || '/'}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        {page.sessions} sessions • {page.uniqueVisitors} unique
-                        visitors
+                        {page?.sessions ?? 0} sessions •{' '}
+                        {page?.uniqueVisitors ?? 0} unique visitors
                       </div>
                     </div>
                   ))}
@@ -409,7 +420,7 @@ export default function AnalyticsDashboard() {
         {/* Visitor Details Modal */}
         {selectedVisitor && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="w-full max-w-2xl max-h-96 overflow-y-auto">
+            <Card className="w-full max-w-2xl max-h-96 overflow-y-auto relative">
               <CardHeader>
                 <CardTitle>Visitor Details</CardTitle>
                 <button
@@ -421,16 +432,18 @@ export default function AnalyticsDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  {Object.entries(selectedVisitor.data).map(([key, value]) => (
-                    <div key={key}>
-                      <div className="font-semibold text-muted-foreground capitalize">
-                        {key.replace(/([A-Z])/g, ' $1')}
+                  {Object.entries(selectedVisitor?.data ?? {}).map(
+                    ([key, value]) => (
+                      <div key={key}>
+                        <div className="font-semibold text-muted-foreground capitalize">
+                          {key.replace(/([A-Z])/g, ' $1')}
+                        </div>
+                        <div className="text-foreground break-words">
+                          {String(value)}
+                        </div>
                       </div>
-                      <div className="text-foreground break-words">
-                        {String(value)}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </CardContent>
             </Card>
