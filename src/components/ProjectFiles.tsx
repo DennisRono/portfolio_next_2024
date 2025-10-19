@@ -44,8 +44,12 @@ export default function ProjectFiles({ docs }: { docs: DocType[] }) {
     return colorMap[ext] || 'bg-gray-100 text-gray-700 border-gray-200'
   }
 
+  if (docs.length === 0) {
+    return null
+  }
+
   return (
-    <div className="my-8 border rounded-lg p-4 bg-card">
+    <div className="my-8 border border-gray-500 rounded-lg p-4 bg-card">
       <h3 className="text-xl font-semibold mb-4">Files</h3>
 
       {Object.entries(groupedDocs).length > 0 ? (
@@ -66,7 +70,7 @@ export default function ProjectFiles({ docs }: { docs: DocType[] }) {
                   {typeDocs.map((doc) => (
                     <div
                       key={doc.file_name}
-                      className="flex items-center p-3 rounded-md border bg-background hover:bg-accent/50 transition-colors"
+                      className="flex items-center p-3 rounded-md border border-gray-500 bg-background hover:bg-accent/50 transition-colors"
                     >
                       <div className="flex-1 min-w-0 mr-4">
                         <div className="flex items-center gap-2">

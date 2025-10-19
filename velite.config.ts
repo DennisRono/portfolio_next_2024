@@ -4,13 +4,57 @@ import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeToc from '@stefanprobst/rehype-extract-toc'
 import rehypeTocExtract from '@stefanprobst/rehype-extract-toc/mdx'
-import remarkMath from "remark-math"
-import rehypeKatex from "rehype-katex"
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 
 const computedFields = <T extends { slug: string }>(data: T) => ({
   ...data,
   slugAsParams: data.slug.split('/').slice(1).join('/'),
 })
+
+const fileExtensions = [
+  'pdf',
+  'docx',
+  'doc',
+  'txt',
+  'md',
+  'rtf',
+  'csv',
+  'xlsx',
+  'xls',
+  'ods',
+  'pptx',
+  'ppt',
+  'odp',
+  'html',
+  'json',
+  'xml',
+  'yaml',
+  'yml',
+  'jpg',
+  'jpeg',
+  'png',
+  'gif',
+  'svg',
+  'webp',
+  'zip',
+  'rar',
+  'tar',
+  '7z',
+  'mp3',
+  'wav',
+  'mp4',
+  'mov',
+  'avi',
+] as const
+
+type FileExtension = (typeof fileExtensions)[number]
+
+export interface DocType {
+  type: FileExtension
+  path: string
+  file_name: string
+}
 
 const posts = defineCollection({
   name: 'Post',
@@ -24,9 +68,25 @@ const posts = defineCollection({
       date: s.isodate(),
       published: s.boolean().default(true),
       tags: s.array(s.string()).optional(),
+      files: s.array(s.string()).optional().default([]),
       body: s.mdx(),
     })
-    .transform(computedFields),
+    .transform((data) => ({
+      ...computedFields(data),
+      files: data.files.map((path) => {
+        const match = path.match(/([^/\\]+)\.([^.]+)$/)
+        const file_name = match ? match[1] : path
+        const ext = match ? match[2].toLowerCase() : 'unknown'
+
+        return {
+          type: fileExtensions.includes(ext as FileExtension)
+            ? (ext as FileExtension)
+            : ('unknown' as any),
+          path: '/docs/blog/' + path,
+          file_name,
+        } as DocType
+      }),
+    })),
 })
 
 const my_projects = defineCollection({
@@ -80,8 +140,8 @@ export default defineConfig({
       ],
       rehypeToc,
       [rehypeTocExtract, { name: 'toc' }],
-      rehypeKatex
+      rehypeKatex,
     ],
-    remarkPlugins: [remarkMath,],
+    remarkPlugins: [remarkMath],
   },
 })

@@ -186,15 +186,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
               <Separator className="my-4" />
 
-              <ProjectFiles
-                docs={[
-                  {
-                    type: 'pdf',
-                    path: '/pdf/blog/Artificial-Intelligence-and-Machine-Learning.pdf',
-                    file_name: 'Artificial-Intelligence-and-Machine-Learning.pdf',
-                  },
-                ]}
-              />
+              <ProjectFiles docs={post.files} />
 
               <Separator className="my-4" />
 
