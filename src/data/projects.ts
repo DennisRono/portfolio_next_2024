@@ -11,8 +11,9 @@ import ShopYangu from '@/assets/images/shop-yangu-landing-page.png'
 import ApS from '@/assets/images/aps-homepage.png'
 import LinkedInClone from '@/assets/images/linkedin-clone.png'
 import NullChemy from '@/assets/images/nullchemy.png'
+import { ProjectType } from '@/interfaces'
 
-const projects = [
+const projects: ProjectType[] = [
   {
     id: 0,
     imageUrl: TqErp,

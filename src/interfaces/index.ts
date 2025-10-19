@@ -17,8 +17,41 @@ interface ListAction {
   comment: string
 }
 
-interface DocType {
-  type: string
+export interface DocType {
+  type:
+    | 'pdf'
+    | 'docx'
+    | 'doc'
+    | 'txt'
+    | 'md'
+    | 'rtf'
+    | 'csv'
+    | 'xlsx'
+    | 'xls'
+    | 'ods'
+    | 'pptx'
+    | 'ppt'
+    | 'odp'
+    | 'html'
+    | 'json'
+    | 'xml'
+    | 'yaml'
+    | 'yml'
+    | 'jpg'
+    | 'jpeg'
+    | 'png'
+    | 'gif'
+    | 'svg'
+    | 'webp'
+    | 'zip'
+    | 'rar'
+    | 'tar'
+    | '7z'
+    | 'mp3'
+    | 'wav'
+    | 'mp4'
+    | 'mov'
+    | 'avi'
   path: string
   file_name: string
 }

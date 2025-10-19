@@ -8,15 +8,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import DownloadButton from '@/components/DownloadButton'
 import { Folder } from 'lucide-react'
+import { DocType } from '@/interfaces'
 
-interface DocState {
-  type: string
-  path: string
-  file_name: string
-}
-
-export default function ProjectFiles({ docs }: { docs: DocState[] }) {
-  // Group files by type
+export default function ProjectFiles({ docs }: { docs: DocType[] }) {
   const groupedDocs = docs.reduce((acc, doc) => {
     const type = doc.type || 'Other'
     if (!acc[type]) {
@@ -24,14 +18,12 @@ export default function ProjectFiles({ docs }: { docs: DocState[] }) {
     }
     acc[type].push(doc)
     return acc
-  }, {} as Record<string, DocState[]>)
+  }, {} as Record<string, DocType[]>)
 
-  // Get file extension
   const getFileExtension = (filename: string) => {
     return filename.split('.').pop()?.toUpperCase() || ''
   }
 
-  // Get file icon color based on type
   const getFileColor = (filename: string) => {
     const ext = getFileExtension(filename).toLowerCase()
     const colorMap: Record<string, string> = {
@@ -54,12 +46,12 @@ export default function ProjectFiles({ docs }: { docs: DocState[] }) {
 
   return (
     <div className="my-8 border rounded-lg p-4 bg-card">
-      <h3 className="text-xl font-semibold mb-4">Project Files</h3>
+      <h3 className="text-xl font-semibold mb-4">Files</h3>
 
       {Object.entries(groupedDocs).length > 0 ? (
         <Accordion type="single" collapsible className="w-full">
           {Object.entries(groupedDocs).map(([type, typeDocs]) => (
-            <AccordionItem key={type} value={type} className='!border-none'>
+            <AccordionItem key={type} value={type} className="!border-none">
               <AccordionTrigger className="text-base font-medium hover:no-underline py-3">
                 <div className="flex items-center gap-2">
                   <Folder />

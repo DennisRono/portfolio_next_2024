@@ -18,6 +18,7 @@ import Instagram from '@/assets/images/instagram.png'
 import Linkedin from '@/assets/images/linkedin.png'
 import Twitter from '@/assets/images/twitter.png'
 import Facebook from '@/assets/images/facebook.png'
+import ProjectFiles from '@/components/ProjectFiles'
 
 interface PostPageProps {
   params: {
@@ -183,7 +184,19 @@ export default async function PostPage({ params }: PostPageProps) {
                 </div>
               </div>
 
-              <Separator className="my-8" />
+              <Separator className="my-4" />
+
+              <ProjectFiles
+                docs={[
+                  {
+                    type: 'pdf',
+                    path: '/pdf/blog/Artificial-Intelligence-and-Machine-Learning.pdf',
+                    file_name: 'Artificial-Intelligence-and-Machine-Learning.pdf',
+                  },
+                ]}
+              />
+
+              <Separator className="my-4" />
 
               <div className="mdx-content overflow-hidden">
                 <MDXContent code={post.body} />

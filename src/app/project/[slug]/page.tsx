@@ -10,7 +10,7 @@ import { ProjectType } from '@/interfaces'
 import ProfileImage from '@/assets/images/profile.png'
 import { my_projects } from '#site/content'
 import { MDXContent } from '@/components/mdx-components'
-import ProjectFiles from './ProjectFiles'
+import ProjectFiles from '@/components/ProjectFiles'
 import { notFound } from 'next/navigation'
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL || 'https://denniskibet.com'

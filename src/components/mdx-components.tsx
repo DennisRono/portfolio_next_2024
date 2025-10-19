@@ -18,16 +18,19 @@ const components = {
   Image,
   Callout,
   h1: (props: any) => (
-    <h1 className="text-2xl font-bold font-apercu mb-2 scroll-mt-20" {...props} />
+    <h1 className="text-2xl font-bold font-volte-rounded-semibold mb-2 scroll-mt-20" {...props} />
   ),
   h2: (props: any) => (
-    <h2 className="text-2xl font-bold font-apercu mb-2 scroll-mt-20" {...props} />
+    <h2 className="text-2xl font-bold font-volte-rounded-semibold mb-2 scroll-mt-20" {...props} />
   ),
   h3: (props: any) => (
-    <h3 className="text-2xl font-bold font-apercu mb-2 scroll-mt-20" {...props} />
+    <h3 className="text-2xl font-bold !font-volte-rounded-semibold mb-2 scroll-mt-20" {...props} />
   ),
   h4: (props: any) => (
-    <h4 className="text-2xl font-bold font-apercu mb-2 scroll-mt-20" {...props} />
+    <h4 className="text-2xl font-bold font-volte-rounded-semibold mb-2 scroll-mt-20" {...props} />
+  ),
+  strong: (props: any) => (
+    <strong className="font-bold font-volte-rounded-semibold" {...props} />
   ),
   table: (props: any) => <table className="table-auto w-full" {...props} />,
   th: (props: any) => <th className="px-4 py-2" {...props} />,
