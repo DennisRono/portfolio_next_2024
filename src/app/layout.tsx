@@ -4,6 +4,7 @@ import '@/styles/output.scss'
 import 'katex/dist/katex.min.css'
 import { Toaster } from '@/components/ui/toaster'
 import Script from 'next/script'
+import { VisitorTrackingProvider } from '@/contexts/visitor-tracking'
 
 const title = 'Dennis Kibet Rono'
 const description = `${title} is a software engineer with more than five years of experience. He has worked on nullchemy group softwares, NBO Tech Labs and many more. He is a graduate of Machakos University and Moringa School`
@@ -194,10 +195,26 @@ export default function RootLayout({
                 'Backend Development',
                 'Machine Learning',
                 'Artificial Intelligence',
-                "digital solutions", "IT consulting", "Agile software development", "cloud architecture"
+                'digital solutions',
+                'IT consulting',
+                'Agile software development',
+                'cloud architecture',
               ],
               description: description,
-              skills: ["JavaScript", "Next.js", "React", "Node.js", "TypeScript", "UX", "FastAPI", "Django", "React Native", "Flutter", "Python", "TailwindCSS"]
+              skills: [
+                'JavaScript',
+                'Next.js',
+                'React',
+                'Node.js',
+                'TypeScript',
+                'UX',
+                'FastAPI',
+                'Django',
+                'React Native',
+                'Flutter',
+                'Python',
+                'TailwindCSS',
+              ],
             }),
           }}
         />
@@ -205,68 +222,224 @@ export default function RootLayout({
         <Script
           id="schema-org"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ 
-            __html: JSON.stringify({ 
-              "@context": "https://schema.org", 
-              "@type": "BreadcrumbList",
-              "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://denniskibet.com/" },
-                { "@type": "ListItem", "position": 2, "name": "Resume", "item": "https://denniskibet.com/resume" },
-                { "@type": "ListItem", "position": 3, "name": "Projects", "item": "https://denniskibet.com/projects" },
-                { "@type": "ListItem", "position": 4, "name": "Blog - Foundations of Code (Specialized LLMs)", "item": "https://denniskibet.com/blog/01-foundations-of-code-specialized-llms" },
-                { "@type": "ListItem", "position": 5, "name": "Comprehensive Guide to Activation Functions in Neural Networks", "item": "https://denniskibet.com/blog/comprehensive-guide-to-activation-functions-in-neural-networks" },
-                { "@type": "ListItem", "position": 6, "name": "Comprehensive Guide to Modern Machine Learning (2025)", "item": "https://denniskibet.com/blog/comprehensive-guide-to-modern-machine-learning-2025" },
-                { "@type": "ListItem", "position": 7, "name": "Deploying Express + AWS EC2 + Nginx", "item": "https://denniskibet.com/blog/deploying-express-aws-ec2-nginx" },
-                { "@type": "ListItem", "position": 8, "name": "Designing Models for PCB Design", "item": "https://denniskibet.com/blog/designing-models-for-pcb-design" },
-                { "@type": "ListItem", "position": 9, "name": "Dynamic Sitemaps with Next.js 14", "item": "https://denniskibet.com/blog/dynamic-sitemaps-with-nextjs-14" },
-                { "@type": "ListItem", "position": 10, "name": "Essential Data Cleaning and Preprocessing Guide", "item": "https://denniskibet.com/blog/essential-data-cleaning-and-preprocessing-guide" },
-                { "@type": "ListItem", "position": 11, "name": "Farm Management System (CLI)", "item": "https://denniskibet.com/blog/farm-management-system-cli" },
-                { "@type": "ListItem", "position": 12, "name": "From Idea to Product (Sit-Stand Desk)", "item": "https://denniskibet.com/blog/from-idea-to-product-sit-stand-desk" },
-                { "@type": "ListItem", "position": 13, "name": "Image Upload to Cloudinary in React", "item": "https://denniskibet.com/blog/image-upload-to-cloudinary-in-react" },
-                { "@type": "ListItem", "position": 14, "name": "Introduction to Javascript", "item": "https://denniskibet.com/blog/introduction-to-javascript" },
-                { "@type": "ListItem", "position": 15, "name": "Latest Advancements in Neural Network Technologies", "item": "https://denniskibet.com/blog/latest-advishments-in-neural-network-technologies" },
-                { "@type": "ListItem", "position": 16, "name": "Private Routes in React JS", "item": "https://denniskibet.com/blog/private-routes-in-react-js" },
-                { "@type": "ListItem", "position": 17, "name": "Quest for Artificial General Intelligence", "item": "https://denniskibet.com/blog/quest-for-artificial-general-intelligence" },
-                { "@type": "ListItem", "position": 18, "name": "State Management with Redux in Next.js 14", "item": "https://denniskibet.com/blog/state-management-with-redux-in-nextjs-14" },
-                { "@type": "ListItem", "position": 19, "name": "Vim Shortcuts (VSCode Efficiency)", "item": "https://denniskibet.com/blog/vim-shortcuts-vscode-efficiency" },
-                { "@type": "ListItem", "position": 20, "name": "We Care", "item": "https://denniskibet.com/project/wecare" },
-                { "@type": "ListItem", "position": 21, "name": "Nullchemy Shop", "item": "https://denniskibet.com/project/nullchemy-shop" },
-                { "@type": "ListItem", "position": 22, "name": "Null EMS", "item": "https://denniskibet.com/project/null-ems" },
-                { "@type": "ListItem", "position": 23, "name": "WeNotify Kenya", "item": "https://denniskibet.com/project/wenotify-kenya" },
-                { "@type": "ListItem", "position": 24, "name": "Tenafriq", "item": "https://denniskibet.com/project/tenafriq" },
-                { "@type": "ListItem", "position": 25, "name": "Bebewa Logistics", "item": "https://denniskibet.com/project/bebewa-logistics" },
-                { "@type": "ListItem", "position": 26, "name": "Shop Yangu", "item": "https://denniskibet.com/project/shop-yangu" },
-                { "@type": "ListItem", "position": 27, "name": "Aerial Properties Solutions Limited", "item": "https://denniskibet.com/project/aerial-properties-solutions-limited" },
-                { "@type": "ListItem", "position": 28, "name": "LinkedIn Clone", "item": "https://denniskibet.com/project/linkedin-clone" },
-                { "@type": "ListItem", "position": 29, "name": "Nullchemy", "item": "https://denniskibet.com/project/nullchemy" },
-                { "@type": "ListItem", "position": 30, "name": "Npay", "item": "https://denniskibet.com/project/npay" },
-                { "@type": "ListItem", "position": 31, "name": "N-Analytics", "item": "https://denniskibet.com/project/n-analytics" }
-              ]
-            })
-          }} 
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'Home',
+                  item: 'https://denniskibet.com/',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: 'Resume',
+                  item: 'https://denniskibet.com/resume',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: 'Projects',
+                  item: 'https://denniskibet.com/projects',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 4,
+                  name: 'Blog - Foundations of Code (Specialized LLMs)',
+                  item: 'https://denniskibet.com/blog/01-foundations-of-code-specialized-llms',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 5,
+                  name: 'Comprehensive Guide to Activation Functions in Neural Networks',
+                  item: 'https://denniskibet.com/blog/comprehensive-guide-to-activation-functions-in-neural-networks',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 6,
+                  name: 'Comprehensive Guide to Modern Machine Learning (2025)',
+                  item: 'https://denniskibet.com/blog/comprehensive-guide-to-modern-machine-learning-2025',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 7,
+                  name: 'Deploying Express + AWS EC2 + Nginx',
+                  item: 'https://denniskibet.com/blog/deploying-express-aws-ec2-nginx',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 8,
+                  name: 'Designing Models for PCB Design',
+                  item: 'https://denniskibet.com/blog/designing-models-for-pcb-design',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 9,
+                  name: 'Dynamic Sitemaps with Next.js 14',
+                  item: 'https://denniskibet.com/blog/dynamic-sitemaps-with-nextjs-14',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 10,
+                  name: 'Essential Data Cleaning and Preprocessing Guide',
+                  item: 'https://denniskibet.com/blog/essential-data-cleaning-and-preprocessing-guide',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 11,
+                  name: 'Farm Management System (CLI)',
+                  item: 'https://denniskibet.com/blog/farm-management-system-cli',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 12,
+                  name: 'From Idea to Product (Sit-Stand Desk)',
+                  item: 'https://denniskibet.com/blog/from-idea-to-product-sit-stand-desk',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 13,
+                  name: 'Image Upload to Cloudinary in React',
+                  item: 'https://denniskibet.com/blog/image-upload-to-cloudinary-in-react',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 14,
+                  name: 'Introduction to Javascript',
+                  item: 'https://denniskibet.com/blog/introduction-to-javascript',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 15,
+                  name: 'Latest Advancements in Neural Network Technologies',
+                  item: 'https://denniskibet.com/blog/latest-advishments-in-neural-network-technologies',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 16,
+                  name: 'Private Routes in React JS',
+                  item: 'https://denniskibet.com/blog/private-routes-in-react-js',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 17,
+                  name: 'Quest for Artificial General Intelligence',
+                  item: 'https://denniskibet.com/blog/quest-for-artificial-general-intelligence',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 18,
+                  name: 'State Management with Redux in Next.js 14',
+                  item: 'https://denniskibet.com/blog/state-management-with-redux-in-nextjs-14',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 19,
+                  name: 'Vim Shortcuts (VSCode Efficiency)',
+                  item: 'https://denniskibet.com/blog/vim-shortcuts-vscode-efficiency',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 20,
+                  name: 'We Care',
+                  item: 'https://denniskibet.com/project/wecare',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 21,
+                  name: 'Nullchemy Shop',
+                  item: 'https://denniskibet.com/project/nullchemy-shop',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 22,
+                  name: 'Null EMS',
+                  item: 'https://denniskibet.com/project/null-ems',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 23,
+                  name: 'WeNotify Kenya',
+                  item: 'https://denniskibet.com/project/wenotify-kenya',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 24,
+                  name: 'Tenafriq',
+                  item: 'https://denniskibet.com/project/tenafriq',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 25,
+                  name: 'Bebewa Logistics',
+                  item: 'https://denniskibet.com/project/bebewa-logistics',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 26,
+                  name: 'Shop Yangu',
+                  item: 'https://denniskibet.com/project/shop-yangu',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 27,
+                  name: 'Aerial Properties Solutions Limited',
+                  item: 'https://denniskibet.com/project/aerial-properties-solutions-limited',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 28,
+                  name: 'LinkedIn Clone',
+                  item: 'https://denniskibet.com/project/linkedin-clone',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 29,
+                  name: 'Nullchemy',
+                  item: 'https://denniskibet.com/project/nullchemy',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 30,
+                  name: 'Npay',
+                  item: 'https://denniskibet.com/project/npay',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 31,
+                  name: 'N-Analytics',
+                  item: 'https://denniskibet.com/project/n-analytics',
+                },
+              ],
+            }),
+          }}
         />
 
         <Script
           id="schema-org"
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ 
+          dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": "Quest for Artificial General Intelligence",
-              "description": "A deep dive into React Hooks and how to use them in functional components.",
-              "author": { "@type": "Person", "name": "Dennis Kibet" },
-              "datePublished": "2024-10-01T08:00:00+00:00",
-              "dateModified": "2024-10-05T09:30:00+00:00",
-              "image": [
-                "https://example.com/images/react-hooks-1x1.jpg",
-                "https://example.com/images/react-hooks-4x3.jpg",
-                "https://example.com/images/react-hooks-16x9.jpg"
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              headline: 'Quest for Artificial General Intelligence',
+              description:
+                'A deep dive into React Hooks and how to use them in functional components.',
+              author: { '@type': 'Person', name: 'Dennis Kibet' },
+              datePublished: '2024-10-01T08:00:00+00:00',
+              dateModified: '2024-10-05T09:30:00+00:00',
+              image: [
+                'https://example.com/images/react-hooks-1x1.jpg',
+                'https://example.com/images/react-hooks-4x3.jpg',
+                'https://example.com/images/react-hooks-16x9.jpg',
               ],
-              "keywords": ["React", "JavaScript", "Hooks", "Web Development"]
-            })}}
+              keywords: ['React', 'JavaScript', 'Hooks', 'Web Development'],
+            }),
+          }}
         />
-
 
         <Script
           id="gtm"
@@ -285,7 +458,7 @@ export default function RootLayout({
         <Script
           id="analytics"
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ 
+          dangerouslySetInnerHTML={{
             __html: `
               // Initialize dataLayer for both GTM and gtag
               window.dataLayer = window.dataLayer || [];
@@ -303,12 +476,13 @@ export default function RootLayout({
               }
               gtag('js', new Date()); 
               gtag('config', 'G-7K0PJKTTMD'); 
-            `
+            `,
           }}
         />
 
-
-        <main>{children}</main>
+        <VisitorTrackingProvider>
+          <main>{children}</main>
+        </VisitorTrackingProvider>
         <Toaster />
 
         <div className="sr-only">
