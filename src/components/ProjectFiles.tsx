@@ -1,14 +1,15 @@
 'use client'
+import { useState } from 'react'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Badge } from '@/components/ui/badge'
+  FileText,
+  ImageIcon,
+  Archive,
+  File,
+  ChevronDown,
+  Folder,
+} from 'lucide-react'
 import DownloadButton from '@/components/DownloadButton'
-import { Folder } from 'lucide-react'
-import { DocType } from '@/interfaces'
+import type { DocType } from '@/interfaces'
 
 export default function ProjectFiles({ docs }: { docs: DocType[] }) {
   const groupedDocs = docs.reduce((acc, doc) => {
@@ -20,28 +21,33 @@ export default function ProjectFiles({ docs }: { docs: DocType[] }) {
     return acc
   }, {} as Record<string, DocType[]>)
 
-  const getFileExtension = (filename: string) => {
-    return filename.split('.').pop()?.toUpperCase() || ''
+  const [isOpen, setIsOpen] = useState(false)
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
+
+  const toggleFolder = (type: string) => {
+    const newExpanded = new Set(expandedFolders)
+    if (newExpanded.has(type)) {
+      newExpanded.delete(type)
+    } else {
+      newExpanded.add(type)
+    }
+    setExpandedFolders(newExpanded)
   }
 
-  const getFileColor = (filename: string) => {
-    const ext = getFileExtension(filename).toLowerCase()
-    const colorMap: Record<string, string> = {
-      pdf: 'bg-red-100 text-red-700 border-red-200',
-      doc: 'bg-blue-100 text-blue-700 border-blue-200',
-      docx: 'bg-blue-100 text-blue-700 border-blue-200',
-      xls: 'bg-green-100 text-green-700 border-green-200',
-      xlsx: 'bg-green-100 text-green-700 border-green-200',
-      ppt: 'bg-orange-100 text-orange-700 border-orange-200',
-      pptx: 'bg-orange-100 text-orange-700 border-orange-200',
-      jpg: 'bg-purple-100 text-purple-700 border-purple-200',
-      jpeg: 'bg-purple-100 text-purple-700 border-purple-200',
-      png: 'bg-purple-100 text-purple-700 border-purple-200',
-      zip: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      rar: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-    }
+  const getFileIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase() || ''
+    const iconProps = { className: 'w-3 h-3 flex-shrink-0' }
 
-    return colorMap[ext] || 'bg-gray-100 text-gray-700 border-gray-200'
+    if (['pdf', 'doc', 'docx', 'txt'].includes(ext)) {
+      return <FileText {...iconProps} />
+    }
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+      return <ImageIcon {...iconProps} />
+    }
+    if (['zip', 'rar', '7z'].includes(ext)) {
+      return <Archive {...iconProps} />
+    }
+    return <File {...iconProps} />
   }
 
   if (docs.length === 0) {
@@ -49,67 +55,89 @@ export default function ProjectFiles({ docs }: { docs: DocType[] }) {
   }
 
   return (
-    <div className="my-8 border border-gray-500 rounded-lg p-4 bg-card">
-      <h3 className="text-xl font-semibold mb-4">Files</h3>
+    <div className="w-full mb-6">
+      {!isOpen ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 transition-colors text-sm font-medium text-foreground"
+        >
+          <Folder className="w-4 h-4" />
+          <span>{docs.length} files</span>
+          <ChevronDown className="w-3.5 h-3.5" />
+        </button>
+      ) : (
+        <div className="border border-border rounded-sm bg-card overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/50">
+            <div className="flex items-center gap-2">
+              <Folder className="w-4 h-4 text-foreground" />
+              <span className="text-sm font-semibold text-foreground">
+                Files
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ({docs.length})
+              </span>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1 hover:bg-muted rounded transition-colors"
+              title="Collapse files"
+            >
+              <ChevronDown className="w-4 h-4 text-foreground rotate-180" />
+            </button>
+          </div>
 
-      {Object.entries(groupedDocs).length > 0 ? (
-        <Accordion type="single" collapsible className="w-full">
-          {Object.entries(groupedDocs).map(([type, typeDocs]) => (
-            <AccordionItem key={type} value={type} className="!border-none">
-              <AccordionTrigger className="text-base font-medium hover:no-underline py-3">
-                <div className="flex items-center gap-2">
-                  <Folder />
-                  <span>{type}</span>
-                  <Badge variant="outline" className="ml-2">
-                    {typeDocs.length}
-                  </Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 py-2">
-                  {typeDocs.map((doc) => (
-                    <div
-                      key={doc.file_name}
-                      className="flex items-center p-3 rounded-md border border-gray-500 bg-background hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex-1 min-w-0 mr-4">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className={`${getFileColor(doc.file_name)}`}
-                          >
-                            <span className="!text-black">
-                              {getFileExtension(doc.file_name)}
-                            </span>
-                          </Badge>
-                          <span
-                            className="font-medium truncate"
-                            title={doc.file_name}
-                          >
+          <div className="max-h-96 overflow-y-auto">
+            <div className="py-1">
+              {Object.entries(groupedDocs).map(([type, typeDocs]) => (
+                <div key={type}>
+                  <button
+                    onClick={() => toggleFolder(type)}
+                    className="w-full flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors group"
+                  >
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 flex-shrink-0 transition-transform ${
+                        expandedFolders.has(type) ? '' : '-rotate-90'
+                      }`}
+                    />
+                    <Folder className="w-3.5 h-3.5 flex-shrink-0 text-primary" />
+                    <span className="truncate text-xs">{type}</span>
+                    <span className="ml-auto text-muted-foreground text-xs">
+                      {typeDocs.length}
+                    </span>
+                  </button>
+
+                  {expandedFolders.has(type) && (
+                    <div className="space-y-0">
+                      {typeDocs.map((doc) => (
+                        <div
+                          key={doc.file_name}
+                          className="flex items-center gap-2 px-3 py-1.5 ml-4 text-xs text-foreground hover:bg-muted group transition-colors rounded"
+                        >
+                          <div className="w-3 flex-shrink-0">
+                            {getFileIcon(doc.file_name)}
+                          </div>
+                          <span className="truncate text-xs">
                             {doc.file_name}
                           </span>
+                          <div className="opacity-80 group-hover:opacity-100 transition-opacity flex-shrink-0" title='Download'>
+                            <DownloadButton
+                              url={doc.path}
+                              filename={doc.file_name}
+                              label=""
+                              loadingLabel=""
+                              className="h-5 w-5 p-0 text-foreground hover:text-primary"
+                              showProgress={false}
+                            />
+                          </div>
                         </div>
-                      </div>
-
-                      <DownloadButton
-                        url={doc.path}
-                        filename={doc.file_name}
-                        label=""
-                        loadingLabel=""
-                        className="h-8 w-8 p-0"
-                        showProgress={false}
-                      />
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      ) : (
-        <p className="text-muted-foreground">
-          No files available for this project.
-        </p>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
