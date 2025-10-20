@@ -19,6 +19,8 @@ import Linkedin from '@/assets/images/linkedin.png'
 import Twitter from '@/assets/images/twitter.png'
 import Facebook from '@/assets/images/facebook.png'
 import ProjectFiles from '@/components/ProjectFiles'
+import Replies from './Replies'
+import ShareButtons from './share-buttons'
 
 interface PostPageProps {
   params: {
@@ -194,41 +196,13 @@ export default async function PostPage({ params }: PostPageProps) {
                 <MDXContent code={post.body} />
               </div>
 
+              <Replies />
+
               <div className="mt-12 pt-6 border-t">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <h3 className="text-lg font-medium">Share this article</h3>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 w-9 p-0 border-none"
-                    >
-                      <div className="h-8 w-8">
-                        <Image src={Twitter} alt={'twitter icon'} />
-                      </div>
-                      <span className="sr-only">Share on Twitter</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 w-9 p-0 border-none"
-                    >
-                      <div className="h-8 w-8">
-                        <Image src={Facebook} alt={'facebook icon'} />
-                      </div>
-                      <span className="sr-only">Share on Facebook</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 w-9 p-0 border-none"
-                    >
-                      <div className="h-8 w-8">
-                        <Image src={Linkedin} alt={'Linkedin icon'} />
-                      </div>
-                      <span className="sr-only">Share on LinkedIn</span>
-                    </Button>
-                  </div>
+
+                  <ShareButtons />
                 </div>
               </div>
             </div>

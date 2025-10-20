@@ -2,7 +2,7 @@ import type React from 'react'
 import type { Metadata, Viewport } from 'next'
 import '@/styles/output.scss'
 import 'katex/dist/katex.min.css'
-import { Toaster } from '@/components/ui/toaster'
+import { Toaster } from "@/components/ui/sonner"
 import Script from 'next/script'
 import { VisitorTrackingProvider } from '@/contexts/visitor-tracking'
 
