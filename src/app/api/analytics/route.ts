@@ -9,9 +9,10 @@ export async function GET() {
     if (!isconnected) {
       throw new CustomError('Failed to connect to database', 500)
     }
-    const analytics = visitorStorage.getAnalytics()
-    const allVisitors = visitorStorage.getAllVisitors()
-    const allPages = visitorStorage.getAllPages()
+
+    const analytics = await visitorStorage.getAnalytics()
+    const allVisitors = await visitorStorage.getAllVisitors()
+    const allPages = await visitorStorage.getAllPages()
 
     return NextResponse.json({
       analytics,
