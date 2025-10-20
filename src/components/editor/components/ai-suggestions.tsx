@@ -158,11 +158,9 @@ export function AISuggestions({ editor, isVisible, onClose }: AISuggestionsProps
 
                 <div className="space-y-1 mb-3">
                   <div className="text-xs text-muted-foreground">Original:</div>
-                  <div className="text-sm bg-red-50 dark:bg-red-950 px-2 py-1 rounded">"{suggestion.original}"</div>
+                  <div className="text-sm bg-red-50 dark:bg-red-950 px-2 py-1 rounded">&quot;{suggestion.original}&quot;</div>
                   <div className="text-xs text-muted-foreground">Suggested:</div>
-                  <div className="text-sm bg-green-50 dark:bg-green-950 px-2 py-1 rounded">
-                    "{suggestion.suggested}"
-                  </div>
+                  <div className="text-sm bg-green-50 dark:bg-green-950 px-2 py-1 rounded">&quot;{suggestion.suggested}&quot;</div>
                 </div>
 
                 <div className="flex gap-2">
