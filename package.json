@@ -58,6 +58,7 @@
     "@tiptap/pm": "^3.7.2",
     "@tiptap/react": "^3.7.2",
     "@tiptap/starter-kit": "^3.7.2",
+    "@tiptap/suggestion": "^3.7.2",
     "@types/mdx": "^2.0.13",
     "@types/nodemailer": "^6.4.15",
     "class-variance-authority": "^0.7.0",
