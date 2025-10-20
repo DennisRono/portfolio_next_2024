@@ -1,12 +1,17 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { visitorStorage } from "@/lib/visitor-storage"
+import { type NextRequest, NextResponse } from 'next/server'
+import { visitorStorage } from '@/lib/visitor-storage'
+import dbConnect from '@/config/database_connect'
+import CustomError from '@/lib/CustomError'
 
 export async function POST(request: NextRequest) {
   try {
+    const isconnected: boolean = await dbConnect()
+    if (!isconnected) {
+      throw new CustomError('Failed to connect to database', 500)
+    }
     const data = await request.json()
     const { visitorId, sessionId, ...visitorInfo } = data
 
-    // Store visitor data asynchronously
     visitorStorage.storeVisitorData(visitorId, {
       sessionId,
       ...visitorInfo,
@@ -14,7 +19,12 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
-    console.error("Visitor tracking error:", error)
+    if (error instanceof CustomError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.statusCode }
+      )
+    }
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

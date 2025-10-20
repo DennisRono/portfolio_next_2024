@@ -1,6 +1,5 @@
-import dbConnect from "@/config/database_connect"
-import { PageSession } from "@/schemas/page-session"
-import { Visitor } from "@/schemas/visitor"
+import { PageSession } from '@/schemas/page-session'
+import { Visitor } from '@/schemas/visitor'
 
 interface StoredVisitorData {
   [key: string]: any
@@ -12,27 +11,24 @@ interface StoredPageSession {
 
 class VisitorStorage {
   async storeVisitorData(visitorId: string, data: any): Promise<void> {
-    try {
-      await dbConnect()
-
-      await Visitor.findOneAndUpdate(
-        { visitorId },
-        {
-          ...data,
-          visitorId,
-          lastUpdated: new Date(),
-        },
-        { upsert: true, new: true },
-      )
-    } catch (error) {
-      console.error("Error storing visitor data:", error)
-    }
+    await Visitor.findOneAndUpdate(
+      { visitorId },
+      {
+        ...data,
+        visitorId,
+        lastUpdated: new Date(),
+      },
+      { upsert: true, new: true }
+    )
   }
 
-  async storePageSession(sessionId: string, visitorId: string, page: string, data: any): Promise<void> {
+  async storePageSession(
+    sessionId: string,
+    visitorId: string,
+    page: string,
+    data: any
+  ): Promise<void> {
     try {
-      await dbConnect()
-
       await PageSession.create({
         sessionId,
         visitorId,
@@ -40,108 +36,99 @@ class VisitorStorage {
         ...data,
       })
     } catch (error) {
-      console.error("Error storing page session:", error)
+      console.error('Error storing page session:', error)
     }
   }
 
   async getVisitorData(visitorId: string): Promise<StoredVisitorData | null> {
     try {
-      await dbConnect()
-
       const visitor = await Visitor.findOne({ visitorId }).lean()
       return visitor ? (visitor as StoredVisitorData) : null
     } catch (error) {
-      console.error("Error getting visitor data:", error)
+      console.error('Error getting visitor data:', error)
       return null
     }
   }
 
-  async getPageSession(visitorId: string, sessionId: string): Promise<StoredPageSession | null> {
+  async getPageSession(
+    visitorId: string,
+    sessionId: string
+  ): Promise<StoredPageSession | null> {
     try {
-      await dbConnect()
-
       const session = await PageSession.findOne({
         visitorId,
         sessionId,
       }).lean()
       return session ? (session as StoredPageSession) : null
     } catch (error) {
-      console.error("Error getting page session:", error)
+      console.error('Error getting page session:', error)
       return null
     }
   }
 
   async getVisitorSessions(visitorId: string): Promise<StoredPageSession[]> {
     try {
-      await dbConnect()
-
       const sessions = await PageSession.find({ visitorId }).lean()
       return sessions as StoredPageSession[]
     } catch (error) {
-      console.error("Error getting visitor sessions:", error)
+      console.error('Error getting visitor sessions:', error)
       return []
     }
   }
 
   async getPageSessions(page: string): Promise<StoredPageSession[]> {
     try {
-      await dbConnect()
-
       const sessions = await PageSession.find({ page }).lean()
       return sessions as StoredPageSession[]
     } catch (error) {
-      console.error("Error getting page sessions:", error)
+      console.error('Error getting page sessions:', error)
       return []
     }
   }
 
-  async getAllVisitors(): Promise<Array<{ visitorId: string; data: StoredVisitorData }>> {
+  async getAllVisitors(): Promise<
+    Array<{ visitorId: string; data: StoredVisitorData }>
+  > {
     try {
-      await dbConnect()
-
       const visitors = await Visitor.find({}).lean()
       return visitors.map((visitor: any) => ({
         visitorId: visitor.visitorId,
         data: visitor as StoredVisitorData,
       }))
     } catch (error) {
-      console.error("Error getting all visitors:", error)
+      console.error('Error getting all visitors:', error)
       return []
     }
   }
 
   async getAllPages(): Promise<string[]> {
     try {
-      await dbConnect()
-
-      const pages = await PageSession.distinct("page")
+      const pages = await PageSession.distinct('page')
       return pages as string[]
     } catch (error) {
-      console.error("Error getting all pages:", error)
+      console.error('Error getting all pages:', error)
       return []
     }
   }
 
   async getAnalytics() {
     try {
-      await dbConnect()
-
       const totalVisitors = await Visitor.countDocuments()
       const totalSessions = await PageSession.countDocuments()
 
       const pageStats = await PageSession.aggregate([
         {
           $group: {
-            _id: "$page",
+            _id: '$page',
             sessions: { $sum: 1 },
-            uniqueVisitors: { $addToSet: "$visitorId" },
+            uniqueVisitors: { $addToSet: '$visitorId' },
           },
         },
         {
           $project: {
-            page: "$_id",
+            page: '$_id',
             sessions: 1,
-            uniqueVisitors: { $size: "$uniqueVisitors" },
+            uniqueVisitors: { $size: '$uniqueVisitors' },
             _id: 0,
           },
         },
@@ -150,7 +137,7 @@ class VisitorStorage {
       const browserStats = await Visitor.aggregate([
         {
           $group: {
-            _id: "$browser",
+            _id: '$browser',
             count: { $sum: 1 },
           },
         },
@@ -162,7 +149,7 @@ class VisitorStorage {
       const osStats = await Visitor.aggregate([
         {
           $group: {
-            _id: "$os",
+            _id: '$os',
             count: { $sum: 1 },
           },
         },
@@ -174,7 +161,7 @@ class VisitorStorage {
       const deviceStats = await Visitor.aggregate([
         {
           $group: {
-            _id: "$deviceType",
+            _id: '$deviceType',
             count: { $sum: 1 },
           },
         },
@@ -186,7 +173,7 @@ class VisitorStorage {
       const utmStats = await Visitor.aggregate([
         {
           $group: {
-            _id: "$utmSource",
+            _id: '$utmSource',
             count: { $sum: 1 },
           },
         },
@@ -199,13 +186,19 @@ class VisitorStorage {
         totalVisitors,
         totalSessions,
         pages: pageStats,
-        browsers: Object.fromEntries(browserStats.map((stat) => [stat._id, stat.count])),
+        browsers: Object.fromEntries(
+          browserStats.map((stat) => [stat._id, stat.count])
+        ),
         oses: Object.fromEntries(osStats.map((stat) => [stat._id, stat.count])),
-        devices: Object.fromEntries(deviceStats.map((stat) => [stat._id, stat.count])),
-        utmSources: Object.fromEntries(utmStats.map((stat) => [stat._id, stat.count])),
+        devices: Object.fromEntries(
+          deviceStats.map((stat) => [stat._id, stat.count])
+        ),
+        utmSources: Object.fromEntries(
+          utmStats.map((stat) => [stat._id, stat.count])
+        ),
       }
     } catch (error) {
-      console.error("Error getting analytics:", error)
+      console.error('Error getting analytics:', error)
       return {
         totalVisitors: 0,
         totalSessions: 0,
@@ -220,12 +213,10 @@ class VisitorStorage {
 
   async clear(): Promise<void> {
     try {
-      await dbConnect()
-
       await Visitor.deleteMany({})
       await PageSession.deleteMany({})
     } catch (error) {
-      console.error("Error clearing data:", error)
+      console.error('Error clearing data:', error)
     }
   }
 }
