@@ -1,6 +1,6 @@
-import Redis from 'ioredis'
-
-const redis = new Redis(process.env.NEXT_PUBLIC_UPSTASH_REDIS_URL!)
+import dbConnect from "@/config/database_connect"
+import { PageSession } from "@/schemas/page-session"
+import { Visitor } from "@/schemas/visitor"
 
 interface StoredVisitorData {
   [key: string]: any
@@ -12,144 +12,220 @@ interface StoredPageSession {
 
 class VisitorStorage {
   async storeVisitorData(visitorId: string, data: any): Promise<void> {
-    const key = `visitor:${visitorId}`
-    const existing = await redis.hgetall(key)
-    const merged = { ...existing, ...data, lastUpdated: Date.now().toString() }
-    await redis.hmset(key, merged)
+    try {
+      await dbConnect()
+
+      await Visitor.findOneAndUpdate(
+        { visitorId },
+        {
+          ...data,
+          visitorId,
+          lastUpdated: new Date(),
+        },
+        { upsert: true, new: true },
+      )
+    } catch (error) {
+      console.error("Error storing visitor data:", error)
+    }
   }
 
-  async storePageSession(
-    sessionId: string,
-    visitorId: string,
-    page: string,
-    data: any
-  ): Promise<void> {
-    const key = `pageSession:${visitorId}:${sessionId}`
-    await redis.hmset(key, { ...data, storedAt: Date.now().toString() })
+  async storePageSession(sessionId: string, visitorId: string, page: string, data: any): Promise<void> {
+    try {
+      await dbConnect()
 
-    await redis.sadd(`visitorSessions:${visitorId}`, sessionId)
-
-    await redis.sadd(`pageSessions:${page}`, key)
+      await PageSession.create({
+        sessionId,
+        visitorId,
+        page,
+        ...data,
+      })
+    } catch (error) {
+      console.error("Error storing page session:", error)
+    }
   }
 
   async getVisitorData(visitorId: string): Promise<StoredVisitorData | null> {
-    const key = `visitor:${visitorId}`
-    const data = await redis.hgetall(key)
-    return Object.keys(data).length > 0 ? data : null
+    try {
+      await dbConnect()
+
+      const visitor = await Visitor.findOne({ visitorId }).lean()
+      return visitor ? (visitor as StoredVisitorData) : null
+    } catch (error) {
+      console.error("Error getting visitor data:", error)
+      return null
+    }
   }
 
-  async getPageSession(
-    visitorId: string,
-    sessionId: string
-  ): Promise<StoredPageSession | null> {
-    const key = `pageSession:${visitorId}:${sessionId}`
-    const data = await redis.hgetall(key)
-    return Object.keys(data).length > 0 ? data : null
+  async getPageSession(visitorId: string, sessionId: string): Promise<StoredPageSession | null> {
+    try {
+      await dbConnect()
+
+      const session = await PageSession.findOne({
+        visitorId,
+        sessionId,
+      }).lean()
+      return session ? (session as StoredPageSession) : null
+    } catch (error) {
+      console.error("Error getting page session:", error)
+      return null
+    }
   }
 
   async getVisitorSessions(visitorId: string): Promise<StoredPageSession[]> {
-    const sessionIds = await redis.smembers(`visitorSessions:${visitorId}`)
-    const sessions = await Promise.all(
-      sessionIds.map((sessionId) => this.getPageSession(visitorId, sessionId))
-    )
-    return sessions.filter((session) => session !== null) as StoredPageSession[]
+    try {
+      await dbConnect()
+
+      const sessions = await PageSession.find({ visitorId }).lean()
+      return sessions as StoredPageSession[]
+    } catch (error) {
+      console.error("Error getting visitor sessions:", error)
+      return []
+    }
   }
 
   async getPageSessions(page: string): Promise<StoredPageSession[]> {
-    const keys = await redis.smembers(`pageSessions:${page}`)
-    const sessions = await Promise.all(keys.map((key) => redis.hgetall(key)))
-    return sessions.filter((session) => Object.keys(session).length > 0)
+    try {
+      await dbConnect()
+
+      const sessions = await PageSession.find({ page }).lean()
+      return sessions as StoredPageSession[]
+    } catch (error) {
+      console.error("Error getting page sessions:", error)
+      return []
+    }
   }
 
-  async getAllVisitors(): Promise<
-    Array<{ visitorId: string; data: StoredVisitorData }>
-  > {
-    const keys = await redis.keys('visitor:*')
-    const visitors = await Promise.all(
-      keys.map(async (key) => {
-        const data = await redis.hgetall(key)
-        return { visitorId: key.split(':')[1], data }
-      })
-    )
-    return visitors
+  async getAllVisitors(): Promise<Array<{ visitorId: string; data: StoredVisitorData }>> {
+    try {
+      await dbConnect()
+
+      const visitors = await Visitor.find({}).lean()
+      return visitors.map((visitor: any) => ({
+        visitorId: visitor.visitorId,
+        data: visitor as StoredVisitorData,
+      }))
+    } catch (error) {
+      console.error("Error getting all visitors:", error)
+      return []
+    }
   }
 
   async getAllPages(): Promise<string[]> {
-    const keys = await redis.keys('pageSessions:*')
-    const pages = new Set<string>()
-    keys.forEach((key) => {
-      const parts = key.split(':')
-      if (parts.length > 1) {
-        pages.add(parts[1])
-      }
-    })
-    return Array.from(pages)
+    try {
+      await dbConnect()
+
+      const pages = await PageSession.distinct("page")
+      return pages as string[]
+    } catch (error) {
+      console.error("Error getting all pages:", error)
+      return []
+    }
   }
 
   async getAnalytics() {
-    const visitorKeys = await redis.keys('visitor:*')
-    const totalVisitors = visitorKeys.length
+    try {
+      await dbConnect()
 
-    const sessionKeys = await redis.keys('pageSession:*')
-    const totalSessions = sessionKeys.length
+      const totalVisitors = await Visitor.countDocuments()
+      const totalSessions = await PageSession.countDocuments()
 
-    const pageKeys = await redis.keys('pageSessions:*')
-    const pages = await Promise.all(
-      pageKeys.map(async (key) => {
-        const page = key.split(':')[1]
-        const keys = await redis.smembers(key)
-        const uniqueVisitors = new Set(keys.map((k) => k.split(':')[1])).size
-        return {
-          page,
-          sessions: keys.length,
-          uniqueVisitors,
-        }
-      })
-    )
+      const pageStats = await PageSession.aggregate([
+        {
+          $group: {
+            _id: "$page",
+            sessions: { $sum: 1 },
+            uniqueVisitors: { $addToSet: "$visitorId" },
+          },
+        },
+        {
+          $project: {
+            page: "$_id",
+            sessions: 1,
+            uniqueVisitors: { $size: "$uniqueVisitors" },
+            _id: 0,
+          },
+        },
+      ])
 
-    const browsers = new Map<string, number>()
-    const oses = new Map<string, number>()
-    const devices = new Map<string, number>()
-    const utmSources = new Map<string, number>()
+      const browserStats = await Visitor.aggregate([
+        {
+          $group: {
+            _id: "$browser",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: { _id: { $ne: null } },
+        },
+      ])
 
-    for (const visitorKey of visitorKeys) {
-      const data = await redis.hgetall(visitorKey)
-      if (data.browser)
-        browsers.set(data.browser, (browsers.get(data.browser) || 0) + 1)
-      if (data.os) oses.set(data.os, (oses.get(data.os) || 0) + 1)
-      if (data.deviceType)
-        devices.set(data.deviceType, (devices.get(data.deviceType) || 0) + 1)
-      if (data.utmSource)
-        utmSources.set(
-          data.utmSource,
-          (utmSources.get(data.utmSource) || 0) + 1
-        )
-    }
+      const osStats = await Visitor.aggregate([
+        {
+          $group: {
+            _id: "$os",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: { _id: { $ne: null } },
+        },
+      ])
 
-    return {
-      totalVisitors,
-      totalSessions,
-      pages,
-      browsers: Object.fromEntries(browsers),
-      oses: Object.fromEntries(oses),
-      devices: Object.fromEntries(devices),
-      utmSources: Object.fromEntries(utmSources),
+      const deviceStats = await Visitor.aggregate([
+        {
+          $group: {
+            _id: "$deviceType",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: { _id: { $ne: null } },
+        },
+      ])
+
+      const utmStats = await Visitor.aggregate([
+        {
+          $group: {
+            _id: "$utmSource",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $match: { _id: { $ne: null } },
+        },
+      ])
+
+      return {
+        totalVisitors,
+        totalSessions,
+        pages: pageStats,
+        browsers: Object.fromEntries(browserStats.map((stat) => [stat._id, stat.count])),
+        oses: Object.fromEntries(osStats.map((stat) => [stat._id, stat.count])),
+        devices: Object.fromEntries(deviceStats.map((stat) => [stat._id, stat.count])),
+        utmSources: Object.fromEntries(utmStats.map((stat) => [stat._id, stat.count])),
+      }
+    } catch (error) {
+      console.error("Error getting analytics:", error)
+      return {
+        totalVisitors: 0,
+        totalSessions: 0,
+        pages: [],
+        browsers: {},
+        oses: {},
+        devices: {},
+        utmSources: {},
+      }
     }
   }
 
   async clear(): Promise<void> {
-    const keys = await redis.keys('visitor:*')
-    const pageSessionKeys = await redis.keys('pageSession:*')
-    const visitorSessionKeys = await redis.keys('visitorSessions:*')
-    const pageIndexKeys = await redis.keys('pageSessions:*')
-    const allKeys = [
-      ...keys,
-      ...pageSessionKeys,
-      ...visitorSessionKeys,
-      ...pageIndexKeys,
-    ]
-    if (allKeys.length > 0) {
-      await redis.del(allKeys)
+    try {
+      await dbConnect()
+
+      await Visitor.deleteMany({})
+      await PageSession.deleteMany({})
+    } catch (error) {
+      console.error("Error clearing data:", error)
     }
   }
 }
