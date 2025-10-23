@@ -41,7 +41,7 @@ export const CollaborationExtension = Extension.create<CollaborationOptions>({
         (user) =>
         ({ editor }) => {
           this.options.user = user
-          console.log('Setting collaboration user:', user)
+      
           return true
         },
     }

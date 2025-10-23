@@ -48,7 +48,6 @@ export default function CodeBlockHeader({ children, language }: CodeBlockHeaderP
 
       await navigator.clipboard.writeText(textToCopy)
       setCopyState("success")
-      console.log("Copied text:", textToCopy)
     } catch (err) {
       console.error("Failed to copy text: ", err)
       setCopyState("error")

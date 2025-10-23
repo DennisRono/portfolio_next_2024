@@ -33,7 +33,7 @@ class Mailer {
                 to: email,
                 from: `"Dennis Kibet R." <contact@denniskibet.com>`,
               })
-              console.log('Message sent: %s', info.messageId)
+          
               return { email, status: 'success' }
             } catch (error: any) {
               return { email, status: 'error' }
@@ -59,7 +59,6 @@ class Mailer {
           ...options,
           from: `"Dennis Kibet R." <contact@denniskibet.com>`,
         })
-        console.log('Message sent: %s', info.messageId)
         return {
           message: 'Email sent successfully!',
           status: 200,

@@ -129,9 +129,6 @@ const Replies = () => {
 
   const renderReplies = (replyList: Reply[], depth = 0, isLastChild = true) => {
     return replyList.map((reply, index: number) => {
-      console.log(
-        isLastChild && index === replyList.length - 1 ? '32px' : '100%'
-      )
       return (
         <div key={index} className={`mt-4 ${depth > 0 ? 'ml-8' : ''} relative`}>
           <div className="p-4 rounded-lg border border-gray-100/2 shadow-sm">
