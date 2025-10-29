@@ -1,0 +1,701 @@
+---
+title: 'All You Need to Know About Kubernetes: From Fundamentals to Production Deployment'
+description: 'A comprehensive, professional guide to understanding and deploying applications with Kubernetes — covering core concepts, real-world workflows, deployment platforms, and alternatives.'
+date: 2025-10-29
+tags: ['Kubernetes', 'DevOps', 'Containers', 'Orchestration']
+published: true
+---
+
+## Introduction: Why Kubernetes Matters in Modern Infrastructure
+
+Kubernetes can feel intimidating at first — like some mysterious, sprawling system that only big tech companies understand. But at its core, it's a **declarative container orchestration platform** designed to automate the deployment, scaling, and management of containerized applications across clusters of machines.
+
+The fundamental problem Kubernetes solves is this: once you move beyond running a couple of containers locally, you face a cascade of operational challenges. You need to **keep containers alive when they crash**, **distribute traffic intelligently across instances**, **roll out updates without downtime**, **scale applications based on demand**, and **recover from infrastructure failures automatically**. Manually managing these concerns doesn't scale — it becomes a full-time job that distracts from building features.
+
+Kubernetes abstracts away these complexities through a declarative model: you describe what you want your infrastructure to look like, and Kubernetes continuously works to maintain that desired state. It's open source, vendor-neutral, and has become the industry standard for container orchestration.
+
+By the end of this guide, you'll understand:
+
+- What Kubernetes actually is and how it works under the hood
+- The core architectural concepts you must master
+- A step-by-step process for deploying your first application
+- How to scale, update, and debug applications in production
+- Which deployment platforms support Kubernetes
+- When and why you might consider alternatives to Kubernetes
+
+
+
+## Part 1: Understanding Kubernetes Architecture and Core Concepts
+
+### What Kubernetes Actually Is
+
+Kubernetes is a **cluster management system for containers**. Think of it as an intelligent orchestrator that:
+
+1. **Distributes your applications** across multiple machines (called nodes) to ensure high availability
+2. **Monitors application health** continuously and restarts failed containers automatically
+3. **Manages resource allocation** by scheduling containers on nodes based on CPU, memory, and custom requirements
+4. **Handles networking** by providing stable DNS names and load balancing across container instances
+5. **Orchestrates updates** by rolling out new versions gradually, allowing you to roll back if something goes wrong
+6. **Scales applications** both manually and automatically based on metrics like CPU usage or custom indicators
+
+The key insight is that Kubernetes operates on a **declarative model**: you declare what you want (e.g., "I want 3 replicas of my web server running"), and Kubernetes continuously ensures that reality matches your declaration. If a pod crashes, Kubernetes automatically starts a new one. If you declare 5 replicas but only 4 are running, Kubernetes schedules another one.
+
+### Core Architectural Concepts
+
+To work effectively with Kubernetes, you need to understand these fundamental building blocks:
+
+#### **Cluster**
+
+A Kubernetes cluster is the complete system consisting of a control plane and one or more worker nodes. The control plane makes decisions about the cluster (like scheduling pods), while worker nodes actually run your applications. Think of it as a distributed system where the control plane is the "brain" and nodes are the "hands."
+
+#### **Node**
+
+A node is a single machine (physical server or virtual machine) that runs containerized applications. Each node has a container runtime (like Docker), a kubelet (an agent that communicates with the control plane), and a kube-proxy (handles networking). Nodes are the actual compute resources where your containers execute.
+
+#### **Pod**
+
+A pod is the smallest deployable unit in Kubernetes. It typically wraps a single container, but can contain multiple tightly-coupled containers that need to share networking and storage. All containers in a pod share the same IP address and can communicate via localhost. Pods are ephemeral — they're created and destroyed as needed, so you should never rely on a specific pod existing.
+
+**Why pods instead of just containers?** Pods enable the sidecar pattern, where you can run a main application container alongside utility containers (like logging agents or proxies) that share the same network namespace.
+
+#### **Deployment**
+
+A Deployment is a higher-level abstraction that manages Pods. It specifies how many replicas (copies) of your application should run, which container image to use, and how to handle updates. When you update a Deployment's image, it automatically creates new pods with the new image and gradually terminates old ones — this is called a rolling update. Deployments also handle self-healing: if a pod crashes, the Deployment automatically creates a replacement.
+
+**Why not just create pods directly?** Pods are ephemeral and don't self-heal. Deployments add reliability and automation on top of pods.
+
+#### **Service**
+
+A Service provides a stable network endpoint for accessing pods. Since pods are ephemeral and get replaced constantly, their IP addresses change. A Service uses label selectors to find all pods matching certain criteria and provides a stable DNS name and IP address that routes traffic to those pods. It acts like a virtual load balancer.
+
+**Types of Services:**
+
+- **ClusterIP** (default): Exposes the service only within the cluster
+- **NodePort**: Exposes the service on a port on every node (useful for development)
+- **LoadBalancer**: Exposes the service externally using a cloud provider's load balancer
+- **ExternalName**: Maps the service to an external DNS name
+
+#### **Ingress**
+
+An Ingress manages external HTTP/HTTPS access to services. While a Service provides internal networking, an Ingress routes external traffic to services based on hostnames and URL paths. For example, you might route `api.example.com/users` to one service and `api.example.com/products` to another. Ingress also handles SSL/TLS termination.
+
+#### **ConfigMap and Secret**
+
+ConfigMaps store non-sensitive configuration data (like environment variables or configuration files) that your applications need. Secrets store sensitive data like database passwords, API keys, and certificates. Both are mounted into pods as environment variables or files. The key difference is that Secrets are intended for sensitive data and can be encrypted at rest (depending on your cluster configuration).
+
+#### **Namespace**
+
+Namespaces provide logical isolation within a cluster. They're useful for separating environments (dev, staging, production), teams, or applications. Resources in one namespace are isolated from others, and you can apply resource quotas per namespace. Think of namespaces as virtual clusters within a single physical cluster.
+
+
+
+## Part 2: Step-by-Step Process for Deploying Your First Application
+
+Let's walk through a complete, practical example of deploying a web application. We'll use Nginx as our example, but the process applies to any containerized application.
+
+### Prerequisites
+
+Before starting, ensure you have:
+
+1. **A Kubernetes cluster** (local options: minikube, kind, or Docker Desktop with Kubernetes enabled)
+2. **kubectl installed** (the command-line tool for interacting with Kubernetes)
+3. **A container image** (either from Docker Hub or your own registry)
+
+### Step 1: Understand Your Application Requirements
+
+**Purpose**: Before deploying, you need to understand what your application needs to run successfully.
+
+Ask yourself:
+
+- What container image should I use? (e.g., `nginx:latest`, `myregistry.azurecr.io/myapp:v1.0`)
+- How many replicas do I need for high availability? (typically 2-3 minimum for production)
+- What resources does each instance need? (CPU and memory requests/limits)
+- What ports does the application listen on?
+- Does it need environment variables or configuration files?
+- Does it need persistent storage?
+
+For our Nginx example:
+
+- Image: `nginx:latest`
+- Replicas: 3 (for high availability)
+- Port: 80 (HTTP)
+- Resources: 100m CPU, 128Mi memory per pod
+
+### Step 2: Create a Deployment Manifest
+
+**Purpose**: Define the desired state of your application in a declarative YAML file. This file becomes your source of truth and should be version-controlled in Git.
+
+Create a file called `deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3 # Run 3 copies of the application
+  selector:
+    matchLabels:
+      app: nginx # Find pods with label app=nginx
+  template:
+    metadata:
+      labels:
+        app: nginx # Label these pods as app=nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest # Container image to run
+          ports:
+            - containerPort: 80 # Port the container listens on
+          resources:
+            requests:
+              cpu: 100m # Minimum CPU needed
+              memory: 128Mi # Minimum memory needed
+            limits:
+              cpu: 500m # Maximum CPU allowed
+              memory: 512Mi # Maximum memory allowed
+          livenessProbe: # Check if container is alive
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe: # Check if container is ready to receive traffic
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+```
+
+**Key explanations:**
+
+- **replicas**: Kubernetes will ensure exactly 3 pods are running at all times
+- **selector**: Tells the Deployment which pods to manage (those with label `app: nginx`)
+- **resources.requests**: Kubernetes uses this to schedule pods on nodes with enough capacity
+- **resources.limits**: Prevents a pod from consuming more than this amount
+- **livenessProbe**: If this check fails, Kubernetes restarts the pod (useful for detecting deadlocks)
+- **readinessProbe**: If this check fails, the pod is removed from the load balancer but not restarted (useful during startup)
+
+### Step 3: Create a Service Manifest
+
+**Purpose**: Expose your application to other pods in the cluster (or externally) with a stable network endpoint.
+
+Create a file called `service.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer # Expose externally (or use NodePort for development)
+  selector:
+    app: nginx # Route traffic to pods with label app=nginx
+  ports:
+    - protocol: TCP
+      port: 80 # Port exposed by the service
+      targetPort: 80 # Port on the pod to route to
+```
+
+**Key explanations:**
+
+- **type: LoadBalancer**: Creates an external load balancer (cloud-dependent; on local clusters, this may not work)
+- **selector**: Matches pods with `app: nginx` label
+- **port**: The port clients use to connect to the service
+- **targetPort**: The port on the pod that receives the traffic
+
+### Step 4: Apply the Manifests to Your Cluster
+
+**Purpose**: Tell Kubernetes to create the resources defined in your manifests.
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
+
+Kubernetes reads these files and creates the Deployment and Service. The Deployment controller then creates 3 pods running Nginx.
+
+### Step 5: Verify the Deployment
+
+**Purpose**: Confirm that your application is running and healthy.
+
+```bash
+# Check if pods are running
+kubectl get pods
+
+# Expected output:
+# NAME                                READY   STATUS    RESTARTS   AGE
+# nginx-deployment-66b6c48dd5-abc12   1/1     Running   0          2m
+# nginx-deployment-66b6c48dd5-def34   1/1     Running   0          2m
+# nginx-deployment-66b6c48dd5-ghi56   1/1     Running   0          2m
+```
+
+All three pods should show `Running` status and `1/1` ready.
+
+```bash
+# Check the service
+kubectl get svc
+
+# Expected output:
+# NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+# nginx-service   LoadBalancer   10.96.123.45    <pending>     80:30123/TCP   2m
+```
+
+### Step 6: Access Your Application
+
+**Purpose**: Test that traffic can reach your application.
+
+The method depends on your cluster type:
+
+**For LoadBalancer (cloud clusters):**
+
+```bash
+kubectl get svc nginx-service
+# Get the EXTERNAL-IP and visit http://<EXTERNAL-IP>
+```
+
+**For NodePort (local clusters):**
+
+```bash
+kubectl get svc nginx-service
+# Get the NodePort (e.g., 30123) and visit http://localhost:30123
+```
+
+**For port forwarding (development):**
+
+```bash
+kubectl port-forward svc/nginx-service 8080:80
+# Visit http://localhost:8080
+```
+
+
+
+## Part 3: Managing Applications in Production
+
+Once your application is running, you need to manage updates, scaling, and troubleshooting.
+
+### Scaling Your Application
+
+**Purpose**: Adjust the number of running replicas based on demand.
+
+**Manual scaling:**
+
+```bash
+kubectl scale deployment nginx-deployment --replicas=5
+```
+
+This tells Kubernetes to ensure 5 pods are running. If 3 are currently running, it creates 2 more. If 10 are running, it terminates 5.
+
+**Automatic scaling (Horizontal Pod Autoscaler):**
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+```
+
+This automatically scales between 2 and 10 replicas, maintaining 70% average CPU utilization. When CPU usage exceeds 70%, Kubernetes creates more pods. When it drops below 70%, it removes pods.
+
+### Rolling Updates
+
+**Purpose**: Deploy a new version of your application without downtime.
+
+Update your `deployment.yaml` to use a new image:
+
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25 # Changed from nginx:latest
+```
+
+Apply the change:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Kubernetes automatically:
+
+1. Creates a new pod with the new image
+2. Waits for it to become ready
+3. Routes traffic to the new pod
+4. Terminates an old pod
+5. Repeats until all pods are updated
+
+You can monitor the rollout:
+
+```bash
+kubectl rollout status deployment/nginx-deployment
+```
+
+### Rolling Back a Failed Update
+
+**Purpose**: Quickly revert to the previous version if something goes wrong.
+
+```bash
+kubectl rollout undo deployment/nginx-deployment
+```
+
+This reverts to the previous image. You can also specify a specific revision:
+
+```bash
+kubectl rollout history deployment/nginx-deployment
+kubectl rollout undo deployment/nginx-deployment --to-revision=2
+```
+
+### Debugging and Troubleshooting
+
+**Purpose**: Understand what's happening when things don't work as expected.
+
+**View pod logs:**
+
+```bash
+kubectl logs nginx-deployment-66b6c48dd5-abc12
+# For streaming logs:
+kubectl logs -f nginx-deployment-66b6c48dd5-abc12
+```
+
+**Describe a pod (see events and status):**
+
+```bash
+kubectl describe pod nginx-deployment-66b6c48dd5-abc12
+```
+
+This shows you why a pod might be stuck in `Pending` or `CrashLoopBackOff` status.
+
+**Execute commands inside a pod:**
+
+```bash
+kubectl exec -it nginx-deployment-66b6c48dd5-abc12 -- bash
+```
+
+This opens a shell inside the pod, allowing you to inspect files, check environment variables, or test connectivity.
+
+**View cluster events:**
+
+```bash
+kubectl get events --sort-by='.lastTimestamp'
+```
+
+Events show what Kubernetes is doing (pod creation, scheduling, failures, etc.).
+
+
+
+## Part 4: Deployment Platforms That Support Kubernetes
+
+Kubernetes is platform-agnostic, but different platforms provide different levels of managed support. Here's a comprehensive overview:
+
+### Managed Kubernetes Services (Recommended for Production)
+
+**Amazon EKS (Elastic Kubernetes Service)**
+
+- AWS's managed Kubernetes service
+- Integrates with AWS services (RDS, S3, IAM, CloudWatch)
+- Handles control plane management and updates
+- Pay for nodes + control plane fee (~$0.10/hour)
+- Best for: Organizations already invested in AWS
+
+**Google GKE (Google Kubernetes Engine)**
+
+- Google Cloud's managed Kubernetes service
+- Excellent integration with Google Cloud services
+- Automatic node upgrades and cluster management
+- Competitive pricing with free tier options
+- Best for: Organizations wanting simplicity and Google Cloud integration
+
+**Microsoft AKS (Azure Kubernetes Service)**
+
+- Azure's managed Kubernetes service
+- Integrates with Azure DevOps, Azure Container Registry, and other Azure services
+- Includes built-in monitoring and security features
+- Free control plane (pay only for nodes)
+- Best for: Organizations using Azure or Microsoft stack
+
+**DigitalOcean Kubernetes (DOKS)**
+
+- Simplified managed Kubernetes for smaller teams
+- Lower cost than AWS/GCP/Azure
+- Easier to understand pricing
+- Good documentation and community support
+- Best for: Startups and small to medium teams
+
+**Linode Kubernetes Engine (LKE)**
+
+- Akamai's managed Kubernetes service
+- Competitive pricing
+- Simple, straightforward interface
+- Good for: Cost-conscious teams
+
+### Self-Managed Kubernetes
+
+**On-Premises (kubeadm, kops, kubespray)**
+
+- Deploy Kubernetes on your own servers
+- Full control but requires operational expertise
+- Requires managing control plane, networking, storage
+- Best for: Organizations with specific compliance requirements or existing infrastructure
+
+**Kubernetes on VMs (AWS EC2, Google Compute Engine, Azure VMs)**
+
+- Rent VMs and install Kubernetes yourself
+- More control than managed services but more operational burden
+- Requires expertise in cluster management
+- Best for: Organizations wanting flexibility
+
+### Local Development Platforms
+
+**minikube**
+
+- Single-node Kubernetes cluster on your laptop
+- Perfect for learning and local development
+- Supports multiple hypervisors (Docker, VirtualBox, Hyper-V)
+- Free and open source
+
+**kind (Kubernetes in Docker)**
+
+- Runs Kubernetes clusters in Docker containers
+- Lightweight and fast
+- Great for CI/CD pipelines
+- Free and open source
+
+**Docker Desktop**
+
+- Includes a single-node Kubernetes cluster
+- Easiest setup for Mac and Windows developers
+- Integrated with Docker tooling
+- Free (with optional paid Pro/Team versions)
+
+
+
+## Part 5: Alternatives to Kubernetes
+
+While Kubernetes is powerful, it's not always the right choice. Here are viable alternatives depending on your needs:
+
+### Docker Swarm
+
+**What it is**: Docker's native orchestration tool, simpler than Kubernetes.
+
+**Pros:**
+
+- Much simpler to learn and operate
+- Lower operational overhead
+- Good for small to medium deployments
+- Integrated with Docker CLI
+
+**Cons:**
+
+- Less feature-rich than Kubernetes
+- Smaller ecosystem and community
+- Limited auto-scaling capabilities
+- Declining adoption
+
+**Best for**: Teams wanting container orchestration without Kubernetes complexity, small deployments with simple requirements.
+
+### Nomad (by HashiCorp)
+
+**What it is**: A flexible orchestration platform that handles containers, VMs, and bare metal workloads.
+
+**Pros:**
+
+- Orchestrates multiple workload types (not just containers)
+- Simpler than Kubernetes for many use cases
+- Excellent for multi-cloud deployments
+- Strong HashiCorp ecosystem (Terraform, Consul, Vault)
+
+**Cons:**
+
+- Smaller community than Kubernetes
+- Less mature ecosystem
+- Requires more custom configuration
+
+**Best for**: Organizations running diverse workloads (containers, VMs, batch jobs) or wanting multi-cloud flexibility.
+
+### AWS ECS (Elastic Container Service)
+
+**What it is**: AWS's proprietary container orchestration service.
+
+**Pros:**
+
+- Deep AWS integration
+- Simpler than Kubernetes for AWS-only deployments
+- Excellent for serverless-like container workloads
+- Strong security and IAM integration
+
+**Cons:**
+
+- AWS-only (not portable)
+- Less flexible than Kubernetes
+- Smaller ecosystem
+
+**Best for**: Organizations fully committed to AWS who want simpler container orchestration.
+
+### Serverless Platforms (AWS Lambda, Google Cloud Run, Azure Functions)
+
+**What it is**: Fully managed compute platforms where you upload code and don't manage infrastructure.
+
+**Pros:**
+
+- Zero infrastructure management
+- Pay only for execution time
+- Automatic scaling
+- Ideal for event-driven workloads
+
+**Cons:**
+
+- Limited to stateless, short-running functions
+- Vendor lock-in
+- Cold start latency
+- Not suitable for long-running services
+
+**Best for**: Event-driven workloads, microservices, APIs with variable traffic.
+
+### Platform-as-a-Service (Heroku, Render, Railway)
+
+**What it is**: Managed platforms that handle deployment, scaling, and operations.
+
+**Pros:**
+
+- Minimal operational overhead
+- Simple deployment process
+- Good for small to medium applications
+- Integrated databases and add-ons
+
+**Cons:**
+
+- Less control than Kubernetes
+- Higher cost at scale
+- Vendor lock-in
+- Limited customization
+
+**Best for**: Startups, small teams, or applications where time-to-market matters more than cost optimization.
+
+### When to Choose Alternatives Over Kubernetes
+
+Choose an alternative if:
+
+- **Your team is small** and doesn't have Kubernetes expertise
+- **Your workloads are simple** (single application, predictable traffic)
+- **You're cost-conscious** and don't need Kubernetes's advanced features
+- **You need vendor-specific features** (AWS ECS for deep AWS integration)
+- **Your workloads are event-driven** (serverless is better)
+- **You want minimal operational overhead** (PaaS is better)
+
+Choose Kubernetes if:
+
+- **You have complex, multi-service architectures** (microservices)
+- **You need multi-cloud or on-premises deployment**
+- **You have large teams** with DevOps expertise
+- **You need advanced features** (auto-scaling, rolling updates, service mesh)
+- **You want vendor independence** and portability
+- **You're running at scale** where Kubernetes's efficiency matters
+
+
+
+## Part 6: Advanced Topics to Explore
+
+Once you've mastered the basics, here are areas to deepen your Kubernetes knowledge:
+
+### Ingress and Certificate Management
+
+Use Ingress to route external traffic to services and Cert-Manager to automatically manage SSL/TLS certificates. This enables you to host multiple applications on a single IP address with HTTPS support.
+
+### Helm: Package Management for Kubernetes
+
+Helm is a package manager for Kubernetes that lets you define, install, and upgrade complex applications. Instead of managing dozens of YAML files, you use Helm charts — reusable templates that can be parameterized for different environments.
+
+### Namespaces and Resource Quotas
+
+Organize your cluster using namespaces and enforce resource limits per namespace. This enables multi-tenancy and prevents one team's workloads from starving others.
+
+### Monitoring and Observability
+
+Deploy Prometheus for metrics collection and Grafana for visualization. Understand your cluster's health, application performance, and resource utilization in real-time.
+
+### Secrets Management
+
+Move beyond Kubernetes Secrets to dedicated solutions like HashiCorp Vault or AWS Secrets Manager. These provide better encryption, rotation, and audit logging.
+
+### Service Mesh (Istio, Linkerd)
+
+Add advanced networking capabilities like traffic management, security policies, and distributed tracing. Service meshes are powerful but add complexity — use them when you have sophisticated networking requirements.
+
+### StatefulSets and Persistent Volumes
+
+Run stateful applications (databases, message queues) on Kubernetes using StatefulSets and persistent storage. This is more complex than stateless applications but enables running your entire stack on Kubernetes.
+
+
+
+## Conclusion: Your Kubernetes Journey
+
+Kubernetes isn't magic — it's a well-designed tool built to handle the complexity of running containerized applications at scale. The core concepts (Pods, Deployments, Services) are straightforward once you understand them, and the rest builds naturally from there.
+
+The best way to learn Kubernetes is by doing. Start with minikube or kind on your laptop, deploy a simple application, break things, fix them, and gradually explore more advanced features. The operational experience you gain is invaluable.
+
+Remember: Kubernetes is a means to an end, not an end in itself. Use it when it solves your problems, but don't hesitate to choose simpler alternatives if they better fit your needs.
+
+### Quick Reference: Key Commands
+
+```bash
+# Cluster information
+kubectl cluster-info
+kubectl get nodes
+
+# Working with pods
+kubectl get pods
+kubectl describe pod <name>
+kubectl logs <name>
+kubectl exec -it <name> -- bash
+
+# Working with deployments
+kubectl get deployments
+kubectl create deployment <name> --image=<image>
+kubectl scale deployment <name> --replicas=<count>
+kubectl set image deployment/<name> <container>=<image>
+kubectl rollout status deployment/<name>
+kubectl rollout undo deployment/<name>
+
+# Working with services
+kubectl get svc
+kubectl expose deployment <name> --type=LoadBalancer --port=80
+
+# Applying manifests
+kubectl apply -f <file>
+kubectl delete -f <file>
+
+# Debugging
+kubectl get events
+kubectl describe node <name>
+```
+
+
+
+## What's Your Next Step?
+
+Try deploying something meaningful on Kubernetes. Whether it's a personal project, a microservice, or a full application stack, hands-on experience is the best teacher. Start small, understand each component deeply, and gradually build toward more complex architectures.
+
+The Kubernetes community is vibrant and helpful — don't hesitate to ask questions and share what you learn along the way.
+
+```
+
+```
