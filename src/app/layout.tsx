@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/sonner'
 import Script from 'next/script'
 import { VisitorTrackingProvider } from '@/contexts/visitor-tracking'
 import { Glow, GlowArea } from '@/components/glow'
-import { ProgressProvider } from '@bprogress/next/app'
+import { BotIdClient } from 'botid/client';
 import ProgressIndicator from '@/contexts/progress'
 
 const title = 'Dennis Kibet Rono'
@@ -143,6 +143,17 @@ export const metadata: Metadata = {
   },
 }
 
+const protectedRoutes = [
+  {
+    path: '/api/resume',
+    method: 'POST',
+  },
+  {
+    path: '/api/analytics',
+    method: 'POST',
+  },
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -150,6 +161,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head>
+        <BotIdClient protect={protectedRoutes} />
+      </head>
       <body className={`min-h-screen relative antialiased`}>
         <GlowArea className="bg-gradient-to-b bg-no-repeat from-[#e3e1ff] from-10% via-[#e3edff] via-30% to-[#fff] to-90% dark:bg-gradient-to-b dark:from-[#09090e] dark:from-20% dark:via-[#090c14] dark:via-50% dark:to-[#0f121a] dark:to-90% dark:bg-no-repeat">
           <Glow color="#00ffff16">

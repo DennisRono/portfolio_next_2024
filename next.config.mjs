@@ -2,10 +2,10 @@ import { build } from 'velite'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import createMDX from '@next/mdx'
+import { withBotId } from 'botid/next/config';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // othor next config here...
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   webpack: (config) => {
     config.plugins.push(new VeliteWebpackPlugin())
@@ -39,4 +39,4 @@ const withMDX = createMDX({
   },
 })
 
-export default withMDX(nextConfig)
+export default withMDX(withBotId(nextConfig))
