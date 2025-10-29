@@ -36,7 +36,7 @@ class VisitorStorage {
         ...data,
       })
     } catch (error) {
-      console.error('Error storing page session:', error)
+      console.error('Error storing page session')
     }
   }
 

@@ -1,92 +1,98 @@
-"use client";
-import { cn } from "@/lib/utils";
-import React, {
-  ComponentPropsWithoutRef,
-  CSSProperties,
+'use client'
+import { cn } from '@/lib/utils'
+import type React from 'react'
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
   useEffect,
   useRef,
-} from "react";
+} from 'react'
 
-interface GlowAreaProps extends ComponentPropsWithoutRef<"div"> {
-  size?: number;
+interface GlowAreaProps extends ComponentPropsWithoutRef<'div'> {
+  size?: number
 }
 
 export const GlowArea = (props: GlowAreaProps) => {
-  const { className = "", size = 300, ...rest } = props;
-  const element = useRef<HTMLDivElement>(null);
-  const frameId = useRef<number | null>(null);
-  const latestCoords = useRef<{ x: number; y: number } | null>(null);
+  const { className = '', size = 300, ...rest } = props
+  const element = useRef<HTMLDivElement>(null)
+  const frameId = useRef<number | null>(null)
+  const latestCoords = useRef<{ x: number; y: number } | null>(null)
 
   const updateGlow = () => {
     if (latestCoords.current && element.current) {
       element.current.style.setProperty(
-        "--glow-x",
-        `${latestCoords.current.x}px`,
-      );
+        '--glow-x',
+        `${latestCoords.current.x}px`
+      )
       element.current.style.setProperty(
-        "--glow-y",
-        `${latestCoords.current.y}px`,
-      );
-      frameId.current = null;
+        '--glow-y',
+        `${latestCoords.current.y}px`
+      )
+      frameId.current = null
     }
-  };
+  }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const bounds = e.currentTarget.getBoundingClientRect();
+    const bounds = e.currentTarget.getBoundingClientRect()
     latestCoords.current = {
       x: e.clientX - bounds.left,
       y: e.clientY - bounds.top,
-    };
+    }
 
     if (!frameId.current) {
-      frameId.current = requestAnimationFrame(() => updateGlow());
+      frameId.current = requestAnimationFrame(() => updateGlow())
     }
-  };
+  }
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.removeProperty("--glow-x");
-    e.currentTarget.style.removeProperty("--glow-y");
-  };
+    e.currentTarget.style.removeProperty('--glow-x')
+    e.currentTarget.style.removeProperty('--glow-y')
+  }
   return (
     <div
       ref={element}
       style={
         {
-          position: "relative",
-          "--glow-size": `${size}px`,
+          position: 'relative',
+          '--glow-size': `${size}px`,
         } as CSSProperties
       }
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={cn(className, "")}
+      className={cn(className, '')}
       {...rest}
     />
-  );
-};
+  )
+}
 
-GlowArea.displayName = "GlowArea";
+GlowArea.displayName = 'GlowArea'
 
-interface GlowProps extends ComponentPropsWithoutRef<"div"> {
-  color?: string;
+interface GlowProps extends ComponentPropsWithoutRef<'div'> {
+  color?: string
 }
 
 export const Glow = (props: GlowProps) => {
-  const { className, color = "rgba(0, 255, 255, 0.4)", children, ...rest } = props;
-  const element = useRef<HTMLDivElement>(null);
+  const {
+    className,
+    color = 'rgba(0, 255, 255, 0.4)',
+    children,
+    ...rest
+  } = props
+  const element = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     element.current?.style.setProperty(
-      "--glow-top",
+      '--glow-top',
       `${element.current?.offsetTop}px`
-    );
+    )
     element.current?.style.setProperty(
-      "--glow-left",
+      '--glow-left',
       `${element.current?.offsetLeft}px`
-    );
-  }, []);
+    )
+  }, [])
 
   return (
-    <div ref={element} className={cn(className, "relative")}>
+    <div ref={element} className={cn(className, 'relative')}>
       <div
         {...rest}
         style={{
@@ -98,17 +104,16 @@ export const Glow = (props: GlowProps) => {
             transparent 70%
           )`,
           opacity: 1,
-          filter: "blur(30px)",
+          filter: 'blur(30px)',
         }}
         className={cn(
           className,
-          "absolute inset-0 pointer-events-none z-10 mix-blend-screen"
+          'absolute inset-0 pointer-events-none z-0 mix-blend-screen'
         )}
       ></div>
-      {children}
+      <div className="relative pointer-events-auto z-10">{children}</div>
     </div>
-  );
-};
+  )
+}
 
-
-Glow.displayName = "Glow";
+Glow.displayName = 'Glow'
