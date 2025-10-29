@@ -18,7 +18,6 @@ export default function HireMePage() {
       <main className="flex-1 flex items-center justify-center py-8 px-4 md:py-12">
         <div className="container max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Left Column - Form */}
             <div className="flex flex-col items-center justify-center">
               <div className="flex items-center justify-center gap-4 mb-6">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-apercu">
@@ -27,21 +26,22 @@ export default function HireMePage() {
                   </span>
                 </h1>
                 <Image
-                  src={Grad || "/placeholder.svg"}
+                  src={Grad || '/placeholder.svg'}
                   alt="Graduation cap"
                   className="h-16 w-auto md:h-20"
                   priority
                 />
               </div>
-              
+
               <div className="w-full max-w-md space-y-6">
                 <ResumeForm />
-                
+
                 <div className="space-y-2 text-center">
                   <p className="text-base md:text-lg text-foreground/80">
-                    Request and you&apos;ll get an email with the resume attached
+                    Request and you&apos;ll get an email with the resume
+                    attached
                   </p>
-                  
+
                   <p className="text-xs text-muted-foreground">
                     This site is protected by reCAPTCHA and the Google{' '}
                     <a
@@ -66,17 +66,25 @@ export default function HireMePage() {
                 </div>
               </div>
             </div>
-            
-            {/* Right Column - Image */}
+
             <div className="hidden md:flex items-center justify-center">
               <div className="relative w-full max-w-lg">
-                <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-                <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+                <div
+                  className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
+                ></div>
+
+                <div
+                  className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 dark:bg-blue-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"
+                ></div>
+
+                <div
+                  className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
+                ></div>
+
                 <div className="relative">
-                  <Image 
-                    src={MadDeveloper || "/placeholder.svg"} 
-                    alt="Developer illustration" 
+                  <Image
+                    src={MadDeveloper || '/placeholder.svg'}
+                    alt="Developer illustration"
                     className="w-full h-auto object-contain z-10 relative"
                     priority
                   />

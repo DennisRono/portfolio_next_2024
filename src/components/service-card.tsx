@@ -7,7 +7,7 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ title, description }) => {
   return (
-    <div className="p-4 bg-[var(--background-modals)] rounded-[5px] overflow-hidden border border-[#fff2]">
+    <div className="p-4 rounded-[5px] overflow-hidden border border-1 border-gray-500 dark:border-[#fff2]">
       <h3 className="text-lg font-space-mono text-gray-900 mb-2 dark:text-white">{title}</h3>
       <p className="text-sm font-space-mono text-gray-700 dark:text-white">{description}</p>
     </div>
