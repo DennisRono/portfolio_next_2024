@@ -1,11 +1,17 @@
 import Mailer from '@/lib/mail'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkBotId } from 'botid/server';
 
 //send?email=levimaximin@gmail.com
 
 export async function POST(request: NextRequest) {
-  const data = await request.json()
   try {
+    const verification = await checkBotId();
+ 
+    if (verification.isBot) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+    }
+    const data = await request.json()
     const mail = new Mailer()
 
     const result = await mail.sendMail({
