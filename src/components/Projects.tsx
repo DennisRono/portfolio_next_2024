@@ -5,6 +5,7 @@ import { ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import projects from '@/data/projects'
 import { useRouter } from 'next/navigation'
+import { Tag } from './tag'
 
 const Projects = ({ no, f }: { no: number; f: boolean }) => {
   const router = useRouter()
@@ -53,12 +54,7 @@ const Projects = ({ no, f }: { no: number; f: boolean }) => {
                 </p>
                 <div className="flex items-center justify-start gap-2">
                   {project.stack.slice(0, 6).map((stack, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center rounded-full bg-[var(--background-modals)] px-3 py-1 text-xs font-medium leading-5 text-ctm"
-                    >
-                      {stack}
-                    </div>
+                    <Tag tag={stack} key={index} />
                   ))}
                 </div>
               </div>

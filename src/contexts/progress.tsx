@@ -9,7 +9,7 @@ const ProgressIndicator: React.FC<{
     <>
       <ProgressProvider
         height="4px"
-        color="#00baba"
+        color="#e85535"
         options={{ showSpinner: false }}
         shallowRouting
       >
