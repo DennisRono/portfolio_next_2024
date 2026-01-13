@@ -49,25 +49,29 @@ const About = () => {
                 Background <span className="text-teal-500 text-sm">.01</span>
               </h2>
               <p className="text-lg text-gray-700 dark:text-white">
-                Hello, I’m Dennis — a Software Engineer passionate about
-                building impactful solutions for the web. My journey began at
-                Samoei Boys Secondary School, where I first got curious about
-                tech, and grew through studies at Alphax College, Machakos
-                University, and later Moringa School, where I honed my software
-                engineering skills.
+                Hello, I’m Dennis, a Software Engineer passionate about building
+                impactful solutions for the web. My journey began at Samoei Boys
+                Secondary School, where I first developed an interest in
+                technology, and continued through my studies at Alphax College,
+                Machakos University, and Moringa School, where I refined my
+                software engineering skills.
                 <br />
                 <br />
                 I’ve gained hands-on experience at the Water Resources Authority
-                and Innovex Solutions Ltd, where I worked on backend systems,
-                databases, and user-focused applications. Today, I’m also a
-                co-founder of{' '}
-                <span className="font-semibold">NBO Tech Labs</span>, where we
-                explore innovations in AI, software development, and robotics.
-                <br />
-                <br />
-                Originally from Eldoret, Kenya, I’m driven by continuous
-                learning and problem-solving, and I’m eager to keep contributing
-                to projects that create real impact.
+                and Innovex Solutions Ltd, working on backend systems,
+                databases, and user-focused applications. Recently, I joined{' '}
+                <a
+                  href="https://www.uab.edu"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-teal-500 hover:underline"
+                >
+                  University of Alabama at Birmingham (UAB)
+                </a>{' '}
+                to pursue a Master’s degree in Computer Science. Originally from
+                Eldoret, Kenya, I’m driven by continuous learning,
+                problem-solving, and building technology that creates real-world
+                impact.
               </p>
             </div>
           </div>

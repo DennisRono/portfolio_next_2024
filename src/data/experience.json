@@ -45,7 +45,14 @@
     "id": 7,
     "institution": "NBO Tech Labs (Co-Founder), Nairobi",
     "description": "I co-founded NBO Tech Labs together with a group of friends. At NBO Tech Labs, we focus on pioneering the future with artificial intelligence, software development, and robotics integration. We’ve worked on delivering AI-powered systems, custom enterprise software, and automation technologies across industries like healthcare, finance, retail, and infrastructure. Being part of this journey has not only strengthened my technical expertise but also honed my leadership, entrepreneurship, and product innovation skills.",
-    "period": "2025 June - Present",
+    "period": "2025 June - 2025 December",
     "logo": "NBO"
+  },
+  {
+    "id": 8,
+    "institution": "University of Alabama at Birmingham",
+    "description": "At the University of Alabama at Birmingham, I am pursuing a Master’s degree in Computer Science, focusing on advanced computing concepts, system design, and research-driven problem solving to strengthen my technical and analytical skills.",
+    "period": "2026 Jan - Present",
+    "logo": "UAB"
   }
 ]

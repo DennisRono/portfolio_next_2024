@@ -6,6 +6,7 @@ import WRA from '@/assets/images/wra.webp'
 import MKSU from '@/assets/images/mksu.png'
 import SamoeiBoys from '@/assets/images/samoei_boys_logo.png'
 import NBO from '@/assets/images/nbo_tech_labs.png'
+import UAB from '@/assets/images/uab.png'
 
 interface ExperienceItemProps {
   institution: string
@@ -60,6 +61,12 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
       alt: 'NBO Tech Labs',
       size: 'h-[60px] w-[60px]',
     },
+    UAB: {
+      href: 'https://uab.edu/',
+      src: UAB,
+      alt: 'University of Alabama at Birmingham',
+      size: 'h-[30px] w-auto',
+    }
   }
 
   const logoData = logo ? logoMap[logo] : null
