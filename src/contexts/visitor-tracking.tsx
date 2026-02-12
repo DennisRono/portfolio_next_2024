@@ -98,57 +98,57 @@ export const VisitorTrackingProvider: React.FC<{
   >([])
   const trackingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  useEffect(() => {
-    sessionIdRef.current = `session_${Date.now()}_${Math.random()
-      .toString(36)
-      .substr(2, 9)}`
+  // useEffect(() => {
+  //   sessionIdRef.current = `session_${Date.now()}_${Math.random()
+  //     .toString(36)
+  //     .substr(2, 9)}`
 
-    let visitorId = localStorage.getItem('visitor_id')
-    if (!visitorId) {
-      visitorId = `visitor_${Date.now()}_${Math.random()
-        .toString(36)
-        .substr(2, 9)}`
-      localStorage.setItem('visitor_id', visitorId)
-    }
-    visitorIdRef.current = visitorId
+  //   let visitorId = localStorage.getItem('visitor_id')
+  //   if (!visitorId) {
+  //     visitorId = `visitor_${Date.now()}_${Math.random()
+  //       .toString(36)
+  //       .substr(2, 9)}`
+  //     localStorage.setItem('visitor_id', visitorId)
+  //   }
+  //   visitorIdRef.current = visitorId
 
-    pageSessionRef.current = {
-      sessionId: sessionIdRef.current,
-      visitorId: visitorIdRef.current,
-      page: window.location.pathname,
-      entryTime: Date.now(),
-      duration: 0,
-      scrollDepth: 0,
-      interactions: [],
-      events: [],
-    }
+  //   pageSessionRef.current = {
+  //     sessionId: sessionIdRef.current,
+  //     visitorId: visitorIdRef.current,
+  //     page: window.location.pathname,
+  //     entryTime: Date.now(),
+  //     duration: 0,
+  //     scrollDepth: 0,
+  //     interactions: [],
+  //     events: [],
+  //   }
 
-    collectAndTrackVisitor()
+  //   collectAndTrackVisitor()
 
-    setupEventListeners()
+  //   setupEventListeners()
 
-    const trackingInterval = setInterval(() => {
-      if (pageSessionRef.current) {
-        pageSessionRef.current.duration =
-          Date.now() - pageSessionRef.current.entryTime
-        trackPageSession()
-      }
-    }, 30000)
+  //   const trackingInterval = setInterval(() => {
+  //     if (pageSessionRef.current) {
+  //       pageSessionRef.current.duration =
+  //         Date.now() - pageSessionRef.current.entryTime
+  //       trackPageSession()
+  //     }
+  //   }, 30000)
 
-    return () => {
-      clearInterval(trackingInterval)
-      if (trackingTimeoutRef.current) {
-        clearTimeout(trackingTimeoutRef.current)
-      }
+  //   return () => {
+  //     clearInterval(trackingInterval)
+  //     if (trackingTimeoutRef.current) {
+  //       clearTimeout(trackingTimeoutRef.current)
+  //     }
 
-      if (pageSessionRef.current) {
-        pageSessionRef.current.duration =
-          Date.now() - pageSessionRef.current.entryTime
-        pageSessionRef.current.exitTime = Date.now()
-        trackPageSession()
-      }
-    }
-  }, [])
+  //     if (pageSessionRef.current) {
+  //       pageSessionRef.current.duration =
+  //         Date.now() - pageSessionRef.current.entryTime
+  //       pageSessionRef.current.exitTime = Date.now()
+  //       trackPageSession()
+  //     }
+  //   }
+  // }, [])
 
   const collectAndTrackVisitor = useCallback(async () => {
     try {
