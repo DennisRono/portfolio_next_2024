@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Fragment } from 'react'
 import Image from 'next/image'
-import ProfileImage from '@/assets/images/profile.png'
+import ProfileImage from '@/assets/images/dennis.jpg'
 
 import ExperienceItem from '@/components/experience-item'
 import TechnologyList from '@/components/technology-list'

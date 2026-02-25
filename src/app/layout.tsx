@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     siteName: title,
     images: [
       {
-        url: `${url}/profile.png`,
+        url: `${url}/dennis.jpg`,
         width: 1200,
         height: 630,
         alt: 'Dennis Kibet - Software Engineer',
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: title,
     description: description,
-    images: [`${url}/profile.png`],
+    images: [`${url}/dennis.jpg`],
     creator: '@dennisrkibet',
   },
 
@@ -177,7 +177,7 @@ export default function RootLayout({
                     '@type': 'Person',
                     name: 'Dennis Kibet Rono',
                     url: url,
-                    image: `${url}/profile.png`,
+                    image: `${url}/dennis.jpg`,
                     jobTitle: 'Software Engineer',
                     worksFor: {
                       '@type': 'Organization',
