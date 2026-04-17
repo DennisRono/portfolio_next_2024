@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Class Notes — Complete Study Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13151c;
+    --surface2: #1a1d27;
+    --border: #252836;
+    --accent1: #7c6af7;
+    --accent2: #e8674a;
+    --accent3: #4ac9a8;
+    --accent4: #f0c040;
+    --text: #dde1f0;
+    --text2: #8b90a8;
+    --text3: #5a5f75;
+    --code-bg: #0a0c12;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  /* NAV / TOC */
+  #toc {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px; height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 24px 0;
+  }
+  #toc h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  #toc a {
+    display: block;
+    padding: 5px 20px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 400;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+  }
+  #toc a:hover { color: var(--text); border-left-color: var(--accent1); background: rgba(124,106,247,0.06); }
+  #toc .toc-chapter {
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 20px 4px;
+    margin-top: 6px;
+  }
+
+  /* MAIN */
+  main {
+    margin-left: 260px;
+    max-width: 900px;
+    padding: 60px 60px 120px;
+  }
+
+  /* HEADER */
+  .site-header {
+    margin-bottom: 72px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .site-header .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 16px;
+  }
+  .site-header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 52px;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .site-header p {
+    color: var(--text2);
+    font-size: 15px;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* LEARNING ORDER CARD */
+  .learning-order {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 64px;
+  }
+  .learning-order h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 20px;
+  }
+  .order-list { list-style: none; counter-reset: order-counter; }
+  .order-list li {
+    counter-increment: order-counter;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text2);
+  }
+  .order-list li:last-child { border-bottom: none; }
+  .order-list li::before {
+    content: counter(order-counter, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent1);
+    min-width: 28px;
+    padding-top: 2px;
+  }
+  .order-list li span { color: var(--text); font-weight: 500; }
+
+  /* CHAPTER */
+  .chapter {
+    margin-bottom: 80px;
+    padding-bottom: 80px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter:last-child { border-bottom: none; }
+
+  .chapter-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  .chapter-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    padding-top: 8px;
+    min-width: 60px;
+  }
+  .chapter-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    line-height: 1.15;
+    color: #fff;
+  }
+  .chapter-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+  .tag-foundation { background: rgba(124,106,247,0.15); color: var(--accent1); }
+  .tag-architecture { background: rgba(74,201,168,0.12); color: var(--accent3); }
+  .tag-generative { background: rgba(232,103,74,0.12); color: var(--accent2); }
+  .tag-adaptation { background: rgba(240,192,64,0.12); color: var(--accent4); }
+  .tag-frontier { background: rgba(124,106,247,0.2); color: #a89cf9; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 40px; }
+  .section h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section h3 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    margin-right: 8px;
+  }
+
+  p { margin-bottom: 14px; color: var(--text2); font-size: 15px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent1);
+    border-radius: 0 8px 8px 0;
+    padding: 18px 22px;
+    margin: 20px 0;
+    font-size: 14.5px;
+  }
+  .highlight.orange { border-left-color: var(--accent2); }
+  .highlight.green { border-left-color: var(--accent3); }
+  .highlight.yellow { border-left-color: var(--accent4); }
+  .highlight strong { color: var(--text); }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #b8bdd6;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent3);
+  }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* DEFINITION LIST / TERMS */
+  .dlist { margin: 16px 0; }
+  .dlist dt {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dlist dt::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent1);
+    flex-shrink: 0;
+  }
+  .dlist dd {
+    margin-left: 14px;
+    color: var(--text2);
+    font-size: 14px;
+    padding-top: 4px;
+    padding-left: 10px;
+    border-left: 1px solid var(--border);
+  }
+
+  /* MATH FORMULA */
+  .formula {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 22px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #c5c9e0;
+    text-align: center;
+  }
+  .formula .label {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* STEPS */
+  .steps { margin: 16px 0; counter-reset: step-counter; }
+  .step {
+    counter-increment: step-counter;
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+  .step::before {
+    content: counter(step-counter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(124,106,247,0.2);
+    border: 1px solid var(--accent1);
+    color: var(--accent1);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step p { margin: 0; font-size: 14px; }
+
+  /* QUIZ BOXES */
+  .quiz {
+    background: rgba(240,192,64,0.06);
+    border: 1px solid rgba(240,192,64,0.2);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .quiz .quiz-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent4);
+    margin-bottom: 12px;
+  }
+  .quiz ul { padding-left: 18px; }
+  .quiz li { color: var(--text2); font-size: 14px; margin-bottom: 6px; }
+
+  /* DIAGRAM IMAGES */
+  .diagram {
+    margin: 24px 0;
+    text-align: center;
+  }
+  .diagram img {
+    max-width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .diagram figcaption {
+    color: var(--text3);
+    font-size: 12px;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* COMPARISON GRID */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compare-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .compare-card h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card ul { padding-left: 16px; }
+  .compare-card li { font-size: 13px; color: var(--text2); margin-bottom: 5px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* SUMMARY TABLE PAGE */
+  .summary-table-section { margin-top: 80px; padding-top: 60px; border-top: 2px solid var(--border); }
+
+  /* KEY EQ PAGE */
+  .eq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .eq-card {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .eq-card .eq-name {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .eq-card .eq-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #c5c9e0;
+    word-break: break-all;
+  }
+
+  @media (max-width: 900px) {
+    #toc { display: none; }
+    main { margin-left: 0; padding: 30px 20px 80px; }
+    .compare-grid, .eq-grid { grid-template-columns: 1fr; }
+    .site-header h1 { font-size: 34px; }
+    .chapter-title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TABLE OF CONTENTS -->
+<nav id="toc">
+  <h2>ML Study Guide</h2>
+
+  <div class="toc-chapter">Foundations</div>
+  <a href="#ch1">01. Encoders</a>
+  <a href="#ch2">02. Decoders</a>
+  <a href="#ch3">03. Autoencoders</a>
+  <a href="#ch4">04. Denoising AE</a>
+  <a href="#ch5">05. Stacked AE</a>
+  <a href="#ch6">06. Contractive AE</a>
+
+  <div class="toc-chapter">Attention & Transformers</div>
+  <a href="#ch7">07. Attention Mechanism</a>
+  <a href="#ch8">08. Transformer Architecture</a>
+  <a href="#ch9">09. Vision Transformer (ViT)</a>
+
+  <div class="toc-chapter">Generative Models</div>
+  <a href="#ch10">10. GANs</a>
+  <a href="#ch11">11. Modern GAN Works</a>
+
+  <div class="toc-chapter">Knowledge & Adaptation</div>
+  <a href="#ch12">12. Transfer Learning</a>
+  <a href="#ch13">13. Fine-Tuning</a>
+  <a href="#ch14">14. Knowledge Distillation</a>
+  <a href="#ch15">15. Knowledge Transfer</a>
+  <a href="#ch16">16. Domain Adaptation</a>
+  <a href="#ch17">17. Active Learning</a>
+  <a href="#ch18">18. Semi-Supervised AL</a>
+
+  <div class="toc-chapter">Frontier Models</div>
+  <a href="#ch19">19. Foundation Models</a>
+  <a href="#ch20">20. LLMs</a>
+  <a href="#ch21">21. Large Vision Models</a>
+  <a href="#ch22">22. CLIP, BLIP & Multi-modal</a>
+  <a href="#ch23">23. LLaVA</a>
+
+  <div class="toc-chapter">Reference</div>
+  <a href="#summary">Summary Table</a>
+  <a href="#equations">Key Equations</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main>
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="label">Machine Learning — Class Notes</div>
+    <h1>The Complete<br>Study Guide</h1>
+    <p>23 chapters. Every topic from encoders to LLaVA. Ordered to maximize learning — each chapter builds on the previous ones. Use the sidebar to jump around.</p>
+  </div>
+
+  <!-- LEARNING ORDER -->
+  <div class="learning-order">
+    <h3>Optimal Learning Order — Why This Sequence?</h3>
+    <ol class="order-list">
+      <li><span>Encoders & Decoders</span> — the raw building blocks everything else uses</li>
+      <li><span>Autoencoders (all variants)</span> — encoders + decoders with a learning objective</li>
+      <li><span>Attention Mechanism</span> — one powerful idea you need before transformers</li>
+      <li><span>Transformer Architecture</span> — built entirely on attention</li>
+      <li><span>Vision Transformer (ViT)</span> — transformers applied to images</li>
+      <li><span>GANs & Modern GAN Works</span> — separate generative paradigm</li>
+      <li><span>Transfer Learning & Fine-tuning</span> — reusing learned models</li>
+      <li><span>Knowledge Distillation & Transfer</span> — compressing and moving knowledge</li>
+      <li><span>Domain Adaptation</span> — when distributions shift</li>
+      <li><span>Active Learning & Semi-supervised AL</span> — when labels are scarce</li>
+      <li><span>Large Foundation Models</span> — the big picture</li>
+      <li><span>LLMs, LVMs, CLIP, BLIP</span> — specific large model types</li>
+      <li><span>LLaVA</span> — ties vision + language together, capstone topic</li>
+    </ol>
+  </div>
+
+  <!-- ===================== CH 1 ===================== -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 01</div>
+      <h2 class="chapter-title">Encoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">1.1</span> What Is an Encoder?</h3>
+      <p>An encoder takes raw input — an image, a sentence, a signal — and turns it into a smaller, compressed form that still carries the important information. Think of it like summarizing a 300-page book into 3 paragraphs. You lose some detail, but the core meaning stays.</p>
+      <p>The compressed form is called a <strong>latent representation</strong> (or embedding). It lives in a space called <strong>latent space</strong>. Latent space is lower-dimensional, meaning it has fewer numbers but packs in more meaning per number.</p>
+      <div class="highlight">
+        <strong>Why do we want this?</strong> Two reasons. First, it is computationally cheaper to work with smaller representations. Second, similar inputs tend to produce similar embeddings — so the geometry of latent space reflects semantic similarity. Two sentences with the same meaning will end up close together in latent space, even if they use different words.
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">1.2</span> How Encoders Work</h3>
+      <p>An encoder is typically a neural network — layers of matrix multiplications followed by activation functions (like ReLU). Each layer transforms the data a bit more, gradually compressing and abstracting it.</p>
+      <div class="dlist">
+        <dt>For images</dt>
+        <dd>Encoders often use <strong>convolutional layers</strong> — filters that slide across the image detecting patterns like edges, textures, and shapes.</dd>
+        <dt>For text</dt>
+        <dd>Encoders use layers that process word sequences and capture context between words.</dd>
+        <dt>Bottleneck</dt>
+        <dd>The encoder's output is sometimes called a bottleneck — information is squeezed through a narrow passage, forcing the model to be selective about what it keeps.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">1.3</span> Types of Encoders</h3>
+      <div class="dlist">
+        <dt>Deterministic Encoders</dt>
+        <dd>Given the same input, always produce the same output. Used in standard autoencoders, classifiers.</dd>
+        <dt>Stochastic Encoders</dt>
+        <dd>Produce a distribution over possible encodings. Given an input, the encoder outputs a mean and variance, and you sample from that distribution. Used in Variational Autoencoders (VAEs).</dd>
+        <dt>Bidirectional Encoders</dt>
+        <dd>Process input in both directions simultaneously. BERT uses a transformer encoder that sees the full context around each word — not just what came before.</dd>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>What is latent space and why is its lower dimensionality useful?</li>
+        <li>What is the difference between a deterministic and a stochastic encoder?</li>
+        <li>Name two types of layers commonly used in image encoders.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 2 ===================== -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 02</div>
+      <h2 class="chapter-title">Decoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">2.1</span> What Is a Decoder?</h3>
+      <p>A decoder is the reverse of an encoder. It takes a compressed latent representation and reconstructs an output — either the original input, or something generated in the same format.</p>
+      <div class="formula">
+        <span class="label">Encoder–Decoder Relationship</span>
+        Encoder: x → z (compress)<br>
+        Decoder: z → x̂ (reconstruct)
+      </div>
+      <p>The output does not have to be exactly the original input. In generative models, the decoder generates <em>new</em> things from <em>new</em> latent vectors never seen during training. This is how we generate new images or text.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">2.2</span> How Decoders Work</h3>
+      <p>Decoders mirror encoders in structure but do the reverse operation.</p>
+      <div class="dlist">
+        <dt>For images</dt>
+        <dd><strong>Transposed convolutions</strong> (deconvolutions) up-sample the spatial size — the reverse of convolutions. An alternative is upsampling + regular convolution, which avoids checkerboard artifacts.</dd>
+        <dt>For text</dt>
+        <dd>Decoders generate tokens one at a time, conditioning each new token on everything generated so far. This is called <strong>autoregressive generation</strong>.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">2.3</span> Encoder-Only vs Decoder-Only vs Encoder-Decoder</h3>
+      <p>This distinction is critical for understanding modern architectures.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Architecture</th><th>Examples</th><th>Good For</th></tr></thead>
+          <tbody>
+            <tr><td>Encoder-only</td><td>BERT, ViT, CLIP image encoder</td><td>Classification, understanding, retrieval</td></tr>
+            <tr><td>Decoder-only</td><td>GPT, LLaMA, Mistral</td><td>Text generation, completion</td></tr>
+            <tr><td>Encoder-Decoder</td><td>T5, BART, original Transformer</td><td>Translation, summarization, seq2seq tasks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 3 ===================== -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 03</div>
+      <h2 class="chapter-title">Autoencoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">3.1</span> The Core Idea</h3>
+      <p>An autoencoder (AE) is a neural network trained to take an input, compress it into a small latent vector, and then reconstruct the original input from that vector — as accurately as possible.</p>
+      <div class="formula">
+        <span class="label">Autoencoder Objective</span>
+        Encoder: z = f(x)<br>
+        Decoder: x̂ = g(z)<br>
+        Loss: minimize ||x − x̂||²
+      </div>
+      <p>The bottleneck forces the network to learn what is <em>actually important</em> in the data. If you compress a 784-dimensional image into a 32-dimensional vector, the network has no choice but to learn the essential structure.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">3.2</span> Architecture</h3>
+      <pre>Input x (784-dim)
+     ↓
+[Encoder Layer 1: 784 → 256]  ReLU
+     ↓
+[Encoder Layer 2: 256 → 128]  ReLU
+     ↓
+[Bottleneck: 128 → 32]        ← Latent code z
+     ↓
+[Decoder Layer 1: 32 → 128]   ReLU
+     ↓
+[Decoder Layer 2: 128 → 256]  ReLU
+     ↓
+[Output Layer: 256 → 784]     Sigmoid</pre>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">3.3</span> Applications</h3>
+      <div class="dlist">
+        <dt>Dimensionality reduction</dt><dd>Like PCA, but nonlinear — can capture curved structure in data.</dd>
+        <dt>Anomaly detection</dt><dd>Train on normal data; unusual inputs reconstruct poorly (high error = anomaly).</dd>
+        <dt>Feature learning</dt><dd>Pretrain an encoder, then fine-tune for a downstream task.</dd>
+        <dt>Data denoising</dt><dd>A trained AE can clean noisy inputs (covered in next chapter).</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">3.4</span> The Problem with Vanilla AEs — Motivating the Variants</h3>
+      <div class="highlight orange">
+        <strong>Key weakness:</strong> A plain AE can overfit the training data. It memorizes specific inputs rather than learning a smooth, generalizable latent space. This means: the latent space has "holes" (random vectors that decode to garbage), and you cannot sample from it to generate new things.
+      </div>
+      <p>This is exactly why we need the variants: Denoising AE, Stacked AE, Contractive AE, and Variational AE (VAE).</p>
+    </div>
+  </section>
+
+  <!-- ===================== CH 4 ===================== -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 04</div>
+      <h2 class="chapter-title">Denoising Autoencoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">4.1</span> The Main Idea</h3>
+      <p>A Denoising Autoencoder (DAE) deliberately corrupts the input before feeding it to the encoder — then trains the network to recover the clean original. The training signal says: "here is noisy data, now reconstruct the clean version."</p>
+      <div class="steps">
+        <div class="step"><p>Take clean input x</p></div>
+        <div class="step"><p>Add noise → x̃ (corrupted version)</p></div>
+        <div class="step"><p>Feed x̃ to the encoder → latent z</p></div>
+        <div class="step"><p>Decode z → reconstruction x̂</p></div>
+        <div class="step"><p>Loss: minimize ||x − x̂||² (compare to the <em>clean</em> original, not the noisy one)</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">4.2</span> Types of Noise</h3>
+      <div class="dlist">
+        <dt>Gaussian noise</dt><dd>Add random values drawn from a normal distribution to input features.</dd>
+        <dt>Masking noise</dt><dd>Randomly set some input features (pixels) to zero.</dd>
+        <dt>Salt-and-pepper noise</dt><dd>Randomly set some features to maximum or minimum values.</dd>
+        <dt>Dropout noise</dt><dd>Randomly zero out features with some probability p.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">4.3</span> Why This Works Better</h3>
+      <p>By forcing the encoder to see corrupted inputs and still reconstruct clean outputs, you push it to learn the <strong>underlying data manifold</strong> — the smooth surface in high-dimensional space where real data lives. Noise pushes data off the manifold; the network learns to project it back.</p>
+      <div class="highlight green">
+        <strong>Historical connection:</strong> Denoising autoencoders are conceptually related to modern diffusion models (DALL-E 3, Stable Diffusion). Diffusion models are essentially very deep denoising networks trained across many noise levels simultaneously. The DAE is where this idea first appeared.
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>What is the key difference between a vanilla AE's loss and a DAE's loss?</li>
+        <li>Why does noisy training produce a smoother latent space?</li>
+        <li>What is a data manifold?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 5 ===================== -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 05</div>
+      <h2 class="chapter-title">Stacked Autoencoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">5.1</span> The Idea</h3>
+      <p>A stacked autoencoder is multiple autoencoders layered on top of each other. The compressed output of one AE becomes the input to the next. The motivation is <strong>greedy layer-wise pretraining</strong> — a technique from 2006 that made it possible to train deep networks before modern tricks like batch normalization existed.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">5.2</span> Training Procedure</h3>
+      <p><strong>Phase 1: Layer-wise Pretraining</strong></p>
+      <div class="steps">
+        <div class="step"><p>Train AE₁ on raw input x → get encoder₁</p></div>
+        <div class="step"><p>Pass x through encoder₁ → get z₁ (compressed)</p></div>
+        <div class="step"><p>Train AE₂ on z₁ → get encoder₂</p></div>
+        <div class="step"><p>Continue for as many layers as desired</p></div>
+      </div>
+      <p><strong>Phase 2: Fine-tuning (Unrolling)</strong></p>
+      <p>Stack all encoders and all decoders (in reverse). Train the whole network end-to-end with a small learning rate to refine everything together.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">5.3</span> Why Layer-wise Pretraining Helps</h3>
+      <div class="highlight">
+        If you try to learn everything at once in a deep network, gradients get confused — they weaken dramatically by the time they reach early layers (the <strong>vanishing gradient problem</strong>). Layer-wise training gives each layer a chance to learn something meaningful before the next layer is added.
+      </div>
+      <p>The concept lives on in modern deep pretraining — BERT pretraining, LLM pretraining, MAE — all train hierarchically in some sense.</p>
+    </div>
+  </section>
+
+  <!-- ===================== CH 6 ===================== -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 06</div>
+      <h2 class="chapter-title">Contractive Autoencoders <span class="chapter-tag tag-foundation">Foundation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">6.1</span> Motivation</h3>
+      <p>The contractive AE (CAE) addresses a specific problem: a vanilla AE's encoder is sensitive to small changes in input. If you perturb x slightly, the latent code z might change wildly. We want the opposite — a <em>stable</em> encoder that ignores small, irrelevant variations.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">6.2</span> The Contractive Penalty</h3>
+      <div class="formula">
+        <span class="label">CAE Loss</span>
+        L = ||x − x̂||² + λ × ||J_f(x)||²_F
+      </div>
+      <p>Where <code>J_f(x)</code> is the <strong>Jacobian matrix</strong> of the encoder — it measures how much each output of the encoder changes when each input dimension changes. <code>||·||²_F</code> is the Frobenius norm (sum of squared entries).</p>
+      <p>Minimizing the Frobenius norm pushes the encoder to be <em>insensitive</em> to small input changes. This is the "contractive" property.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">6.3</span> CAE vs DAE Comparison</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Property</th><th>DAE</th><th>CAE</th></tr></thead>
+          <tbody>
+            <tr><td>How robustness is enforced</td><td>Corrupted input at training time</td><td>Analytic penalty on encoder Jacobian</td></tr>
+            <tr><td>What is penalized</td><td>Sensitivity (implicitly)</td><td>Sensitivity (explicitly, via gradient)</td></tr>
+            <tr><td>Computational cost</td><td>Lower</td><td>Higher (computing Jacobian is expensive)</td></tr>
+            <tr><td>Latent space quality</td><td>Smooth manifold structure</td><td>Smooth, insensitive to perturbations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">6.4</span> Missing Variant: Variational Autoencoder (VAE)</h3>
+      <div class="highlight orange">
+        <strong>The most important AE variant.</strong> VAEs impose a prior distribution (standard normal N(0,I)) on the latent space. The encoder outputs μ and σ instead of a single vector; you sample z ∼ N(μ, σ²). The loss adds a KL divergence term to keep the latent distribution close to N(0,I). This creates a continuous, organized latent space you can sample from to generate new things.
+      </div>
+      <div class="formula">
+        <span class="label">VAE Loss (ELBO)</span>
+        L = E[log p(x|z)] − KL(N(μ,σ²) || N(0,I))<br>
+        = Reconstruction term − KL regularization
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 7 ===================== -->
+  <section class="chapter" id="ch7">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 07</div>
+      <h2 class="chapter-title">Attention Mechanism <span class="chapter-tag tag-architecture">Architecture</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.1</span> The Problem Attention Solves</h3>
+      <p>Before attention, sequence models (RNNs) processed sequences step by step and had to compress the entire history into a fixed-size vector. Long sequences were a disaster — by the time you got to the end, the beginning was mostly forgotten.</p>
+      <p>Attention solves this by letting every position in the output look directly at any position in the input. No compression. No forgetting.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.2</span> Query–Key–Value Framework</h3>
+      <p>Think of attention like a database lookup:</p>
+      <div class="dlist">
+        <dt>Query (Q)</dt><dd>What am I looking for?</dd>
+        <dt>Key (K)</dt><dd>What does each piece of information say it contains?</dd>
+        <dt>Value (V)</dt><dd>What is the actual content of each piece?</dd>
+      </div>
+      <div class="formula">
+        <span class="label">Scaled Dot-Product Attention</span>
+        Attention(Q, K, V) = softmax(QKᵀ / √d_k) × V
+      </div>
+      <p>The division by √d_k prevents dot products from growing too large (which would push softmax into flat saturation regions, killing gradients).</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.3</span> Step-by-Step Walkthrough</h3>
+      <p>Sentence: <em>"The cat sat on the mat."</em> We want the representation of "sat" that incorporates context.</p>
+      <div class="steps">
+        <div class="step"><p>"sat" becomes a Query vector q</p></div>
+        <div class="step"><p>Every word becomes a Key vector k_i</p></div>
+        <div class="step"><p>Compute dot products: q·k_i for each word, then divide by √d_k</p></div>
+        <div class="step"><p>Apply softmax → get attention weights (sum to 1)</p></div>
+        <div class="step"><p>Multiply each word's Value vector v_i by its attention weight</p></div>
+        <div class="step"><p>Sum weighted Values → contextual representation of "sat"</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.4</span> Self-Attention vs Cross-Attention</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>Self-Attention</h4>
+          <ul>
+            <li>Q, K, V all come from the <em>same</em> sequence</li>
+            <li>Each position attends to every other position</li>
+            <li>Used in transformer encoders (BERT)</li>
+            <li>Used in decoder-only models (GPT)</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>Cross-Attention</h4>
+          <ul>
+            <li>Q from one sequence, K and V from another</li>
+            <li>Decoder queries look into encoder output</li>
+            <li>Used in encoder-decoder transformers</li>
+            <li>Used in multi-modal models (image → text)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.5</span> Multi-Head Attention</h3>
+      <p>Instead of one attention function, compute h parallel attention functions with different learned projections:</p>
+      <pre>MultiHead(Q, K, V) = Concat(head₁, ..., headₕ) × W_O
+head_i = Attention(Q·W_Qi, K·W_Ki, V·W_Vi)</pre>
+      <p>Each head can focus on different relationship types: one head might track syntactic dependencies, another semantic similarity, another positional patterns. Richer than single-head attention.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">7.6</span> Positional Encoding</h3>
+      <p>Attention has no notion of order — it treats input as a <em>set</em>, not a sequence. Positional encodings are added to input embeddings to inject order information.</p>
+      <div class="dlist">
+        <dt>Sinusoidal (original Transformer)</dt><dd>Fixed mathematical formula using sine and cosine at different frequencies. Does not need to be learned.</dd>
+        <dt>Learned embeddings</dt><dd>A lookup table — one vector per position, learned during training (used in BERT, GPT).</dd>
+        <dt>RoPE (Rotary Position Embeddings)</dt><dd>Rotates embedding vectors in complex space. Used in LLaMA, Mistral. Generalizes better to longer sequences than seen during training.</dd>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>Why do we divide by √d_k in the attention formula?</li>
+        <li>What is the difference between self-attention and cross-attention?</li>
+        <li>Why do we need positional encodings in attention?</li>
+        <li>What does each "head" in multi-head attention potentially specialize in?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 8 ===================== -->
+  <section class="chapter" id="ch8">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 08</div>
+      <h2 class="chapter-title">Transformer Architecture <span class="chapter-tag tag-architecture">Architecture</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">8.1</span> The Big Picture</h3>
+      <p>The Transformer (Vaswani et al., "Attention Is All You Need," 2017) replaced recurrent networks for sequence-to-sequence tasks. It is built entirely on attention — no RNNs, no convolutions in the core architecture. The key insight: attention can replace sequential processing with parallel processing.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">8.2</span> Full Architecture</h3>
+      <pre>INPUT TOKENS
+     ↓
+Token Embedding + Positional Encoding
+     ↓
+┌─────────────────────────────┐
+│  ENCODER BLOCK (×N layers)  │
+│  ┌───────────────────────┐  │
+│  │ Multi-Head Self-Attn  │  │
+│  └──────────┬────────────┘  │
+│      + residual connection   │
+│       Layer Normalization    │
+│  ┌───────────────────────┐  │
+│  │ Feed-Forward Network  │  │
+│  └──────────┬────────────┘  │
+│      + residual connection   │
+│       Layer Normalization    │
+└─────────────────────────────┘
+     ↓ Encoder Output (context)
+┌─────────────────────────────┐
+│  DECODER BLOCK (×N layers)  │
+│  ┌───────────────────────┐  │
+│  │ Masked Self-Attention │  │ ← Causal: can't see future
+│  └──────────┬────────────┘  │
+│      + residual + LayerNorm  │
+│  ┌───────────────────────┐  │
+│  │  Cross-Attention      │  │ ← Attends to encoder output
+│  └──────────┬────────────┘  │
+│      + residual + LayerNorm  │
+│  ┌───────────────────────┐  │
+│  │ Feed-Forward Network  │  │
+│  └──────────┬────────────┘  │
+│      + residual + LayerNorm  │
+└─────────────────────────────┘
+     ↓
+Linear + Softmax → token probabilities</pre>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">8.3</span> Key Components</h3>
+      <div class="dlist">
+        <dt>Residual Connections</dt><dd>After each sub-layer, the input is added back to the output: <code>output = sublayer(x) + x</code>. Prevents vanishing gradients in deep stacks.</dd>
+        <dt>Layer Normalization</dt><dd>Normalizes activations across feature dimensions. Stabilizes training. Applied after residual addition.</dd>
+        <dt>Feed-Forward Network (FFN)</dt><dd>Applied independently at each position: <code>FFN(x) = max(0, xW₁+b₁)W₂+b₂</code>. Expands to 4× the model dimension, then contracts. Stores a lot of factual knowledge.</dd>
+        <dt>Masked Self-Attention (Decoder)</dt><dd>A causal mask prevents each position from attending to future positions — essential for autoregressive generation.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">8.4</span> Computational Complexity</h3>
+      <p>Self-attention is <strong>O(n²d)</strong> in time and <strong>O(n²)</strong> in memory, where n is sequence length. This quadratic scaling is the main bottleneck for long sequences.</p>
+      <div class="highlight yellow">
+        <strong>Efficient attention variants:</strong> FlashAttention (hardware-optimized, exact), Longformer (local + global attention), Performer (linear approximation). These are practical solutions to the quadratic problem.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 9 ===================== -->
+  <section class="chapter" id="ch9">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 09</div>
+      <h2 class="chapter-title">Vision Transformer (ViT) <span class="chapter-tag tag-architecture">Architecture</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">9.1</span> The Core Idea</h3>
+      <p>ViT (Dosovitskiy et al., 2020) asked a simple question: what if we just split an image into patches and treat them like a sequence of tokens, then apply a standard transformer? Turns out — it works extremely well, especially at scale.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">9.2</span> Step-by-Step Architecture</h3>
+      <div class="steps">
+        <div class="step"><p><strong>Patch Embedding:</strong> Split 224×224 image into 16×16 patches → 196 patches. Each patch (16×16×3 = 768 values) is flattened and linearly projected to dimension d.</p></div>
+        <div class="step"><p><strong>Class Token [CLS]:</strong> A special learnable token prepended to the sequence. Its final representation is used for classification. (Borrowed from BERT.)</p></div>
+        <div class="step"><p><strong>Position Embeddings:</strong> Learned 1D position embeddings added to each patch embedding. The model learns which positions are where.</p></div>
+        <div class="step"><p><strong>Transformer Encoder:</strong> L layers of multi-head self-attention + FFN. Each patch attends to every other patch. No convolutions.</p></div>
+        <div class="step"><p><strong>Classification Head:</strong> Take the final [CLS] token → small MLP → class probabilities.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">9.3</span> ViT vs CNN</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Property</th><th>CNN</th><th>ViT</th></tr></thead>
+          <tbody>
+            <tr><td>Inductive bias</td><td>Strong (locality, translation equivariance baked in)</td><td>Weak (must learn from data)</td></tr>
+            <tr><td>Data efficiency</td><td>High — works with small datasets</td><td>Lower — needs more data to learn what CNNs assume</td></tr>
+            <tr><td>Scalability</td><td>Good</td><td>Excellent — scales very well with data and compute</td></tr>
+            <tr><td>Long-range dependencies</td><td>Hard (limited receptive field)</td><td>Easy — global attention from the first layer</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">9.4</span> Important ViT Variants</h3>
+      <div class="dlist">
+        <dt>DeiT</dt><dd>Data-efficient ViT. Trained on ImageNet-1K alone (no extra data) using knowledge distillation from a CNN teacher. Shows ViT works without massive external datasets.</dd>
+        <dt>Swin Transformer</dt><dd>Hierarchical ViT with local attention within shifted windows. Restores spatial locality and hierarchy. Very widely used as a backbone for detection, segmentation.</dd>
+        <dt>MAE (Masked Autoencoder)</dt><dd>He et al., 2021. Masks 75% of image patches, trains a ViT encoder + lightweight decoder to reconstruct missing patches. Simple, scalable, excellent self-supervised pretraining.</dd>
+        <dt>BEiT</dt><dd>BERT-style pretraining for ViT. Masks patches and predicts their discrete visual tokens (from a trained discrete VAE).</dd>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>A 224×224 image with 16×16 patches produces how many patches?</li>
+        <li>What is the [CLS] token and why is it useful?</li>
+        <li>Why does ViT need more data than a CNN to perform well?</li>
+        <li>What does MAE do and how is it related to denoising autoencoders?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 10 ===================== -->
+  <section class="chapter" id="ch10">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 10</div>
+      <h2 class="chapter-title">Generative Adversarial Networks <span class="chapter-tag tag-generative">Generative</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">10.1</span> The Core Idea — A Two-Player Game</h3>
+      <p>A GAN (Goodfellow et al., 2014) consists of two networks trained in opposition:</p>
+      <div class="dlist">
+        <dt>Generator G</dt><dd>Takes random noise z and generates fake samples G(z). Wants to fool D.</dd>
+        <dt>Discriminator D</dt><dd>Takes real or fake samples and outputs a probability that the input is real. Wants to correctly identify fakes.</dd>
+      </div>
+      <div class="formula">
+        <span class="label">GAN Minimax Objective</span>
+        min_G max_D  𝔼_x[log D(x)] + 𝔼_z[log(1 − D(G(z)))]
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">10.2</span> Training Loop</h3>
+      <pre>For each training step:
+
+1. Sample batch of real data {x₁, ..., xₘ}
+2. Sample batch of noise {z₁, ..., zₘ}
+3. Generate fakes: {G(z₁), ..., G(zₘ)}
+
+Update Discriminator:
+  Real samples → D should output 1
+  Fake samples → D should output 0
+  Minimize: −[log D(x) + log(1 − D(G(z)))]
+
+Update Generator:
+  Want D(G(z)) ≈ 1 (fool D)
+  Minimize: −log D(G(z))   ← non-saturating loss</pre>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">10.3</span> Why the Non-Saturating Loss?</h3>
+      <p>The original G loss was <code>log(1 − D(G(z)))</code>. Early in training, D can easily spot fakes (since G is terrible), so D(G(z)) ≈ 0 and the gradient ≈ 0 — G cannot learn.</p>
+      <p>The fix: use <code>−log D(G(z))</code>. When D(G(z)) ≈ 0, this loss is large, giving G a strong gradient to improve.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">10.4</span> Common GAN Problems</h3>
+      <div class="dlist">
+        <dt>Mode Collapse</dt><dd>G learns to generate only a few types of output (e.g., only one digit) because this reliably fools D. The generator stops being diverse.</dd>
+        <dt>Training Instability</dt><dd>G and D need to improve at roughly the same rate. If D becomes too strong too fast, G cannot learn. If G jumps ahead, D collapses.</dd>
+        <dt>Vanishing Gradients</dt><dd>If D is perfect, its output is always 0 for fakes, and G gets no gradient signal at all.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">10.5</span> Evaluation Metrics</h3>
+      <div class="dlist">
+        <dt>Inception Score (IS)</dt><dd>Measures quality (each image should look like one clear class) and diversity (all classes should appear). Higher is better.</dd>
+        <dt>FID (Fréchet Inception Distance)</dt><dd>Compares statistics of deep features from real and generated images using Fréchet distance. Lower is better. More reliable than IS.</dd>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 11 ===================== -->
+  <section class="chapter" id="ch11">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 11</div>
+      <h2 class="chapter-title">Modern GAN Works <span class="chapter-tag tag-generative">Generative</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.1</span> DCGAN (2015)</h3>
+      <p>The first practically successful image GAN. Key contributions: transposed convolutions in G, strided convolutions in D (no pooling), batch normalization, LeakyReLU in D. This architecture guideline became the universal GAN starting point.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.2</span> Conditional GAN (cGAN, 2014)</h3>
+      <p>Feed a class label (or other conditioning) to both G and D. <code>G(z, y) → image conditioned on label y</code>. Lets you control what the generator produces — ask for a "7" and get a 7.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.3</span> Pix2Pix (2017)</h3>
+      <p>Conditional GAN for paired image-to-image translation. Given (input image, target image) pairs, learn to translate between domains: sketch→photo, day→night, satellite→map. Loss = adversarial loss + L1 pixel-level reconstruction loss.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.4</span> CycleGAN (2017)</h3>
+      <p>Unpaired image-to-image translation. No need for matched pairs — just two sets of images (horses and zebras). Uses two generators and two discriminators, plus a <strong>cycle consistency loss</strong>: translating A→B→A should recover A.</p>
+      <div class="formula">
+        <span class="label">Cycle Consistency</span>
+        ||G_BA(G_AB(x)) − x||₁ ≈ 0
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.5</span> StyleGAN (2019) / StyleGAN2 (2020)</h3>
+      <p>Radical generator architecture redesign. Key ideas:</p>
+      <div class="dlist">
+        <dt>Mapping network</dt><dd>Maps noise z → intermediate latent w through 8 FC layers. The w space is more disentangled than z space.</dd>
+        <dt>AdaIN (Adaptive Instance Normalization)</dt><dd>Style vector w controls the "style" at each layer via scale and shift parameters — coarse styles at low resolution, fine styles at high resolution.</dd>
+        <dt>Style mixing</dt><dd>Use one latent for early layers and another for later layers → combine two identities in interesting ways.</dd>
+      </div>
+      <p>StyleGAN2 fixes blob artifacts from AdaIN. Powers "This Person Does Not Exist."</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.6</span> WGAN (Wasserstein GAN, 2017)</h3>
+      <p>Addresses GAN instability theoretically. Replaces Jensen-Shannon divergence (implicit in standard GAN) with <strong>Wasserstein distance</strong> — a more stable training signal.</p>
+      <div class="dlist">
+        <dt>Key change 1</dt><dd>Remove sigmoid from D — it becomes a "critic" outputting real values, not probabilities.</dd>
+        <dt>Key change 2</dt><dd>Clip D's weights to [-0.01, 0.01] to enforce the Lipschitz constraint (or use gradient penalty: WGAN-GP).</dd>
+        <dt>Key change 3</dt><dd>Train D 5× more than G per iteration. A better critic gives G a better signal.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">11.7</span> Progressive Growing (ProGAN, 2018)</h3>
+      <p>Start generating 4×4 images, gradually increase to 8×8, 16×16, ... 1024×1024. Add new layers with smooth blending transitions. Makes training stable because the task starts easy (4×4) and the model builds on what it has already learned.</p>
+    </div>
+  </section>
+
+  <!-- ===================== CH 12 ===================== -->
+  <section class="chapter" id="ch12">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 12</div>
+      <h2 class="chapter-title">Transfer Learning <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">12.1</span> What Is Transfer Learning?</h3>
+      <p>Transfer learning uses knowledge gained from solving one problem to help solve a different (but related) problem. The core empirical observation: neural networks trained on one task learn feature representations that are useful for many other tasks.</p>
+      <div class="highlight">
+        Early layers of an image classifier learn edges, textures, colors — universally useful features. Later layers learn task-specific features. Even these can be adapted. This is the foundation of the entire modern ML paradigm.
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">12.2</span> Why It Matters</h3>
+      <p>Training large models from scratch requires millions of labeled examples, weeks of GPU time, and enormous cost. Transfer learning lets practitioners start from a powerful pretrained model and adapt it with a small dataset in hours.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">12.3</span> When to Use Which Strategy</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Dataset Size</th><th>Similarity to Pretraining Data</th><th>Recommended Strategy</th></tr></thead>
+          <tbody>
+            <tr><td>Small</td><td>High</td><td>Feature extraction only (freeze all pretrained weights)</td></tr>
+            <tr><td>Small</td><td>Low</td><td>Feature extraction (risky) or few-shot methods</td></tr>
+            <tr><td>Large</td><td>High</td><td>Fine-tune all layers</td></tr>
+            <tr><td>Large</td><td>Low</td><td>Fine-tune all layers or train from scratch</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">12.4</span> Negative Transfer</h3>
+      <div class="highlight orange">
+        Transfer learning can sometimes <em>hurt</em> performance. This happens when source and target domains are very different (e.g., pretraining on natural photos, target is medical X-rays). Recognizing when transfer helps vs hurts is an important practical skill.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 13 ===================== -->
+  <section class="chapter" id="ch13">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 13</div>
+      <h2 class="chapter-title">Fine-Tuning <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">13.1</span> What Is Fine-Tuning?</h3>
+      <p>Fine-tuning means taking a pretrained model and continuing training it on a new (typically smaller) dataset, adjusting weights to fit the new task. Unlike feature extraction (frozen backbone), fine-tuning lets the internal representations shift.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">13.2</span> Standard Procedure</h3>
+      <div class="steps">
+        <div class="step"><p>Load pretrained model weights</p></div>
+        <div class="step"><p>Replace the final classification head with a new one (random init) matching the new task's number of classes</p></div>
+        <div class="step"><p>Choose a small learning rate — usually 10–100× smaller than original training LR</p></div>
+        <div class="step"><p>Optionally freeze early layers initially, then unfreeze gradually ("unfreezing schedule")</p></div>
+        <div class="step"><p>Train on new dataset; monitor validation loss for overfitting</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">13.3</span> Parameter-Efficient Fine-Tuning (PEFT)</h3>
+      <p>Modern LLMs have billions of parameters — full fine-tuning is expensive and risks overfitting. PEFT methods update only a small fraction of parameters:</p>
+      <div class="dlist">
+        <dt>Adapter Layers</dt><dd>Insert small trainable layers between existing frozen layers. Only adapters are trained (~1–3% of parameters).</dd>
+        <dt>Prefix Tuning</dt><dd>Add trainable prefix tokens to the input sequence. Only the prefix embeddings are optimized.</dd>
+        <dt>LoRA (Low-Rank Adaptation)</dt><dd>For each weight matrix W, learn a low-rank update: W' = W + AB where A ∈ ℝ^(d×r) and B ∈ ℝ^(r×k) with rank r ≪ min(d,k). Extremely popular for LLM fine-tuning. Fast, cheap, avoids forgetting.</dd>
+      </div>
+      <div class="formula">
+        <span class="label">LoRA Update</span>
+        W' = W + ΔW = W + A × B<br>
+        where rank r ≪ min(d, k)<br>
+        Parameters trained: d×r + r×k  instead of  d×k
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">13.4</span> Catastrophic Forgetting</h3>
+      <p>When you fine-tune on a new task, the network can "forget" what it learned before. New gradient updates overwrite old knowledge. Mitigation: small LR, replay (mix old + new data), EWC (Elastic Weight Consolidation), or PEFT methods (frozen backbone prevents forgetting).</p>
+    </div>
+  </section>
+
+  <!-- ===================== CH 14 ===================== -->
+  <section class="chapter" id="ch14">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 14</div>
+      <h2 class="chapter-title">Knowledge Distillation <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">14.1</span> The Core Idea</h3>
+      <p>Knowledge distillation (Hinton et al., 2015) transfers knowledge from a large, accurate model (the <strong>teacher</strong>) into a smaller, faster model (the <strong>student</strong>). The student learns from the teacher's soft output probabilities, not just hard labels.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">14.2</span> Why Soft Labels Carry More Information</h3>
+      <p>A hard label says: "this image is a cat." That is all. The teacher's output probabilities say: "95% cat, 4% dog, 1% tiger." These <strong>soft labels</strong> reveal which classes are similar — a dog is more like a cat than a car is. This extra signal helps the student learn better representations.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">14.3</span> Distillation Loss</h3>
+      <div class="formula">
+        <span class="label">Distillation Objective</span>
+        L = α × L_CE(student, true_labels)<br>
+          + (1−α) × L_KL(softmax(student/T) || softmax(teacher/T))
+      </div>
+      <p>Where T is <strong>temperature</strong> — higher T makes soft labels softer (less peaked), making the small probabilities more readable and useful for the student.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">14.4</span> Variants of Distillation</h3>
+      <div class="dlist">
+        <dt>Response-based</dt><dd>Student matches teacher's final output (logits/probabilities). The classical approach.</dd>
+        <dt>Feature-based</dt><dd>Student matches teacher's intermediate representations (hidden layer activations). Richer signal, more complex to implement.</dd>
+        <dt>Relation-based</dt><dd>Student matches relationships between different samples in teacher's representation space (e.g., pairwise distances, Gram matrices).</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">14.5</span> Real-World Applications</h3>
+      <div class="dlist">
+        <dt>DistilBERT</dt><dd>60% the size of BERT, 97% of its performance, 60% faster at inference.</dd>
+        <dt>DeiT</dt><dd>ViT trained on ImageNet-1K alone by distilling from a CNN (RegNet) teacher. Makes ViT practical without huge datasets.</dd>
+        <dt>TinyBERT</dt><dd>Distillation at multiple layers (attention matrices + hidden states), giving a very compact model.</dd>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 15 ===================== -->
+  <section class="chapter" id="ch15">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 15</div>
+      <h2 class="chapter-title">Knowledge Transfer <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">15.1</span> Broader Than Distillation</h3>
+      <p>Knowledge distillation is one specific method of knowledge transfer. Knowledge transfer is the broader idea — any method by which knowledge learned in one setting is made useful in another. This includes: transfer learning, fine-tuning, distillation, multi-task learning, zero-shot transfer, and few-shot transfer.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">15.2</span> Zero-Shot Transfer</h3>
+      <p>The model is tested on a task it was never explicitly trained on. Works when the model has learned sufficiently general representations. CLIP is the canonical example — trained to align image and text, it can classify images into any category by comparing image embeddings to text embeddings of class names. No task-specific training needed.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">15.3</span> Few-Shot Transfer</h3>
+      <p>The model sees only K examples (K = 1, 5, or 10) of the new task and must generalize. This is the goal of <strong>meta-learning</strong> — training models to be good at learning quickly.</p>
+      <div class="dlist">
+        <dt>Prototypical Networks</dt><dd>Compute a class prototype (mean embedding) from K examples. Classify new examples by finding the nearest prototype.</dd>
+        <dt>MAML (Model-Agnostic Meta-Learning)</dt><dd>Learn an initialization that can be fine-tuned to any new task in a few gradient steps.</dd>
+        <dt>Matching Networks</dt><dd>Use attention to match test examples to the K support examples directly.</dd>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 16 ===================== -->
+  <section class="chapter" id="ch16">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 16</div>
+      <h2 class="chapter-title">Domain Adaptation <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">16.1</span> The Problem</h3>
+      <p>You train a model on data from one distribution (source domain) and deploy it on data from a different distribution (target domain). Performance degrades — sometimes catastrophically. Example: train on California sunshine photos, deploy in winter fog in Germany.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">16.2</span> Types of Distribution Shift</h3>
+      <div class="dlist">
+        <dt>Covariate shift</dt><dd>P(X) changes between source and target, but P(Y|X) stays the same. The input distribution changes, but the relationship between input and label does not. Most common type.</dd>
+        <dt>Label shift</dt><dd>P(Y) changes — different class frequencies in source and target.</dd>
+        <dt>Concept drift</dt><dd>P(Y|X) changes — the actual relationship between input and output changes over time.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">16.3</span> Key Methods</h3>
+      <div class="dlist">
+        <dt>DANN (Domain-Adversarial Neural Network)</dt><dd>Add a domain classifier that tries to distinguish source from target features. The feature extractor is trained to fool the domain classifier — like a GAN. A gradient reversal layer flips the gradient sign to achieve this elegantly.</dd>
+        <dt>Deep CORAL</dt><dd>Align second-order statistics (covariance matrices) of source and target features. Simpler than DANN but effective.</dd>
+        <dt>MMD (Maximum Mean Discrepancy)</dt><dd>Minimize the statistical distance between source and target feature distributions in a kernel space.</dd>
+        <dt>Self-training</dt><dd>Train on source, predict pseudo-labels for target, retrain using high-confidence predictions. Iterate until convergence.</dd>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>What is covariate shift and why does it degrade model performance?</li>
+        <li>How does DANN use an adversarial objective — and how is it similar to GANs?</li>
+        <li>What is unsupervised domain adaptation and why is it the hardest variant?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 17 ===================== -->
+  <section class="chapter" id="ch17">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 17</div>
+      <h2 class="chapter-title">Active Learning <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">17.1</span> The Setting</h3>
+      <p>You have a large pool of unlabeled data. Labeling is expensive (requires human annotators). You have a limited labeling budget. The question: which examples should you label to maximize model performance?</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">17.2</span> The Active Learning Loop</h3>
+      <pre>1. Start with small labeled set L, large unlabeled pool U
+2. Train model on L
+3. Score each unlabeled example using an acquisition function
+4. Select top-K highest scoring examples from U
+5. Have humans label those K examples
+6. Add to L; go to step 2
+7. Repeat until labeling budget is exhausted</pre>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">17.3</span> Acquisition Functions</h3>
+      <div class="dlist">
+        <dt>Least Confidence</dt><dd>Select x where P(y*|x) is lowest — the model is least sure of even its top prediction.</dd>
+        <dt>Margin Sampling</dt><dd>Select x where the gap between top-2 class probabilities is smallest — the model cannot decide between two options.</dd>
+        <dt>Entropy Sampling</dt><dd>Select x with highest entropy H = −Σ p log p over all classes. Most general uncertainty measure.</dd>
+        <dt>Query by Committee (QbC)</dt><dd>Train multiple models with different random seeds. Select examples where committee members disagree the most.</dd>
+        <dt>Core-Set Selection</dt><dd>Select examples that best "cover" the unlabeled set in feature space — maximize geometric diversity, not just uncertainty.</dd>
+        <dt>BALD</dt><dd>Bayesian Active Learning by Disagreement. Maximizes mutual information between predictions and model parameters. Requires MC Dropout or a Bayesian model.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">17.4</span> Batch Active Learning</h3>
+      <p>Most real scenarios require selecting a batch of K examples at once. Naive approach: pick top-K by individual score. Problem: they might all be similar (redundant). Better: balance informativeness with diversity.</p>
+      <div class="dlist">
+        <dt>BADGE</dt><dd>Batch Active Learning by Diverse Gradient Embeddings. Compute gradient embeddings for each unlabeled example; use k-means++ to select a batch that is both uncertain (large gradient) and diverse (different gradient directions).</dd>
+        <dt>CoreSet (k-center greedy)</dt><dd>Greedily select points that minimize the maximum distance from any unlabeled point to the nearest selected point — covers feature space uniformly.</dd>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 18 ===================== -->
+  <section class="chapter" id="ch18">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 18</div>
+      <h2 class="chapter-title">Semi-Supervised Active Learning <span class="chapter-tag tag-adaptation">Adaptation</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">18.1</span> Combining Two Paradigms</h3>
+      <p><strong>Semi-supervised learning (SSL)</strong> uses both labeled and unlabeled data to improve the model. <strong>Active learning</strong> selects which examples to label. Together: use unlabeled data to improve the model, then use the improved model to better choose what to label next. A virtuous cycle.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">18.2</span> Semi-Supervised Learning Methods (Background)</h3>
+      <div class="dlist">
+        <dt>Pseudo-labeling (Self-training)</dt><dd>Train on labeled data → predict on unlabeled → use high-confidence predictions as pseudo-labels → retrain. Iterate.</dd>
+        <dt>Consistency Regularization</dt><dd>Perturb an unlabeled example (augmentation, noise) and force the model output to be consistent across perturbations.</dd>
+        <dt>FixMatch</dt><dd>Use weak augmentation to generate pseudo-labels; use strong augmentation to get predictions; enforce consistency only when pseudo-label confidence > threshold. Strong baseline for SSL.</dd>
+        <dt>Mean Teacher</dt><dd>Maintain student (gradient-updated) and teacher (exponential moving average of student) networks. Teacher produces targets for unlabeled data. Student learns from those targets.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">18.3</span> VAAL (Variational Adversarial Active Learning)</h3>
+      <p>Trains a VAE on all data (labeled + unlabeled). Trains a discriminator to distinguish labeled from unlabeled data in latent space. Query examples the discriminator cannot tell apart from labeled data — regions of latent space not yet covered by labeled examples.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">18.4</span> Why Combine SSL and AL?</h3>
+      <div class="highlight green">
+        SSL changes what the model is uncertain about — it extracts information from unlabeled data before labeling. This changes the acquisition function's output. Without SSL, active learning picks "hard" examples. With SSL, the model already partially understands unlabeled data, so it picks examples that are <em>still</em> hard — these are genuinely informative, not just out-of-distribution.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 19 ===================== -->
+  <section class="chapter" id="ch19">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 19</div>
+      <h2 class="chapter-title">Large AI Foundation Models <span class="chapter-tag tag-frontier">Frontier</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">19.1</span> What Is a Foundation Model?</h3>
+      <p>A foundation model is a large model trained on vast amounts of broad data that can be adapted to many downstream tasks. Term coined by Stanford HAI in 2021. Properties: massive scale (billions of parameters), generality (not one task), emergent capabilities (appear at scale), adaptability (fine-tune / prompt for specific applications).</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">19.2</span> Pretraining Paradigms</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Paradigm</th><th>Method</th><th>Used In</th></tr></thead>
+          <tbody>
+            <tr><td>Masked Language Modeling</td><td>Mask tokens, predict them</td><td>BERT, RoBERTa</td></tr>
+            <tr><td>Causal Language Modeling</td><td>Predict next token</td><td>GPT, LLaMA, Mistral</td></tr>
+            <tr><td>Contrastive Pretraining</td><td>Align representations from different modalities</td><td>CLIP, ALIGN</td></tr>
+            <tr><td>Masked Image Modeling</td><td>Mask patches, reconstruct them</td><td>MAE, BEiT</td></tr>
+            <tr><td>Multi-task Pretraining</td><td>Many tasks with different prompts</td><td>T5, FLAN, Gemini</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">19.3</span> Emergent Abilities</h3>
+      <p>Certain capabilities appear only above a scale threshold. Below: near-random performance. Above: sudden, dramatic improvement. Examples: few-shot learning (GPT-3+), chain-of-thought reasoning, multi-step arithmetic, instruction following without explicit training. Not fully understood — active research area.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">19.4</span> RLHF — Making Models Behave</h3>
+      <p>Reinforcement Learning from Human Feedback shapes model behavior toward being helpful, honest, and harmless.</p>
+      <div class="steps">
+        <div class="step"><p>Fine-tune LLM with supervised learning on high-quality human demonstrations</p></div>
+        <div class="step"><p>Collect human preferences: show pairs of model responses, humans pick which is better</p></div>
+        <div class="step"><p>Train a reward model to predict human preferences from these pairs</p></div>
+        <div class="step"><p>Use RL (PPO) to optimize the LLM to maximize the reward model's score</p></div>
+      </div>
+      <div class="highlight yellow">
+        <strong>DPO (Direct Preference Optimization):</strong> Skips the separate reward model entirely. Directly optimizes the LLM on preference pairs using a closed-form objective derived from RLHF theory. Simpler, often equally effective.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 20 ===================== -->
+  <section class="chapter" id="ch20">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 20</div>
+      <h2 class="chapter-title">Large Language Models (LLMs) <span class="chapter-tag tag-frontier">Frontier</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">20.1</span> Architecture</h3>
+      <p>Modern LLMs are transformer <strong>decoder-only</strong> models: causal self-attention only, trained to predict the next token autoregressively. No encoder, no cross-attention.</p>
+      <div class="dlist">
+        <dt>RMSNorm</dt><dd>Replaces LayerNorm — more computationally efficient (no mean subtraction).</dd>
+        <dt>SwiGLU activation</dt><dd>Replaces ReLU in the FFN. Better empirical performance.</dd>
+        <dt>Rotary Position Embeddings (RoPE)</dt><dd>Rotates in embedding space; better generalization to longer sequences than seen in training.</dd>
+        <dt>Grouped Query Attention (GQA)</dt><dd>Shares key/value heads across multiple query heads. Reduces memory and speeds up inference. Used in LLaMA-3, Mistral.</dd>
+        <dt>KV Cache</dt><dd>During inference, store computed key and value tensors from previous tokens. Avoids recomputing them each step. Essential for practical autoregressive generation.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">20.2</span> Scaling Laws</h3>
+      <p>Chinchilla (2022) showed the optimal relationship: train on ~20 tokens per parameter. Many earlier models were over-parameterized and under-trained (too big, too little data). Loss follows power laws with both model size and training data size.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">20.3</span> In-Context Learning</h3>
+      <p>GPT-3 showed that LLMs can perform few-shot learning just from prompt formatting — no gradient updates. Give the model a few examples in the prompt; it infers the task from context and answers. The model is learning from context at inference time, without updating weights.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">20.4</span> Chain-of-Thought Prompting</h3>
+      <p>Adding "Let's think step by step" dramatically improves performance on reasoning tasks. The model generates intermediate reasoning steps before the final answer. The final answer is conditioned on the reasoning chain — externalizing computation that would otherwise need to happen implicitly.</p>
+    </div>
+  </section>
+
+  <!-- ===================== CH 21 ===================== -->
+  <section class="chapter" id="ch21">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 21</div>
+      <h2 class="chapter-title">Large Vision Models (LVMs) <span class="chapter-tag tag-frontier">Frontier</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">21.1</span> What Are LVMs?</h3>
+      <p>Large Vision Models are foundation models for visual data — pretrained on massive image datasets, adaptable to many vision tasks. Same philosophy as LLMs: pretrain at scale, adapt as needed.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">21.2</span> Key Models</h3>
+      <div class="dlist">
+        <dt>DINO / DINOv2</dt><dd>Self-supervised ViT trained with knowledge distillation from a momentum encoder (teacher = EMA of student). No labels required. Learns interpretable segmentation features. DINOv2 (2023) trained on curated 142M images — excellent general-purpose visual features.</dd>
+        <dt>SAM (Segment Anything Model)</dt><dd>Trained on 1B masks from 11M images. Segments any object given a point, box, or text prompt. Remarkable zero-shot generalization — works on images it has never seen before.</dd>
+        <dt>MAE</dt><dd>Masks 75% of image patches, reconstructs them. Simple, scalable, effective for ViT pretraining.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">21.3</span> Self-Supervised Methods for Vision (Important Background)</h3>
+      <div class="dlist">
+        <dt>SimCLR</dt><dd>Two augmented views of the same image → push representations together; push different images apart. No labels.</dd>
+        <dt>MoCo (Momentum Contrast)</dt><dd>Momentum encoder (slow EMA) produces stable targets. Enables large effective batch sizes without storing them in memory.</dd>
+        <dt>MAE</dt><dd>Mask 75% of patches, reconstruct them. Simple but extremely effective.</dd>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CH 22 ===================== -->
+  <section class="chapter" id="ch22">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 22</div>
+      <h2 class="chapter-title">Multi-Modal LLMs — CLIP, BLIP & Beyond <span class="chapter-tag tag-frontier">Frontier</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.1</span> What Makes a Model Multi-Modal?</h3>
+      <p>A multi-modal model processes data from multiple modalities simultaneously — text, images, audio, video. The challenge is learning a joint representation space where different modalities can communicate with each other meaningfully.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.2</span> CLIP (OpenAI, 2021)</h3>
+      <p>Trained on 400 million (image, text) pairs from the internet. Learns to align image and text embeddings in a shared space.</p>
+      <div class="dlist">
+        <dt>Architecture</dt><dd>Image encoder (ViT or ResNet) + Text encoder (Transformer). Both project to the same d-dimensional space.</dd>
+        <dt>Contrastive Loss (InfoNCE)</dt><dd>In a batch of N pairs, maximize cosine similarity on the diagonal (matched pairs), minimize off-diagonal (mismatched pairs).</dd>
+        <dt>Zero-shot classification</dt><dd>Encode class names as text ("a photo of a cat"). Encode test image. Predict: class with highest cosine similarity to the image. No task-specific fine-tuning needed.</dd>
+      </div>
+      <div class="formula">
+        <span class="label">CLIP InfoNCE Loss (for images)</span>
+        L = −log [ exp(sim(Iᵢ,Tᵢ)/τ) / Σⱼ exp(sim(Iᵢ,Tⱼ)/τ) ]
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.3</span> BLIP (2022)</h3>
+      <p>Addresses CLIP's weakness: noisy web training data. BLIP bootstraps cleaner training data.</p>
+      <div class="dlist">
+        <dt>Architecture additions</dt><dd>Adds a multimodal encoder (image+text with cross-attention) and an image-grounded text decoder. Three objectives trained simultaneously: ITC (contrastive), ITM (image-text matching), LM (language modeling).</dd>
+        <dt>CapFilt</dt><dd>Captioner generates synthetic captions for web images. Filter removes noisy web captions and bad synthetic ones. This bootstrapping creates cleaner pseudo-labeled training data.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.4</span> BLIP-2 (2023)</h3>
+      <p>Freeze a pretrained image encoder AND a pretrained LLM. Bridge them with a lightweight <strong>Q-Former</strong> — 32 learnable query tokens that attend to image features. Only the Q-Former is trained. Extremely parameter-efficient.</p>
+      <pre>Frozen Image Encoder → Q-Former → Frozen LLM
+                         ↑
+               32 learnable query tokens</pre>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.5</span> Flamingo (DeepMind, 2022)</h3>
+      <p>Connects a frozen vision encoder to a frozen LLM using cross-attention layers inserted between LLM layers. Trained on interleaved image-text sequences. Enables few-shot visual question answering — give a few (image, question, answer) examples, then ask about a new image.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">22.6</span> ImageBind (Meta, 2023)</h3>
+      <p>Extends CLIP to 6 modalities: image, text, audio, depth, thermal, IMU. Uses images as the binding modality — aligning all modalities to images implicitly aligns them to each other. Enables cross-modal retrieval between modalities that were never directly paired in training (e.g., retrieve audio from text).</p>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-label">🧠 Check Your Understanding</div>
+      <ul>
+        <li>What is contrastive learning and why does it train CLIP effectively?</li>
+        <li>How does CLIP perform zero-shot classification without being explicitly trained on classification?</li>
+        <li>What problem does BLIP's CapFilt solve?</li>
+        <li>What does the Q-Former do in BLIP-2, and why is freezing both encoder and LLM advantageous?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CH 23 ===================== -->
+  <section class="chapter" id="ch23">
+    <div class="chapter-header">
+      <div class="chapter-num">CH 23</div>
+      <h2 class="chapter-title">LLaVA <span class="chapter-tag tag-frontier">Frontier</span></h2>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.1</span> What Is LLaVA?</h3>
+      <p>LLaVA (Large Language and Vision Assistant, Liu et al., 2023) connects a CLIP vision encoder to a LLaMA/Vicuna LLM using a simple linear projection layer. Despite its architectural simplicity, it achieves strong performance on visual dialogue and question answering. It democratized multi-modal LLM research.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.2</span> Architecture</h3>
+      <pre>Image Input
+    ↓
+CLIP Image Encoder (frozen ViT-L/14)
+    ↓  visual features [N × D_clip]
+Linear Projection Layer (trainable)
+    ↓  visual tokens [N × D_llm]
+    ↕
+LLM (LLaMA / Vicuna) — processes [visual tokens + text tokens] together
+    ↓
+Text output (answer to the question)</pre>
+      <p>The visual features are projected into the LLM's embedding space and prepended to the text token sequence. The LLM sees them as "extra tokens" at the start of the sequence.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.3</span> Training Data — The Key Innovation</h3>
+      <p>LLaVA's training data was generated using GPT-4. The authors gave GPT-4 image captions and bounding boxes (text descriptions of visual content — not the actual images) and asked it to generate:</p>
+      <div class="dlist">
+        <dt>Conversation data</dt><dd>Multi-turn Q&A about the image — questions a curious person might ask.</dd>
+        <dt>Detailed descriptions</dt><dd>Long, rich descriptions of the image content.</dd>
+        <dt>Complex reasoning</dt><dd>Questions requiring multi-step reasoning about what is shown.</dd>
+      </div>
+      <p>Total: 158K samples generated this way. High quality instruction-following data without expensive human annotation.</p>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.4</span> Two-Stage Training</h3>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>Stage 1 — Feature Alignment</h4>
+          <ul>
+            <li>Freeze: CLIP encoder + LLM</li>
+            <li>Train: projection layer only</li>
+            <li>Data: 595K image-caption pairs (CC-595K)</li>
+            <li>Goal: make visual tokens meaningful to LLM</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>Stage 2 — End-to-End Fine-tuning</h4>
+          <ul>
+            <li>Freeze: CLIP encoder only</li>
+            <li>Train: projection layer + LLM</li>
+            <li>Data: 158K GPT-4 generated instructions</li>
+            <li>Goal: teach visual instruction following</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.5</span> LLaVA-1.5 and Beyond</h3>
+      <div class="dlist">
+        <dt>LLaVA-1.5 (2023)</dt><dd>Replace linear projection with a 2-layer MLP. Use higher resolution (336×336). More instruction data. Significant performance improvement.</dd>
+        <dt>LLaVA-NeXT (2024)</dt><dd>Handle even higher resolutions by splitting images into sub-images, processing each separately, concatenating. Supports resolutions up to 672×672+.</dd>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="num">23.6</span> Why LLaVA Matters</h3>
+      <div class="highlight green">
+        LLaVA showed that a simple linear projection between a frozen vision encoder and an LLM — trained on GPT-4 generated instruction data — is enough to build a powerful visual assistant. This principle (freeze → bridge → freeze) has become the dominant paradigm for building multi-modal models cheaply and effectively.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SUMMARY TABLE ===================== -->
+  <section class="summary-table-section" id="summary">
+    <div class="chapter-header">
+      <div class="chapter-num">REF</div>
+      <h2 class="chapter-title">Summary Table — All Topics</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Topic</th><th>What It Does</th><th>Key Idea</th><th>Related To</th></tr></thead>
+        <tbody>
+          <tr><td>Encoder</td><td>Compress input to latent</td><td>Learn compact representations</td><td>Autoencoders, ViT, CLIP</td></tr>
+          <tr><td>Decoder</td><td>Reconstruct from latent</td><td>Generate from representation</td><td>Autoencoders, Transformers</td></tr>
+          <tr><td>Autoencoder (vanilla)</td><td>Reconstruct input via bottleneck</td><td>Bottleneck compression</td><td>Foundation for all AE variants</td></tr>
+          <tr><td>Denoising AE</td><td>Reconstruct from corrupted input</td><td>Learn the data manifold</td><td>Diffusion models</td></tr>
+          <tr><td>Stacked AE</td><td>Hierarchical layer-wise pretraining</td><td>Train deep networks layer by layer</td><td>Deep pretraining, BERT</td></tr>
+          <tr><td>Contractive AE</td><td>Insensitive encoder via Jacobian penalty</td><td>Penalize sensitivity explicitly</td><td>Robust representations</td></tr>
+          <tr><td>VAE</td><td>Generate new data by sampling latent</td><td>Probabilistic latent space + KL prior</td><td>GANs, BLIP, generative models</td></tr>
+          <tr><td>Attention</td><td>Selective, weighted combination of context</td><td>Query-Key-Value lookup</td><td>Transformers, ViT, CLIP, LLaVA</td></tr>
+          <tr><td>Transformer</td><td>Sequence processing via stacked attention</td><td>Fully parallel, long-range dependencies</td><td>LLMs, ViT, BERT, T5</td></tr>
+          <tr><td>ViT</td><td>Image processing via transformer</td><td>Patches as tokens</td><td>LVMs, CLIP image encoder, LLaVA</td></tr>
+          <tr><td>GAN</td><td>Generate realistic data via adversarial game</td><td>Generator vs Discriminator</td><td>CycleGAN, StyleGAN, domain adaptation</td></tr>
+          <tr><td>Modern GANs</td><td>Better, controllable generation</td><td>Stability tricks + architectural innovations</td><td>StyleGAN, CycleGAN, WGAN</td></tr>
+          <tr><td>Transfer Learning</td><td>Reuse pretrained knowledge</td><td>Pretrained features are general</td><td>Fine-tuning, distillation</td></tr>
+          <tr><td>Fine-tuning</td><td>Adapt pretrained model to new task</td><td>Update weights on new task data</td><td>LoRA, PEFT, LLaVA Stage 2</td></tr>
+          <tr><td>Knowledge Distillation</td><td>Compress large model into small one</td><td>Soft label transfer with temperature</td><td>DistilBERT, DeiT, TinyBERT</td></tr>
+          <tr><td>Knowledge Transfer</td><td>Move knowledge between settings</td><td>Broad paradigm: zero/few-shot, meta-learning</td><td>CLIP zero-shot, MAML</td></tr>
+          <tr><td>Domain Adaptation</td><td>Handle distribution shift</td><td>Learn domain-invariant representations</td><td>DANN, CORAL, self-training</td></tr>
+          <tr><td>Active Learning</td><td>Label most informative examples</td><td>Acquisition function selects queries</td><td>Entropy, CoreSet, BADGE</td></tr>
+          <tr><td>Semi-supervised AL</td><td>Combine SSL and active learning</td><td>Use unlabeled data to improve querying</td><td>VAAL, FixMatch, Mean Teacher</td></tr>
+          <tr><td>Foundation Models</td><td>Pretrain at scale, adapt anywhere</td><td>General + emergent + adaptable</td><td>LLMs, LVMs, CLIP, LLaVA</td></tr>
+          <tr><td>LLMs</td><td>Language understanding and generation</td><td>Decoder-only transformers + scaling</td><td>GPT, LLaMA, ChatGPT</td></tr>
+          <tr><td>LVMs</td><td>Visual features at scale</td><td>Self-supervised ViT pretraining</td><td>SAM, DINOv2, CLIP image encoder</td></tr>
+          <tr><td>CLIP</td><td>Align image and text in shared space</td><td>Contrastive pretraining on 400M pairs</td><td>Zero-shot classification, LLaVA, BLIP</td></tr>
+          <tr><td>BLIP / BLIP-2</td><td>Image-text understanding + generation</td><td>CapFilt bootstrapping + Q-Former bridge</td><td>VQA, captioning, multi-modal</td></tr>
+          <tr><td>LLaVA</td><td>Visual dialogue and instruction following</td><td>CLIP encoder → linear projection → LLM</td><td>Ties everything together</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== KEY EQUATIONS ===================== -->
+  <section class="chapter" id="equations" style="margin-top:60px;">
+    <div class="chapter-header">
+      <div class="chapter-num">REF</div>
+      <h2 class="chapter-title">Key Equations Reference</h2>
+    </div>
+    <div class="eq-grid">
+      <div class="eq-card">
+        <div class="eq-name">Autoencoder Loss</div>
+        <div class="eq-formula">L = ||x − g(f(x))||²</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">VAE ELBO</div>
+        <div class="eq-formula">L = E[log p(x|z)] − KL(q(z|x) || p(z))</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">GAN Objective</div>
+        <div class="eq-formula">min_G max_D E[log D(x)] + E[log(1−D(G(z)))]</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">Scaled Dot-Product Attention</div>
+        <div class="eq-formula">Attn(Q,K,V) = softmax(QKᵀ / √d_k) V</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">Knowledge Distillation</div>
+        <div class="eq-formula">L = α·L_CE + (1−α)·L_KL(stu/T || tea/T)</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">CLIP InfoNCE Loss</div>
+        <div class="eq-formula">L = −log[exp(sim(Iᵢ,Tᵢ)/τ) / Σⱼ exp(sim(Iᵢ,Tⱼ)/τ)]</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">LoRA Update</div>
+        <div class="eq-formula">W' = W + AB,  A∈ℝ^(d×r), B∈ℝ^(r×k), r≪min(d,k)</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">Entropy (Active Learning)</div>
+        <div class="eq-formula">H(p) = −Σᵢ pᵢ log pᵢ</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">CAE Loss</div>
+        <div class="eq-formula">L = ||x−x̂||² + λ||J_f(x)||²_F</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">Cycle Consistency (CycleGAN)</div>
+        <div class="eq-formula">||G_BA(G_AB(x)) − x||₁ ≈ 0</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">Sinusoidal Position Encoding</div>
+        <div class="eq-formula">PE(pos,2i) = sin(pos/10000^(2i/d))</div>
+      </div>
+      <div class="eq-card">
+        <div class="eq-name">WGAN Critic Loss</div>
+        <div class="eq-formula">L_W = −D(x) + D(G(z))</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
