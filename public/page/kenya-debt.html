@@ -97,6 +97,25 @@
     color: #fff;
   }
 
+  .cover-meta-item a::before {
+    content: "View Analysis GitHub";
+    color: #fff;
+  }
+
+  .cover-meta-item a {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #24292e;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.25s ease;
+  }
+
+  .cover-meta-item a:hover {
+    background-color: #272b30;
+  }
+
   /* ─── TOC ─── */
   .toc {
     background: var(--parchment);
@@ -326,7 +345,7 @@
   .tl-item::before {
     content: '';
     position: absolute;
-    left: -34px;
+    left: -37px;
     top: 6px;
     width: 14px;
     height: 14px;
@@ -494,6 +513,7 @@
     color: #fff;
     font-weight: 600;
     transition: width 0.5s ease;
+    white-space: nowrap;
   }
   .bar-fill.red { background: var(--red); }
   .bar-fill.gold { background: var(--gold); }
@@ -599,6 +619,11 @@
     <div class="cover-meta-item">
       <label>IMF Risk Assessment</label>
       <span>High Distress</span>
+    </div>
+  </div>
+  <div class="cover-meta" style="margin-top: 40px;">
+    <div class="cover-meta-item">
+      <a href="http://github.com/DennisRono/kenya-debt-analysis" target="_blank" rel="noopener noreferrer"></a>
     </div>
   </div>
 </div>
