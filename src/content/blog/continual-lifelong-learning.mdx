@@ -1,0 +1,86 @@
+---
+title: 'Continual / Lifelong Learning'
+description: 'Discover continual and lifelong learning approaches that enable AI systems to learn continuously from new data and tasks without forgetting previously acquired knowledge.'
+date: 2024-09-20
+tags:
+  [
+    'continual learning',
+    'lifelong learning',
+    'catastrophic forgetting',
+    'incremental learning',
+    'adaptive AI',
+    'online learning',
+  ]
+published: false
+---
+
+# Continual / Lifelong Learning
+
+Continual learning addresses one of AI's fundamental challenges: enabling systems to learn continuously from new data and tasks without forgetting what they previously learned.
+
+## What is Continual Learning?
+
+Continual learning (also called lifelong learning) enables AI systems to:
+- Learn from a stream of data over time
+- Acquire new skills and knowledge incrementally
+- Retain previously learned capabilities
+
+## The Catastrophic Forgetting Problem
+
+When neural networks learn new tasks, they tend to overwrite weights important for previous tasks, leading to catastrophic forgetting of earlier knowledge.
+
+## Key Approaches
+
+### Regularization Methods
+
+Adding constraints to preserve important weights when learning new tasks.
+
+**Elastic Weight Consolidation (EWC)**: Protecting weights important for previous tasks.
+
+### Replay Methods
+
+Storing and rehearsing examples from previous tasks.
+
+**Experience Replay**: Maintaining a memory buffer of past examples.
+
+### Architecture-Based Methods
+
+Dedicating different network components to different tasks.
+
+**Progressive Neural Networks**: Adding new modules for new tasks while freezing old ones.
+
+### Hybrid Approaches
+
+Combining multiple strategies for better performance.
+
+## Evaluation Scenarios
+
+### Task-Incremental
+
+Learning new tasks with clear task boundaries.
+
+### Class-Incremental
+
+Learning to classify new classes over time.
+
+### Domain-Incremental
+
+Adapting to distribution shifts in the input data.
+
+## Applications
+
+- Personalized AI assistants
+- Autonomous systems adapting to new environments
+- Industrial systems with evolving requirements
+- Long-running AI applications
+
+## Challenges
+
+- Balancing stability and plasticity
+- Scalability to many tasks
+- Forward and backward transfer
+- Evaluation and benchmarking
+
+## Future Directions
+
+Biological inspiration and integration with meta-learning promise more capable continual learning systems.

@@ -1,0 +1,81 @@
+---
+title: 'Federated Learning'
+description: 'Understand federated learning, a privacy-preserving approach to machine learning where models are trained across decentralized devices without sharing raw data.'
+date: 2024-09-20
+tags:
+  [
+    'federated learning',
+    'privacy-preserving ML',
+    'distributed learning',
+    'data privacy',
+    'collaborative AI',
+    'decentralized AI',
+  ]
+published: false
+---
+
+# Federated Learning
+
+Federated learning is a machine learning approach that enables training models across multiple decentralized devices or servers holding local data, without exchanging raw data.
+
+## What is Federated Learning?
+
+Instead of centralizing data for training, federated learning brings the model to the data. Each participant trains locally, and only model updates (not data) are shared and aggregated.
+
+## How It Works
+
+1. **Initialization**: A global model is distributed to participants
+2. **Local Training**: Each participant trains on their local data
+3. **Update Sharing**: Model updates (gradients) are sent to a central server
+4. **Aggregation**: Updates are combined to improve the global model
+5. **Distribution**: The improved model is sent back to participants
+
+## Key Advantages
+
+### Privacy
+
+Raw data never leaves the local device, reducing privacy risks.
+
+### Data Sovereignty
+
+Enables collaboration while respecting data ownership and regulations.
+
+### Reduced Communication
+
+Only model updates are transmitted, not entire datasets.
+
+### Diverse Data
+
+Access to naturally distributed, diverse data sources.
+
+## Challenges
+
+### Statistical Heterogeneity
+
+Data across participants may be non-IID (not independently and identically distributed).
+
+### System Heterogeneity
+
+Devices have varying compute capabilities and availability.
+
+### Communication Efficiency
+
+Minimizing communication rounds and bandwidth usage.
+
+### Security
+
+Protecting against adversarial participants and inference attacks.
+
+## Applications
+
+- Mobile keyboard prediction
+- Healthcare across institutions
+- Financial fraud detection
+- Smart city applications
+
+## Privacy Enhancements
+
+Combining federated learning with:
+- Differential privacy
+- Secure aggregation
+- Homomorphic encryption

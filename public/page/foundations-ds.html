@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ══ PRIMARY SEO ══ -->
+  <title>Foundations of Data Science — Complete Course Notes</title>
+  <meta name="description" content="Comprehensive lecture notes for Foundations of Data Science covering data fundamentals, preprocessing, hypothesis testing, high-dimensional geometry, SVD/PCA, machine learning, Markov chains, hidden Markov models, and digital signal processing." />
+  <meta name="keywords" content="foundations of data science, data science notes, hypothesis testing, PCA SVD, machine learning, Markov chains, hidden Markov models, digital signal processing, dimensionality reduction, time series analysis, data preprocessing, similarity distance measures" />
+  <meta name="author" content="Foundations of Data Science" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://example.com/foundations-of-data-science" />
+
+  <!-- ══ OPEN GRAPH ══ -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Foundations of Data Science — Complete Course Notes" />
+  <meta property="og:description" content="Complete structured notes covering every major topic in Foundations of Data Science: from attribute types and preprocessing to Markov chains, HMMs, and deep learning for time series." />
+  <meta property="og:url" content="https://example.com/foundations-of-data-science" />
+  <meta property="og:site_name" content="The Dossier" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="article:published_time" content="2026-04-29T00:00:00Z" />
+  <meta property="article:section" content="Data Science" />
+  <meta property="article:tag" content="Data Science" />
+  <meta property="article:tag" content="Machine Learning" />
+  <meta property="article:tag" content="Statistics" />
+  <meta property="article:tag" content="Linear Algebra" />
+  <meta property="article:tag" content="Signal Processing" />
+
+  <!-- ══ STRUCTURED DATA ══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Foundations of Data Science",
+    "description": "Complete course notes for Foundations of Data Science covering data fundamentals, hypothesis testing, dimensionality reduction, machine learning, Markov processes, and digital signal processing.",
+    "datePublished": "2026-04-29",
+    "about": [
+      { "@type": "Thing", "name": "Data Science" },
+      { "@type": "Thing", "name": "Machine Learning" },
+      { "@type": "Thing", "name": "Statistics" },
+      { "@type": "Thing", "name": "Signal Processing" }
+    ]
+  }
+  </script>
+
+  <!-- ══ FONTS ══ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --paper: #f5f0e8;
+      --parchment: #ede6d3;
+      --red: #c0392b;
+      --red-light: #f5cdc9;
+      --blue: #1a3a5c;
+      --blue-light: #d0dce8;
+      --gold: #b8860b;
+      --gold-light: #f0e0a0;
+      --green: #1a5c2e;
+      --green-light: #c9e8d5;
+      --grey: #5a5a5a;
+      --rule: #1a1a1a;
+      --accent: #8b0000;
+
+      --sidebar-w: 310px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══ MASTHEAD ══ */
+    .masthead {
+      background: var(--ink);
+      color: var(--paper);
+      border-bottom: 4px solid var(--red);
+      flex-shrink: 0;
+      /* position: sticky;
+      top: 0;
+      z-index: 200; */
+    }
+    .masthead-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 40px;
+      border-bottom: 1px solid #333;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: #999;
+      letter-spacing: 0.08em;
+    }
+    .masthead-title {
+      text-align: center;
+      padding: 18px 40px 14px;
+    }
+    .masthead-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 4vw, 52px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--paper);
+    }
+    .masthead-title .subtitle {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: #aaa;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .masthead-rule {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+      margin: 0 40px 0;
+    }
+
+    /* ══ LAYOUT ══ */
+    .layout {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    /* ══ OVERLAY BACKDROP ══ */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-backdrop.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ══ FLOATING MENU BUTTON ══ */
+    .menu-btn {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      z-index: 160;
+      background: var(--ink);
+      border: none;
+      border-right: 3px solid var(--red);
+      border-top: 1px solid #2a2a2a;
+      border-bottom: 1px solid #2a2a2a;
+      color: var(--paper);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px 12px;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .menu-btn:hover {
+      background: #1a1a1a;
+      border-right-color: var(--gold);
+    }
+    .menu-btn:hover .menu-bars span { background: var(--gold); }
+    .menu-btn:hover .menu-label { color: var(--gold); }
+
+    .menu-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 18px;
+    }
+    .menu-bars span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--paper);
+      transition: background 0.15s, transform 0.25s, opacity 0.25s, width 0.25s;
+      transform-origin: center;
+    }
+    /* Animate to X when open */
+    .menu-btn.open .menu-bars span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+    .menu-btn.open .menu-bars span:nth-child(2) {
+      opacity: 0;
+      width: 0;
+    }
+    .menu-btn.open .menu-bars span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+    .menu-btn.open { border-right-color: var(--gold); }
+    .menu-btn.open .menu-label { color: var(--gold); }
+
+    .menu-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 7px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #aaa;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transition: color 0.15s;
+    }
+
+    /* ══ SIDEBAR (off-canvas drawer) ══ */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: var(--sidebar-w);
+      background: var(--ink);
+      border-right: 3px solid var(--red);
+      display: flex;
+      flex-direction: column;
+      z-index: 155;
+      transform: translateX(-100%);
+      transition: transform var(--transition);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    /* Sidebar header */
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid #2a2a2a;
+      flex-shrink: 0;
+    }
+    .sidebar-header-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .sidebar-close {
+      background: none;
+      border: 1px solid #333;
+      color: #888;
+      font-size: 14px;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      font-family: 'IBM Plex Mono', monospace;
+      flex-shrink: 0;
+    }
+    .sidebar-close:hover { border-color: var(--red); color: var(--red); }
+
+    .sidebar-inner {
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      padding: 10px 0 32px;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a2a transparent;
+    }
+    .sidebar-inner::-webkit-scrollbar { width: 3px; }
+    .sidebar-inner::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-inner::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+    /* Sidebar chapter groups */
+    .toc-chapter {
+      margin-bottom: 4px;
+    }
+    .toc-chapter-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--red);
+      padding: 14px 18px 5px;
+      display: block;
+      border-top: 1px solid #1e1e1e;
+      white-space: nowrap;
+    }
+    .toc-chapter:first-child .toc-chapter-label {
+      border-top: none;
+      padding-top: 6px;
+    }
+
+    /* Sidebar items */
+    .toc-link {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 7px 18px 7px 20px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.12s;
+      white-space: nowrap;
+      border-left: 3px solid transparent;
+    }
+    .toc-link:hover {
+      background: #1a1a1a;
+      border-left-color: var(--gold);
+    }
+    .toc-link.active {
+      background: #161616;
+      border-left-color: var(--red);
+    }
+    .toc-link .toc-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      color: #555;
+      flex-shrink: 0;
+      min-width: 28px;
+      transition: color 0.12s;
+    }
+    .toc-link:hover .toc-num { color: var(--gold); }
+    .toc-link .toc-text {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 12px;
+      color: #bbb;
+      line-height: 1.35;
+      white-space: normal;
+      overflow: hidden;
+      transition: color 0.12s;
+    }
+    .toc-link:hover .toc-text { color: var(--paper); }
+    .toc-link.active .toc-text { color: white; }
+
+    /* sub-items (deeper indent) */
+    .toc-link.sub {
+      padding-left: 34px;
+    }
+    .toc-link.sub .toc-text { font-size: 11px; color: #888; }
+    .toc-link.sub:hover .toc-text { color: #ddd; }
+
+    /* ══ MAIN CONTENT ══ */
+    .main {
+      flex: 1;
+      overflow: hidden;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .content-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 60px 60px 100px;
+    }
+
+    /* ══ SECTION TITLES (placeholders) ══ */
+    .part-divider {
+      margin: 80px 0 0;
+      padding-bottom: 0;
+    }
+    .part-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      color: var(--red);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .part-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 900;
+      color: var(--ink);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      padding-bottom: 16px;
+      border-bottom: 4px solid var(--ink);
+      margin-bottom: 48px;
+    }
+
+    .section-block {
+      margin: 56px 0 0;
+      scroll-margin-top: 20px;
+    }
+    .section-num-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      color: var(--grey);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 7px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 2.5vw, 27px);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .subsection-block {
+      margin: 38px 0 0;
+      scroll-margin-top: 20px;
+    }
+    .subsection-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--blue);
+      padding-left: 14px;
+      border-left: 4px solid var(--gold);
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+
+    /* Content placeholder */
+    .content-placeholder {
+      background: var(--parchment);
+      border: 1px dashed #ccc;
+      border-radius: 2px;
+      padding: 20px 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: #bbb;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* ══ ORNAMENT ══ */
+    .ornament {
+      text-align: center;
+      color: var(--gold);
+      font-size: 16px;
+      letter-spacing: 0.5em;
+      margin: 48px 0;
+      opacity: 0.5;
+    }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: var(--ink);
+      color: #555;
+      padding: 32px 60px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-align: center;
+      border-top: 3px solid var(--red);
+    }
+
+    /* ══ SCROLL TO TOP ══ */
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 38px;
+      height: 38px;
+      background: var(--ink);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 300;
+    }
+    .scroll-top.visible { opacity: 1; }
+    .scroll-top:hover { background: var(--gold); color: var(--ink); }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 768px) {
+      .masthead-top { padding: 8px 20px; }
+      .masthead-title { padding: 14px 20px 10px; }
+      .content-wrap { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ MASTHEAD ══ -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <span>COURSE NOTES</span>
+      <span>FOUNDATIONS OF DATA SCIENCE</span>
+      <span>UPDATED APRIL 2026</span>
+    </div>
+    <div class="masthead-title">
+      <h1>Foundations of Data Science</h1>
+      <div class="subtitle">Complete Lecture Notes &nbsp;·&nbsp; All Modules &nbsp;·&nbsp; All Topics</div>
+    </div>
+    <div class="masthead-rule"></div>
+  </header>
+
+  <!-- ══ BACKDROP ══ -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- ══ FLOATING MENU BUTTON ══ -->
+  <button class="menu-btn" id="menu-btn" aria-label="Open table of contents" aria-expanded="false" aria-controls="sidebar">
+    <div class="menu-bars">
+      <span></span><span></span><span></span>
+    </div>
+    <span class="menu-label">Menu</span>
+  </button>
+
+  <!-- ══ LAYOUT ══ -->
+  <div class="layout">
+
+    <!-- ══ SIDEBAR (off-canvas) ══ -->
+    <nav class="sidebar" id="sidebar" aria-label="Table of Contents" aria-hidden="true">
+      <div class="sidebar-header">
+        <span class="sidebar-header-label">Table of Contents</span>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
+      </div>
+      <div class="sidebar-inner">
+
+          <!-- PART I -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part I — Data Science Fundamentals</span>
+
+            <a class="toc-link" href="#s-intro">
+              <span class="toc-num">1.1</span>
+              <span class="toc-text">Introduction to Data Science</span>
+            </a>
+            <a class="toc-link" href="#s-data-fundamentals">
+              <span class="toc-num">1.2</span>
+              <span class="toc-text">Data Fundamentals: Attributes & Objects</span>
+            </a>
+            <a class="toc-link sub" href="#s-types-of-data">
+              <span class="toc-num">1.3</span>
+              <span class="toc-text">Types of Data</span>
+            </a>
+            <a class="toc-link sub" href="#s-data-quality">
+              <span class="toc-num">1.4</span>
+              <span class="toc-text">Data Quality</span>
+            </a>
+            <a class="toc-link sub" href="#s-aggregation">
+              <span class="toc-num">1.5</span>
+              <span class="toc-text">Aggregation</span>
+            </a>
+            <a class="toc-link sub" href="#s-sampling">
+              <span class="toc-num">1.6</span>
+              <span class="toc-text">Sampling</span>
+            </a>
+            <a class="toc-link sub" href="#s-dim-reduction">
+              <span class="toc-num">1.7</span>
+              <span class="toc-text">Dimensionality Reduction</span>
+            </a>
+            <a class="toc-link" href="#s-discretization">
+              <span class="toc-num">1.8</span>
+              <span class="toc-text">Discretization & Binarization</span>
+            </a>
+            <a class="toc-link sub" href="#s-attr-transform">
+              <span class="toc-num">1.9</span>
+              <span class="toc-text">Attribute Transformation</span>
+            </a>
+            <a class="toc-link" href="#s-similarity">
+              <span class="toc-num">1.10</span>
+              <span class="toc-text">Similarity & Dissimilarity</span>
+            </a>
+            <a class="toc-link sub" href="#s-distance-metrics">
+              <span class="toc-num">1.11</span>
+              <span class="toc-text">Distance Metrics</span>
+            </a>
+            <a class="toc-link sub" href="#s-similarity-metrics">
+              <span class="toc-num">1.12</span>
+              <span class="toc-text">Similarity Metrics</span>
+            </a>
+            <a class="toc-link" href="#s-visualization">
+              <span class="toc-num">1.13</span>
+              <span class="toc-text">Visualization (Jupyter Notebook)</span>
+            </a>
+          </div>
+
+          <!-- PART II -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part II — Hypothesis Testing</span>
+
+            <a class="toc-link" href="#s-cont-random-vars">
+              <span class="toc-num">2.1</span>
+              <span class="toc-text">Continuous Random Variables</span>
+            </a>
+            <a class="toc-link sub" href="#s-clt">
+              <span class="toc-num">2.2</span>
+              <span class="toc-text">Central Limit Theorem</span>
+            </a>
+            <a class="toc-link sub" href="#s-confidence-intervals">
+              <span class="toc-num">2.3</span>
+              <span class="toc-text">Confidence Intervals</span>
+            </a>
+            <a class="toc-link sub" href="#s-t-distribution">
+              <span class="toc-num">2.4</span>
+              <span class="toc-text">t-Distribution</span>
+            </a>
+            <a class="toc-link" href="#s-hyp-one-sample">
+              <span class="toc-num">2.5</span>
+              <span class="toc-text">Hypothesis Testing (One Sample)</span>
+            </a>
+            <a class="toc-link" href="#s-hyp-two-sample">
+              <span class="toc-num">2.6</span>
+              <span class="toc-text">Hypothesis Testing (Two Samples)</span>
+            </a>
+            <a class="toc-link sub" href="#s-effect-sizes">
+              <span class="toc-num">2.7</span>
+              <span class="toc-text">Effect Sizes & Cohen's d</span>
+            </a>
+            <a class="toc-link sub" href="#s-additional-tests">
+              <span class="toc-num">2.8</span>
+              <span class="toc-text">Mann-Whitney U, ANOVA, Correlations, ICC</span>
+            </a>
+            <a class="toc-link sub" href="#s-markov-chebyshev">
+              <span class="toc-num">2.9</span>
+              <span class="toc-text">Markov & Chebyshev Inequalities</span>
+            </a>
+          </div>
+
+          <!-- PART III -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part III — High-Dimensional Geometry</span>
+
+            <a class="toc-link" href="#s-hd-geometry">
+              <span class="toc-num">3.1</span>
+              <span class="toc-text">Geometry of High Dimensions</span>
+            </a>
+            <a class="toc-link sub" href="#s-unit-ball-volume">
+              <span class="toc-num">3.2</span>
+              <span class="toc-text">Volume of the Unit Ball</span>
+            </a>
+            <a class="toc-link sub" href="#s-sampling-unit-ball">
+              <span class="toc-num">3.3</span>
+              <span class="toc-text">Sampling from the Unit Ball</span>
+            </a>
+            <a class="toc-link" href="#s-gaussians-hd">
+              <span class="toc-num">3.4</span>
+              <span class="toc-text">Gaussians in High Dimensions</span>
+            </a>
+            <a class="toc-link sub" href="#s-near-orthogonality">
+              <span class="toc-num">3.5</span>
+              <span class="toc-text">Near Orthogonality</span>
+            </a>
+            <a class="toc-link sub" href="#s-random-projections">
+              <span class="toc-num">3.6</span>
+              <span class="toc-text">Random Projections</span>
+            </a>
+            <a class="toc-link sub" href="#s-jl-lemma">
+              <span class="toc-num">3.7</span>
+              <span class="toc-text">Johnson-Lindenstrauss Lemma</span>
+            </a>
+          </div>
+
+          <!-- PART IV -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part IV — Matrix Decompositions & Dim. Reduction</span>
+
+            <a class="toc-link" href="#s-svd">
+              <span class="toc-num">4.1</span>
+              <span class="toc-text">Singular Value Decomposition (SVD)</span>
+            </a>
+            <a class="toc-link sub" href="#s-singular-values">
+              <span class="toc-num">4.2</span>
+              <span class="toc-text">Singular Values & Best-Fit Subspaces</span>
+            </a>
+            <a class="toc-link sub" href="#s-svd-interpretation">
+              <span class="toc-num">4.3</span>
+              <span class="toc-text">Another Interpretation of SVD</span>
+            </a>
+            <a class="toc-link" href="#s-krank">
+              <span class="toc-num">4.4</span>
+              <span class="toc-text">k-Rank Approximations</span>
+            </a>
+            <a class="toc-link sub" href="#s-centering">
+              <span class="toc-num">4.5</span>
+              <span class="toc-text">To Center or Not to Center?</span>
+            </a>
+            <a class="toc-link" href="#s-pca">
+              <span class="toc-num">4.6</span>
+              <span class="toc-text">Principal Component Analysis (PCA)</span>
+            </a>
+            <a class="toc-link sub" href="#s-feature-scale">
+              <span class="toc-num">4.7</span>
+              <span class="toc-text">Effects of Feature Scale</span>
+            </a>
+          </div>
+
+          <!-- PART V -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part V — Machine Learning</span>
+
+            <a class="toc-link" href="#s-intro-ml">
+              <span class="toc-num">5.1</span>
+              <span class="toc-text">Introduction to Machine Learning</span>
+            </a>
+            <a class="toc-link sub" href="#s-ols">
+              <span class="toc-num">5.2</span>
+              <span class="toc-text">Ordinary Least Squares (OLS)</span>
+            </a>
+            <a class="toc-link sub" href="#s-logistic">
+              <span class="toc-num">5.3</span>
+              <span class="toc-text">Logistic Regression</span>
+            </a>
+            <a class="toc-link" href="#s-perf-metrics">
+              <span class="toc-num">5.4</span>
+              <span class="toc-text">Performance Metrics</span>
+            </a>
+            <a class="toc-link" href="#s-model-training">
+              <span class="toc-num">5.5</span>
+              <span class="toc-text">Training ML Models</span>
+            </a>
+            <a class="toc-link sub" href="#s-cross-validation">
+              <span class="toc-num">5.6</span>
+              <span class="toc-text">Cross Validation</span>
+            </a>
+            <a class="toc-link sub" href="#s-regularization">
+              <span class="toc-num">5.7</span>
+              <span class="toc-text">Regularization (Ridge, Lasso, ElasticNet)</span>
+            </a>
+            <a class="toc-link sub" href="#s-hyperparameters">
+              <span class="toc-num">5.8</span>
+              <span class="toc-text">Hyperparameters</span>
+            </a>
+            <a class="toc-link sub" href="#s-interp-weights">
+              <span class="toc-num">5.9</span>
+              <span class="toc-text">Interpreting Linear Models</span>
+            </a>
+            <a class="toc-link" href="#s-decision-trees">
+              <span class="toc-num">5.10</span>
+              <span class="toc-text">Decision Trees</span>
+            </a>
+            <a class="toc-link sub" href="#s-ensembles">
+              <span class="toc-num">5.11</span>
+              <span class="toc-text">Decision Tree Ensembles (Bagging & Boosting)</span>
+            </a>
+          </div>
+
+          <!-- PART VI -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part VI — Markov Processes</span>
+
+            <a class="toc-link" href="#s-markov-chains">
+              <span class="toc-num">6.1</span>
+              <span class="toc-text">Markov Chains</span>
+            </a>
+            <a class="toc-link sub" href="#s-ck-equation">
+              <span class="toc-num">6.2</span>
+              <span class="toc-text">Chapman-Kolmogorov Equation</span>
+            </a>
+            <a class="toc-link sub" href="#s-stationary">
+              <span class="toc-num">6.3</span>
+              <span class="toc-text">Stationary Distributions</span>
+            </a>
+            <a class="toc-link" href="#s-hmm">
+              <span class="toc-num">6.4</span>
+              <span class="toc-text">Hidden Markov Models (HMM)</span>
+            </a>
+            <a class="toc-link sub" href="#s-forward-algo">
+              <span class="toc-num">6.5</span>
+              <span class="toc-text">Forward Algorithm (Likelihood)</span>
+            </a>
+            <a class="toc-link sub" href="#s-viterbi">
+              <span class="toc-num">6.6</span>
+              <span class="toc-text">Viterbi Algorithm (Decoding)</span>
+            </a>
+            <a class="toc-link sub" href="#s-forward-backward">
+              <span class="toc-num">6.7</span>
+              <span class="toc-text">Forward-Backward / Baum-Welch (Learning)</span>
+            </a>
+            <a class="toc-link" href="#s-random-walks">
+              <span class="toc-num">6.8</span>
+              <span class="toc-text">Random Walks</span>
+            </a>
+            <a class="toc-link sub" href="#s-mcmc">
+              <span class="toc-num">6.9</span>
+              <span class="toc-text">Markov Chain Monte Carlo (MCMC)</span>
+            </a>
+            <a class="toc-link sub" href="#s-mh">
+              <span class="toc-num">6.10</span>
+              <span class="toc-text">Metropolis-Hastings & Gibbs Sampling</span>
+            </a>
+          </div>
+
+          <!-- PART VII -->
+          <div class="toc-chapter">
+            <span class="toc-chapter-label">Part VII — Time Series & Signal Processing</span>
+
+            <a class="toc-link" href="#s-ts-intro">
+              <span class="toc-num">7.1</span>
+              <span class="toc-text">Time-Series Introduction</span>
+            </a>
+            <a class="toc-link sub" href="#s-frequency-domain">
+              <span class="toc-num">7.2</span>
+              <span class="toc-text">Frequency Domain & Fourier Series</span>
+            </a>
+            <a class="toc-link sub" href="#s-spectrograms">
+              <span class="toc-num">7.3</span>
+              <span class="toc-text">Spectrograms</span>
+            </a>
+            <a class="toc-link" href="#s-digital-filters">
+              <span class="toc-num">7.4</span>
+              <span class="toc-text">Digital Filters</span>
+            </a>
+            <a class="toc-link sub" href="#s-fir">
+              <span class="toc-num">7.5</span>
+              <span class="toc-text">Finite Impulse Response (FIR)</span>
+            </a>
+            <a class="toc-link sub" href="#s-iir">
+              <span class="toc-num">7.6</span>
+              <span class="toc-text">Infinite Impulse Response (IIR)</span>
+            </a>
+            <a class="toc-link" href="#s-segmentation">
+              <span class="toc-num">7.7</span>
+              <span class="toc-text">Time Series Segmentation</span>
+            </a>
+            <a class="toc-link sub" href="#s-ts-features">
+              <span class="toc-num">7.8</span>
+              <span class="toc-text">Classical Time Series Features</span>
+            </a>
+            <a class="toc-link sub" href="#s-spectral-features">
+              <span class="toc-num">7.9</span>
+              <span class="toc-text">Spectral Features & MFCC</span>
+            </a>
+            <a class="toc-link" href="#s-deep-learning-ts">
+              <span class="toc-num">7.10</span>
+              <span class="toc-text">Deep Learning for Time Series</span>
+            </a>
+            <a class="toc-link sub" href="#s-cnn-ts">
+              <span class="toc-num">7.11</span>
+              <span class="toc-text">CNNs for Time Series</span>
+            </a>
+            <a class="toc-link sub" href="#s-attention">
+              <span class="toc-num">7.12</span>
+              <span class="toc-text">Sequences, Attention & Transformers</span>
+            </a>
+          </div>
+
+        </div><!-- /sidebar-inner -->
+    </nav><!-- /sidebar -->
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="main">
+      <div class="content-wrap">
+
+        <!-- ══ PART I ══ -->
+        <div class="part-divider" id="part-1">
+          <span class="part-label">Part I</span>
+          <h2 class="part-title">Data Science Fundamentals</h2>
+        </div>
+
+        <div class="section-block" id="s-intro">
+          <span class="section-num-tag">Section 1.1</span>
+          <h2 class="section-title">Introduction to Data Science</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-data-fundamentals">
+          <span class="section-num-tag">Section 1.2</span>
+          <h2 class="section-title">Data Fundamentals: Attributes & Objects</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-types-of-data">
+          <h3 class="subsection-title">Types of Data</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-data-quality">
+          <h3 class="subsection-title">Data Quality</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-aggregation">
+          <h3 class="subsection-title">Aggregation</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-sampling">
+          <h3 class="subsection-title">Sampling</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-dim-reduction">
+          <h3 class="subsection-title">Dimensionality Reduction</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-discretization">
+          <span class="section-num-tag">Section 1.8</span>
+          <h2 class="section-title">Discretization & Binarization</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-attr-transform">
+          <h3 class="subsection-title">Attribute Transformation</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-similarity">
+          <span class="section-num-tag">Section 1.10</span>
+          <h2 class="section-title">Similarity & Dissimilarity</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-distance-metrics">
+          <h3 class="subsection-title">Distance Metrics</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-similarity-metrics">
+          <h3 class="subsection-title">Similarity Metrics</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-visualization">
+          <span class="section-num-tag">Section 1.13</span>
+          <h2 class="section-title">Visualization (Jupyter Notebook)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART II ══ -->
+        <div class="part-divider" id="part-2">
+          <span class="part-label">Part II</span>
+          <h2 class="part-title">Hypothesis Testing</h2>
+        </div>
+
+        <div class="section-block" id="s-cont-random-vars">
+          <span class="section-num-tag">Section 2.1</span>
+          <h2 class="section-title">Continuous Random Variables</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-clt">
+          <h3 class="subsection-title">Central Limit Theorem</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-confidence-intervals">
+          <h3 class="subsection-title">Confidence Intervals</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-t-distribution">
+          <h3 class="subsection-title">t-Distribution</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-hyp-one-sample">
+          <span class="section-num-tag">Section 2.5</span>
+          <h2 class="section-title">Hypothesis Testing (One Sample)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-hyp-two-sample">
+          <span class="section-num-tag">Section 2.6</span>
+          <h2 class="section-title">Hypothesis Testing (Two Samples)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-effect-sizes">
+          <h3 class="subsection-title">Effect Sizes & Cohen's d</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-additional-tests">
+          <h3 class="subsection-title">Mann-Whitney U, ANOVA, Correlations, ICC</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-markov-chebyshev">
+          <h3 class="subsection-title">Markov & Chebyshev Inequalities</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART III ══ -->
+        <div class="part-divider" id="part-3">
+          <span class="part-label">Part III</span>
+          <h2 class="part-title">High-Dimensional Geometry</h2>
+        </div>
+
+        <div class="section-block" id="s-hd-geometry">
+          <span class="section-num-tag">Section 3.1</span>
+          <h2 class="section-title">Geometry of High Dimensions</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-unit-ball-volume">
+          <h3 class="subsection-title">Volume of the Unit Ball</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-sampling-unit-ball">
+          <h3 class="subsection-title">Sampling from the Unit Ball</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-gaussians-hd">
+          <span class="section-num-tag">Section 3.4</span>
+          <h2 class="section-title">Gaussians in High Dimensions</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-near-orthogonality">
+          <h3 class="subsection-title">Near Orthogonality</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-random-projections">
+          <h3 class="subsection-title">Random Projections</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-jl-lemma">
+          <h3 class="subsection-title">Johnson-Lindenstrauss Lemma</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART IV ══ -->
+        <div class="part-divider" id="part-4">
+          <span class="part-label">Part IV</span>
+          <h2 class="part-title">Matrix Decompositions & Dimensionality Reduction</h2>
+        </div>
+
+        <div class="section-block" id="s-svd">
+          <span class="section-num-tag">Section 4.1</span>
+          <h2 class="section-title">Singular Value Decomposition (SVD)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-singular-values">
+          <h3 class="subsection-title">Singular Values & Best-Fit Subspaces</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-svd-interpretation">
+          <h3 class="subsection-title">Another Interpretation of SVD</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-krank">
+          <span class="section-num-tag">Section 4.4</span>
+          <h2 class="section-title">k-Rank Approximations</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-centering">
+          <h3 class="subsection-title">To Center or Not to Center?</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-pca">
+          <span class="section-num-tag">Section 4.6</span>
+          <h2 class="section-title">Principal Component Analysis (PCA)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-feature-scale">
+          <h3 class="subsection-title">Effects of Feature Scale</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART V ══ -->
+        <div class="part-divider" id="part-5">
+          <span class="part-label">Part V</span>
+          <h2 class="part-title">Machine Learning</h2>
+        </div>
+
+        <div class="section-block" id="s-intro-ml">
+          <span class="section-num-tag">Section 5.1</span>
+          <h2 class="section-title">Introduction to Machine Learning</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-ols">
+          <h3 class="subsection-title">Ordinary Least Squares (OLS)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-logistic">
+          <h3 class="subsection-title">Logistic Regression</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-perf-metrics">
+          <span class="section-num-tag">Section 5.4</span>
+          <h2 class="section-title">Performance Metrics</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-model-training">
+          <span class="section-num-tag">Section 5.5</span>
+          <h2 class="section-title">Training ML Models</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-cross-validation">
+          <h3 class="subsection-title">Cross Validation</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-regularization">
+          <h3 class="subsection-title">Regularization (Ridge, Lasso, ElasticNet)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-hyperparameters">
+          <h3 class="subsection-title">Hyperparameters</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-interp-weights">
+          <h3 class="subsection-title">Interpreting Linear Models</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-decision-trees">
+          <span class="section-num-tag">Section 5.10</span>
+          <h2 class="section-title">Decision Trees</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-ensembles">
+          <h3 class="subsection-title">Decision Tree Ensembles (Bagging & Boosting)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART VI ══ -->
+        <div class="part-divider" id="part-6">
+          <span class="part-label">Part VI</span>
+          <h2 class="part-title">Markov Processes</h2>
+        </div>
+
+        <div class="section-block" id="s-markov-chains">
+          <span class="section-num-tag">Section 6.1</span>
+          <h2 class="section-title">Markov Chains</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-ck-equation">
+          <h3 class="subsection-title">Chapman-Kolmogorov Equation</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-stationary">
+          <h3 class="subsection-title">Stationary Distributions</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-hmm">
+          <span class="section-num-tag">Section 6.4</span>
+          <h2 class="section-title">Hidden Markov Models (HMM)</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-forward-algo">
+          <h3 class="subsection-title">Forward Algorithm (Likelihood)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-viterbi">
+          <h3 class="subsection-title">Viterbi Algorithm (Decoding)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-forward-backward">
+          <h3 class="subsection-title">Forward-Backward / Baum-Welch (Learning)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-random-walks">
+          <span class="section-num-tag">Section 6.8</span>
+          <h2 class="section-title">Random Walks</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-mcmc">
+          <h3 class="subsection-title">Markov Chain Monte Carlo (MCMC)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-mh">
+          <h3 class="subsection-title">Metropolis-Hastings & Gibbs Sampling</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+        <!-- ══ PART VII ══ -->
+        <div class="part-divider" id="part-7">
+          <span class="part-label">Part VII</span>
+          <h2 class="part-title">Time Series & Digital Signal Processing</h2>
+        </div>
+
+        <div class="section-block" id="s-ts-intro">
+          <span class="section-num-tag">Section 7.1</span>
+          <h2 class="section-title">Time-Series Introduction</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-frequency-domain">
+          <h3 class="subsection-title">Frequency Domain & Fourier Series</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-spectrograms">
+          <h3 class="subsection-title">Spectrograms</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-digital-filters">
+          <span class="section-num-tag">Section 7.4</span>
+          <h2 class="section-title">Digital Filters</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-fir">
+          <h3 class="subsection-title">Finite Impulse Response (FIR)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-iir">
+          <h3 class="subsection-title">Infinite Impulse Response (IIR)</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-segmentation">
+          <span class="section-num-tag">Section 7.7</span>
+          <h2 class="section-title">Time Series Segmentation</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-ts-features">
+          <h3 class="subsection-title">Classical Time Series Features</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-spectral-features">
+          <h3 class="subsection-title">Spectral Features & MFCC</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="section-block" id="s-deep-learning-ts">
+          <span class="section-num-tag">Section 7.10</span>
+          <h2 class="section-title">Deep Learning for Time Series</h2>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-cnn-ts">
+          <h3 class="subsection-title">CNNs for Time Series</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="subsection-block" id="s-attention">
+          <h3 class="subsection-title">Sequences, Attention & Transformers</h3>
+          <div class="content-placeholder">Content coming soon — add your notes here</div>
+        </div>
+
+        <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+      </div><!-- /content-wrap -->
+    </main><!-- /main -->
+
+  </div><!-- /layout -->
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div>FOUNDATIONS OF DATA SCIENCE &nbsp;·&nbsp; COMPLETE COURSE NOTES &nbsp;·&nbsp; ALL RIGHTS RESERVED</div>
+    <div style="margin-top:10px;color:#444">COMPILED APRIL 2026</div>
+  </footer>
+
+  <!-- ══ SCROLL TO TOP ══ -->
+  <div class="scroll-top" id="scroll-top" title="Back to top">↑</div>
+
+  <script>
+    const sidebar   = document.getElementById('sidebar');
+    const backdrop  = document.getElementById('sidebar-backdrop');
+    const menuBtn   = document.getElementById('menu-btn');
+    const closeBtn  = document.getElementById('sidebar-close');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      backdrop.classList.add('visible');
+      menuBtn.classList.add('open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      sidebar.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('visible');
+      menuBtn.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      sidebar.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    closeBtn.addEventListener('click', closeSidebar);
+    backdrop.addEventListener('click', closeSidebar);
+
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeSidebar();
+    });
+
+    // ── Active link on scroll ──
+    const allLinks    = document.querySelectorAll('.toc-link');
+    const allSections = Array.from(document.querySelectorAll('[id^="s-"], [id^="part-"]'));
+
+    function setActive() {
+      let current = '';
+      const scrollY = window.scrollY + 120;
+      allSections.forEach(sec => {
+        if (sec.offsetTop <= scrollY) current = sec.id;
+      });
+      allLinks.forEach(link => {
+        const href = link.getAttribute('href').slice(1);
+        link.classList.toggle('active', href === current);
+      });
+    }
+    window.addEventListener('scroll', setActive, { passive: true });
+    setActive();
+
+    // ── Smooth scroll + close on link click ──
+    allLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        closeSidebar();
+      });
+    });
+
+    // ── Scroll to top button ──
+    const scrollTopBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+</body>
+</html>
