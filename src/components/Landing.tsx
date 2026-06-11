@@ -3,6 +3,7 @@ import React from 'react'
 import Calendar from '@/assets/images/calendar.png'
 import Grad from '@/assets/images/graduation-cap.png'
 import Projects from '@/assets/images/projects.png'
+import Research from '@/assets/images/research.png'
 import Book from '@/assets/images/book.png'
 import Blog from '@/assets/images/blog.png'
 import Github from '@/assets/images/github.png'
@@ -84,13 +85,27 @@ const Landing = () => {
             title="My Projects"
           >
             <div className="h-6 w-6">
-              <Image src={Projects} alt={'calendar image'} />
+              <Image src={Projects} alt={'projects image'} />
             </div>
             <span className="text-black dark:text-white text-nowrap text-xs">
               What i&apos;ve done
             </span>
             <span className="text-black dark:text-white">|</span>
             <span className="text-black dark:text-white">Projects</span>
+          </Link>
+          <Link
+            href="/research"
+            className="py-2 px-4 cursor-pointer border border-slate-800 rounded-md overflow-hidden w-min flex items-center justify-start gap-4 mb-4 hover:scale-105 transition-all"
+            title="My Research"
+          >
+            <div className="h-6 w-6">
+              <Image src={Research} alt={'Research Icon'} />
+            </div>
+            <span className="text-black dark:text-white text-nowrap text-xs">
+              My Research
+            </span>
+            <span className="text-black dark:text-white">|</span>
+            <span className="text-black dark:text-white">Research</span>
           </Link>
           <Link
             href="#about-me"

@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CircuitMind AI — Exhaustive Project Proposal &amp; System Design</title>
+  <meta name="description" content="Exhaustive project proposal for an AI-powered cross-platform circuit design platform covering architecture, AI strategy, development lifecycle, revenue model, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --paper: #f5f0e8;
+      --parchment: #ede6d3;
+      --parchment-dark: #e2d9c2;
+      --red: #c0392b;
+      --red-light: #f5cdc9;
+      --blue: #1a3a5c;
+      --blue-light: #d0dce8;
+      --gold: #b8860b;
+      --gold-light: #f0e0a0;
+      --green: #1a5c2e;
+      --green-light: #c9e8d5;
+      --purple: #4a1a6e;
+      --purple-light: #e0d0f0;
+      --grey: #5a5a5a;
+      --rule: #1a1a1a;
+      --accent: #8b0000;
+      --orange: #b84a0b;
+      --orange-light: #f5dac9;
+      --teal: #0b6e6e;
+      --teal-light: #c9e8e8;
+      --sidebar-w: 320px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══ PROGRESS BAR ══ */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--red); z-index: 500; width: 0%; transition: width 0.1s;
+    }
+
+    /* ══ MASTHEAD ══ */
+    .masthead { background: var(--ink); color: var(--paper); border-bottom: 4px solid var(--red); flex-shrink: 0; }
+    .masthead-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 40px; border-bottom: 1px solid #333;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #999; letter-spacing: 0.08em;
+    }
+    .masthead-title { text-align: center; padding: 22px 40px 16px; }
+    .masthead-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 4vw, 54px); font-weight: 900;
+      letter-spacing: -0.02em; line-height: 1; color: var(--paper);
+    }
+    .masthead-title .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      letter-spacing: 0.28em; color: #aaa; text-transform: uppercase; margin-top: 10px;
+    }
+    .masthead-rule {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+      margin: 0 40px;
+    }
+    .masthead-meta {
+      display: flex; justify-content: center; gap: 32px;
+      padding: 10px 40px 14px; font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em; color: #666;
+      text-transform: uppercase; border-top: 1px solid #1e1e1e;
+    }
+    .masthead-meta span { color: var(--gold); }
+
+    /* ══ LAYOUT ══ */
+    .layout { display: flex; flex: 1; position: relative; }
+
+    /* ══ BACKDROP ══ */
+    .sidebar-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 150;
+      opacity: 0; pointer-events: none; transition: opacity var(--transition); backdrop-filter: blur(2px);
+    }
+    .sidebar-backdrop.visible { opacity: 1; pointer-events: all; }
+
+    /* ══ MENU BUTTON ══ */
+    .menu-btn {
+      position: fixed; top: 50%; left: 0; transform: translateY(-50%); z-index: 160;
+      background: var(--ink); border: none; border-right: 3px solid var(--red);
+      border-top: 1px solid #2a2a2a; border-bottom: 1px solid #2a2a2a;
+      color: var(--paper); cursor: pointer; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; padding: 14px 10px 12px;
+      transition: background 0.15s, border-color 0.15s; user-select: none;
+    }
+    .menu-btn:hover { background: #1a1a1a; border-right-color: var(--gold); }
+    .menu-btn:hover .menu-bars span { background: var(--gold); }
+    .menu-btn:hover .menu-label { color: var(--gold); }
+    .menu-bars { display: flex; flex-direction: column; gap: 4px; width: 18px; }
+    .menu-bars span {
+      display: block; height: 2px; width: 100%; background: var(--paper);
+      transition: background 0.15s, transform 0.25s, opacity 0.25s, width 0.25s; transform-origin: center;
+    }
+    .menu-btn.open .menu-bars span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .menu-btn.open .menu-bars span:nth-child(2) { opacity: 0; width: 0; }
+    .menu-btn.open .menu-bars span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    .menu-btn.open { border-right-color: var(--gold); }
+    .menu-btn.open .menu-label { color: var(--gold); }
+    .menu-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 7px;
+      letter-spacing: 0.22em; text-transform: uppercase; color: #aaa;
+      writing-mode: vertical-rl; text-orientation: mixed; transition: color 0.15s;
+    }
+
+    /* ══ SIDEBAR ══ */
+    .sidebar {
+      position: fixed; left: 0; top: 0; height: 100vh; width: var(--sidebar-w);
+      background: var(--ink); border-right: 3px solid var(--red);
+      display: flex; flex-direction: column; z-index: 155;
+      transform: translateX(-100%); transition: transform var(--transition);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px 14px; border-bottom: 1px solid #2a2a2a; flex-shrink: 0;
+    }
+    .sidebar-header-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); }
+    .sidebar-close {
+      background: none; border: 1px solid #333; color: #888; font-size: 14px;
+      width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color 0.15s, color 0.15s; font-family: 'IBM Plex Mono', monospace; flex-shrink: 0;
+    }
+    .sidebar-close:hover { border-color: var(--red); color: var(--red); }
+    .sidebar-inner {
+      overflow-y: auto; overflow-x: hidden; flex: 1; padding: 10px 0 32px;
+      scrollbar-width: thin; scrollbar-color: #2a2a2a transparent;
+    }
+    .sidebar-inner::-webkit-scrollbar { width: 3px; }
+    .sidebar-inner::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-inner::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+    .toc-chapter { margin-bottom: 4px; }
+    .toc-chapter-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.35em;
+      text-transform: uppercase; color: var(--red); padding: 14px 18px 5px;
+      display: block; border-top: 1px solid #1e1e1e; white-space: nowrap;
+    }
+    .toc-chapter:first-child .toc-chapter-label { border-top: none; padding-top: 6px; }
+    .toc-link {
+      display: flex; align-items: baseline; gap: 10px; padding: 6px 18px 6px 20px;
+      text-decoration: none; cursor: pointer; transition: background 0.12s;
+      white-space: nowrap; border-left: 3px solid transparent;
+    }
+    .toc-link:hover { background: #1a1a1a; border-left-color: var(--gold); }
+    .toc-link.active { background: #161616; border-left-color: var(--red); }
+    .toc-link .toc-num { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #555; flex-shrink: 0; min-width: 32px; transition: color 0.12s; }
+    .toc-link:hover .toc-num { color: var(--gold); }
+    .toc-link .toc-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; color: #bbb; line-height: 1.35; white-space: normal; overflow: hidden; transition: color 0.12s; }
+    .toc-link:hover .toc-text { color: var(--paper); }
+    .toc-link.active .toc-text { color: white; }
+    .toc-link.sub { padding-left: 36px; }
+    .toc-link.sub .toc-text { font-size: 11px; color: #777; }
+    .toc-link.sub:hover .toc-text { color: #ddd; }
+
+    /* ══ MAIN ══ */
+    .main { flex: 1; overflow: hidden; min-width: 0; width: 100%; }
+    .content-wrap { max-width: 1160px; margin: 0 auto; padding: 60px 64px 120px; }
+
+    /* ══ PART DIVIDERS ══ */
+    .part-divider { margin: 96px 0 0; padding-bottom: 0; scroll-margin-top: 20px; }
+    .part-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.35em; color: var(--red); text-transform: uppercase; display: block; margin-bottom: 10px; }
+    .part-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(30px, 4vw, 50px);
+      font-weight: 900; color: var(--ink); line-height: 1.05; letter-spacing: -0.01em;
+      padding-bottom: 18px; border-bottom: 4px solid var(--ink); margin-bottom: 52px;
+    }
+    .part-intro {
+      font-size: 16px; color: var(--grey); font-style: italic;
+      font-family: 'Playfair Display', serif; margin-bottom: 20px;
+      padding-left: 20px; border-left: 3px solid var(--gold); line-height: 1.65;
+    }
+
+    /* ══ SECTIONS ══ */
+    .section-block { margin: 64px 0 0; scroll-margin-top: 20px; }
+    .section-num-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.28em; color: var(--grey); text-transform: uppercase; display: block; margin-bottom: 7px; }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(19px, 2.5vw, 28px);
+      font-weight: 700; color: var(--ink); line-height: 1.2;
+      padding-bottom: 12px; border-bottom: 2px solid var(--ink); margin-bottom: 26px;
+    }
+    .subsection-block { margin: 40px 0 0; scroll-margin-top: 20px; }
+    .subsection-title {
+      font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600;
+      color: var(--blue); padding-left: 14px; border-left: 4px solid var(--gold);
+      margin-bottom: 18px; line-height: 1.3;
+    }
+    .sub-subsection-title {
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+      margin: 28px 0 12px; padding-bottom: 4px; border-bottom: 1px solid #ddd;
+    }
+
+    /* ══ PROSE ══ */
+    p { margin-bottom: 16px; color: #1a1a1a; }
+    p:last-child { margin-bottom: 0; }
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+    a { color: var(--blue); text-decoration: underline; }
+    a:hover { color: var(--red); }
+
+    /* ══ CALLOUTS ══ */
+    .callout { padding: 18px 22px; margin: 24px 0; border-radius: 1px; font-size: 14px; line-height: 1.7; }
+    .callout-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px; }
+    .callout.note { background: var(--blue-light); border-left: 4px solid var(--blue); }
+    .callout.note .callout-label { color: var(--blue); }
+    .callout.warning { background: var(--gold-light); border-left: 4px solid var(--gold); }
+    .callout.warning .callout-label { color: var(--gold); }
+    .callout.critical { background: var(--red-light); border-left: 4px solid var(--red); }
+    .callout.critical .callout-label { color: var(--red); }
+    .callout.success { background: var(--green-light); border-left: 4px solid var(--green); }
+    .callout.success .callout-label { color: var(--green); }
+    .callout.purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .callout.purple .callout-label { color: var(--purple); }
+    .callout.teal { background: var(--teal-light); border-left: 4px solid var(--teal); }
+    .callout.teal .callout-label { color: var(--teal); }
+    .callout.orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+    .callout.orange .callout-label { color: var(--orange); }
+
+    /* ══ TABLES ══ */
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'IBM Plex Sans', sans-serif; }
+    thead { background: var(--ink); color: var(--paper); }
+    thead th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 16px; text-align: left; font-weight: 400; }
+    tbody tr { border-bottom: 1px solid var(--parchment-dark); }
+    tbody tr:nth-child(even) { background: var(--parchment); }
+    tbody tr:hover { background: var(--gold-light); }
+    tbody td { padding: 10px 16px; vertical-align: top; line-height: 1.5; }
+    tbody td strong { color: var(--blue); }
+    td code, th code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 2px; }
+
+    /* ══ CODE BLOCKS ══ */
+    .code-block {
+      background: #0f1117; border: 1px solid #2a2a2a; border-left: 4px solid var(--gold);
+      padding: 20px 24px; margin: 20px 0; overflow-x: auto;
+      font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; line-height: 1.65; color: #e0e0e0;
+    }
+    .code-block .code-lang { font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #1e1e1e; }
+    .code-block .kw { color: #c084fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .cm { color: #6b7280; font-style: italic; }
+    .code-block .fn { color: #60a5fa; }
+    .code-block .cl { color: #f59e0b; }
+    .code-block .at { color: #fb923c; }
+    .code-block .nu { color: #34d399; }
+
+    /* ══ FEATURE GRID ══ */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+    .feature-card { background: var(--parchment); border: 1px solid var(--parchment-dark); border-top: 3px solid var(--gold); padding: 18px 20px; }
+    .feature-card-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+    .feature-card-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .feature-card-body { font-size: 13px; color: var(--grey); line-height: 1.6; }
+
+    /* ══ SCHEMA BLOCKS ══ */
+    .schema-block { background: #0f1117; border: 1px solid #1e2a3a; border-left: 4px solid var(--blue); margin: 20px 0; overflow: hidden; }
+    .schema-header { background: #1a2233; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+    .schema-header-name { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #60a5fa; font-weight: 600; }
+    .schema-header-type { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; background: rgba(184,134,11,0.1); padding: 2px 8px; border-radius: 2px; }
+    .schema-body { padding: 16px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: #d0d0d0; }
+    .schema-field { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #1a1a2e; }
+    .schema-field:last-child { border-bottom: none; }
+    .sf-name { color: #93c5fd; min-width: 220px; flex-shrink: 0; }
+    .sf-type { color: #34d399; min-width: 130px; flex-shrink: 0; }
+    .sf-note { color: #6b7280; font-style: italic; }
+
+    /* ══ ENDPOINT BLOCKS ══ */
+    .endpoint-block { border: 1px solid var(--parchment-dark); margin: 16px 0; overflow: hidden; }
+    .endpoint-header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--parchment); border-bottom: 1px solid var(--parchment-dark); }
+    .method-badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 2px; min-width: 52px; text-align: center; }
+    .method-get { background: #1a5c2e; color: #c9e8d5; }
+    .method-post { background: #1a3a5c; color: #d0dce8; }
+    .method-put { background: #6e5c1a; color: #f0e0a0; }
+    .method-patch { background: #4a1a6e; color: #e0d0f0; }
+    .method-delete { background: #6e1a1a; color: #f5cdc9; }
+    .endpoint-path { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--blue); flex: 1; }
+    .endpoint-desc { font-size: 12px; color: var(--grey); }
+    .endpoint-body { padding: 14px 18px; font-size: 13px; line-height: 1.65; }
+    .endpoint-body p { font-size: 13px; margin-bottom: 8px; }
+
+    /* ══ LISTS ══ */
+    ul.styled, ol.styled { margin: 14px 0 14px 24px; line-height: 1.75; }
+    ul.styled li, ol.styled li { margin-bottom: 8px; font-size: 14px; color: #1a1a1a; }
+    ul.styled li::marker { color: var(--gold); }
+    ol.styled li::marker { color: var(--red); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+    ul.check li { list-style: none; padding-left: 4px; }
+    ul.check li::before { content: "✓ "; color: var(--green); font-weight: 600; }
+
+    /* ══ INLINE CODE ══ */
+    code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: rgba(0,0,0,0.07); padding: 1px 5px; border-radius: 2px; color: var(--blue); }
+
+    /* ══ BADGES ══ */
+    .badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin: 2px; }
+    .badge-red { background: var(--red-light); color: var(--accent); }
+    .badge-blue { background: var(--blue-light); color: var(--blue); }
+    .badge-gold { background: var(--gold-light); color: #7a5a00; }
+    .badge-green { background: var(--green-light); color: var(--green); }
+    .badge-grey { background: #e0e0e0; color: #555; }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+    /* ══ TWO-COL ══ */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 20px 0; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0; }
+
+    /* ══ STAT BOXES ══ */
+    .stat-box { background: var(--ink); color: var(--paper); padding: 18px 20px; text-align: center; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 900; color: var(--gold); display: block; line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: #aaa; }
+
+    /* ══ TIMELINE ══ */
+    .timeline { margin: 28px 0; }
+    .timeline-item { display: flex; gap: 20px; margin-bottom: 0; position: relative; }
+    .timeline-item::before { content: ''; position: absolute; left: 15px; top: 36px; bottom: -4px; width: 2px; background: var(--parchment-dark); }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); border: 3px solid var(--gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 4px; z-index: 1; }
+    .timeline-dot span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--gold); font-weight: 600; }
+    .timeline-content { flex: 1; padding-bottom: 32px; }
+    .timeline-phase { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+    .timeline-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .timeline-duration { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold); background: var(--gold-light); padding: 2px 8px; border-radius: 2px; display: inline-block; margin-bottom: 10px; }
+    .timeline-body { font-size: 13px; color: var(--grey); line-height: 1.65; }
+
+    /* ══ REVENUE CARD ══ */
+    .revenue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+    .revenue-card { background: var(--ink); color: var(--paper); padding: 20px; border-top: 3px solid var(--gold); }
+    .revenue-tier { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; display: block; }
+    .revenue-price { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--paper); line-height: 1; margin-bottom: 4px; }
+    .revenue-period { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #777; margin-bottom: 14px; }
+    .revenue-features { list-style: none; margin: 0; padding: 0; }
+    .revenue-features li { font-size: 12px; color: #bbb; padding: 4px 0; border-bottom: 1px solid #1a1a1a; }
+    .revenue-features li::before { content: "→ "; color: var(--gold); }
+
+    /* ══ RISK TABLE ══ */
+    .risk-high { background: #f5cdc9; color: #8b0000; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; }
+    .risk-med { background: #f0e0a0; color: #7a5a00; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; }
+    .risk-low { background: #c9e8d5; color: #1a5c2e; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; }
+
+    /* ══ ORNAMENT ══ */
+    .ornament { text-align: center; color: var(--gold); font-size: 16px; letter-spacing: 0.6em; margin: 60px 0 0; opacity: 0.5; }
+
+    /* ══ SCROLL TOP ══ */
+    .scroll-top {
+      position: fixed; bottom: 28px; right: 28px; width: 38px; height: 38px;
+      background: var(--ink); border: 1px solid var(--gold); color: var(--gold);
+      font-family: 'IBM Plex Mono', monospace; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; transition: opacity 0.2s; z-index: 300;
+    }
+    .scroll-top.visible { opacity: 1; }
+    .scroll-top:hover { background: var(--gold); color: var(--ink); }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: var(--ink); color: #555; padding: 32px 60px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      letter-spacing: 0.1em; text-align: center; border-top: 3px solid var(--red);
+    }
+
+    @media (max-width: 900px) {
+      .two-col, .three-col { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .revenue-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .masthead-top { padding: 8px 20px; }
+      .masthead-title { padding: 14px 20px 10px; }
+      .masthead-meta { flex-wrap: wrap; gap: 12px; }
+      .content-wrap { padding: 40px 24px 80px; }
+      footer { padding: 24px 20px; }
+      .revenue-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span>CONFIDENTIAL — INTERNAL PROJECT PROPOSAL</span>
+    <span>DOCUMENT VERSION 1.0 — MAY 2026</span>
+    <span>AI-POWERED EDA PLATFORM</span>
+  </div>
+  <div class="masthead-title">
+    <h1>CircuitMind AI</h1>
+    <p class="subtitle">An Exhaustive Proposal for an AI-Powered Cross-Platform Electronic Design Automation Platform</p>
+  </div>
+  <div class="masthead-rule"></div>
+  <div class="masthead-meta">
+    <span>Status: <span>PROPOSAL DRAFT</span></span>
+    <span>Scope: <span>FULL-STACK PLATFORM</span></span>
+    <span>Horizon: <span>36 MONTHS</span></span>
+    <span>Target: <span>ENGINEERS + ENTERPRISES</span></span>
+  </div>
+</header>
+
+<!-- SIDEBAR BACKDROP -->
+<div class="sidebar-backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+<!-- FLOATING MENU BUTTON -->
+<button class="menu-btn" id="menuBtn" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <div class="menu-bars"><span></span><span></span><span></span></div>
+  <span class="menu-label">Menu</span>
+</button>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-header-label">Contents</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <div class="sidebar-inner">
+
+    <div class="toc-chapter">
+      <span class="toc-chapter-label">Overview</span>
+      <a class="toc-link" onclick="goTo('exec-summary');closeSidebar()"><span class="toc-num">§ 1</span><span class="toc-text">Executive Summary</span></a>
+      <a class="toc-link" onclick="goTo('problem');closeSidebar()"><span class="toc-num">§ 2</span><span class="toc-text">Problem Analysis</span></a>
+      <a class="toc-link" onclick="goTo('market');closeSidebar()"><span class="toc-num">§ 3</span><span class="toc-text">Market Opportunity</span></a>
+    </div>
+
+    <div class="toc-chapter">
+      <span class="toc-chapter-label">Product</span>
+      <a class="toc-link" onclick="goTo('vision');closeSidebar()"><span class="toc-num">§ 4</span><span class="toc-text">Vision & Core Principles</span></a>
+      <a class="toc-link" onclick="goTo('features');closeSidebar()"><span class="toc-num">§ 5</span><span class="toc-text">Exhaustive Feature Set</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-ai');closeSidebar()"><span class="toc-num">5.1</span><span class="toc-text">AI Design Workflow</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-schematic');closeSidebar()"><span class="toc-num">5.2</span><span class="toc-text">Schematic Engine</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-pcb');closeSidebar()"><span class="toc-num">5.3</span><span class="toc-text">PCB Workflow</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-sim');closeSidebar()"><span class="toc-num">5.4</span><span class="toc-text">Simulation & Verification</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-bom');closeSidebar()"><span class="toc-num">5.5</span><span class="toc-text">BoM & Supply Chain</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-collab');closeSidebar()"><span class="toc-num">5.6</span><span class="toc-text">Collaboration & Versioning</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-save');closeSidebar()"><span class="toc-num">5.7</span><span class="toc-text">Save & Resume Projects</span></a>
+      <a class="toc-link sub" onclick="goTo('feat-export');closeSidebar()"><span class="toc-num">5.8</span><span class="toc-text">Export & Integration</span></a>
+    </div>
+
+    <div class="toc-chapter">
+      <span class="toc-chapter-label">Architecture</span>
+      <a class="toc-link" onclick="goTo('ai-strategy');closeSidebar()"><span class="toc-num">§ 6</span><span class="toc-text">AI Model Strategy</span></a>
+      <a class="toc-link sub" onclick="goTo('ai-local');closeSidebar()"><span class="toc-num">6.1</span><span class="toc-text">Local Model Layer</span></a>
+      <a class="toc-link sub" onclick="goTo('ai-cloud');closeSidebar()"><span class="toc-num">6.2</span><span class="toc-text">Cloud Provider Layer</span></a>
+      <a class="toc-link sub" onclick="goTo('ai-routing');closeSidebar()"><span class="toc-num">6.3</span><span class="toc-text">Intelligent Model Routing</span></a>
+      <a class="toc-link sub" onclick="goTo('ai-finetuning');closeSidebar()"><span class="toc-num">6.4</span><span class="toc-text">Fine-tuning Strategy</span></a>
+      <a class="toc-link" onclick="goTo('tech-stack');closeSidebar()"><span class="toc-num">§ 7</span><span class="toc-text">Technology Stack</span></a>
+      <a class="toc-link" onclick="goTo('data-arch');closeSidebar()"><span class="toc-num">§ 8</span><span class="toc-text">Data Architecture</span></a>
+      <a class="toc-link" onclick="goTo('security');closeSidebar()"><span class="toc-num">§ 9</span><span class="toc-text">Security & Compliance</span></a>
+      <a class="toc-link" onclick="goTo('infra');closeSidebar()"><span class="toc-num">§ 10</span><span class="toc-text">Infrastructure & DevOps</span></a>
+    </div>
+
+    <div class="toc-chapter">
+      <span class="toc-chapter-label">Execution</span>
+      <a class="toc-link" onclick="goTo('lifecycle');closeSidebar()"><span class="toc-num">§ 11</span><span class="toc-text">Development Lifecycle</span></a>
+      <a class="toc-link sub" onclick="goTo('phase1');closeSidebar()"><span class="toc-num">11.1</span><span class="toc-text">Phase 1 — Foundation</span></a>
+      <a class="toc-link sub" onclick="goTo('phase2');closeSidebar()"><span class="toc-num">11.2</span><span class="toc-text">Phase 2 — Core AI</span></a>
+      <a class="toc-link sub" onclick="goTo('phase3');closeSidebar()"><span class="toc-num">11.3</span><span class="toc-text">Phase 3 — PCB & Sim</span></a>
+      <a class="toc-link sub" onclick="goTo('phase4');closeSidebar()"><span class="toc-num">11.4</span><span class="toc-text">Phase 4 — Enterprise</span></a>
+      <a class="toc-link sub" onclick="goTo('phase5');closeSidebar()"><span class="toc-num">11.5</span><span class="toc-text">Phase 5 — Scale</span></a>
+      <a class="toc-link" onclick="goTo('team');closeSidebar()"><span class="toc-num">§ 12</span><span class="toc-text">Team & Hiring Plan</span></a>
+    </div>
+
+    <div class="toc-chapter">
+      <span class="toc-chapter-label">Business</span>
+      <a class="toc-link" onclick="goTo('revenue');closeSidebar()"><span class="toc-num">§ 13</span><span class="toc-text">Revenue Model</span></a>
+      <a class="toc-link sub" onclick="goTo('pricing');closeSidebar()"><span class="toc-num">13.1</span><span class="toc-text">Pricing Tiers</span></a>
+      <a class="toc-link sub" onclick="goTo('roi');closeSidebar()"><span class="toc-num">13.2</span><span class="toc-text">ROI & Financial Projections</span></a>
+      <a class="toc-link sub" onclick="goTo('market-entry');closeSidebar()"><span class="toc-num">13.3</span><span class="toc-text">Go-to-Market Strategy</span></a>
+      <a class="toc-link" onclick="goTo('risks');closeSidebar()"><span class="toc-num">§ 14</span><span class="toc-text">Risk Analysis</span></a>
+      <a class="toc-link" onclick="goTo('blind-spots');closeSidebar()"><span class="toc-num">§ 15</span><span class="toc-text">Blind Spots & Unknowns</span></a>
+      <a class="toc-link" onclick="goTo('conclusion');closeSidebar()"><span class="toc-num">§ 16</span><span class="toc-text">Conclusion</span></a>
+    </div>
+
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <main class="main">
+    <div class="content-wrap">
+
+      <!-- ══ PART I: OVERVIEW ══ -->
+      <div class="part-divider" id="exec-summary">
+        <span class="part-label">Part I — Overview</span>
+        <h2 class="part-title">Executive Summary</h2>
+        <p class="part-intro">A plain-language assessment of what we are building, why now, and why this specific approach is the right one — before any technical detail enters the picture.</p>
+      </div>
+
+      <div class="section-block">
+        <span class="section-num-tag">§ 1</span>
+        <h3 class="section-title">What This Is</h3>
+
+        <p>Electronic design automation, the field that produces tools for drawing circuits and laying out printed circuit boards, has not changed its fundamental interaction model in roughly four decades. Engineers still open schematic editors, manually place components, wire nets by hand, run rule checks, fix violations, and iterate — often for weeks — before a design is ready to send to a manufacturer. The tools have become faster and the components more complex, but the cognitive burden on the engineer has not meaningfully shrunk.</p>
+
+        <p>This proposal describes <strong>CircuitMind AI</strong>: a cross-platform application that inverts this model. Instead of asking an engineer to operate a tool, the platform asks the engineer to describe a requirement, and the system produces a working design candidate. The engineer then reviews, steers, adjusts, and approves — which is a fundamentally different workflow, one closer to how senior engineers mentor junior ones than how engineers currently interact with software.</p>
+
+        <p>The platform runs on macOS, Windows, Linux, and in the browser. It uses a hybrid AI model stack combining locally-run open-weight models for latency-sensitive tasks and privacy-critical workloads, with cloud-hosted frontier models from Anthropic, OpenAI, Google, and DeepSeek for complex reasoning tasks. It is subscription-based, with a free tier that is genuinely useful and enterprise tiers that integrate with existing EDA ecosystems.</p>
+
+        <div class="callout note">
+          <span class="callout-label">Scope Note</span>
+          This proposal is intended to be a living document. Sections marked with a <span class="badge badge-gold">ESTIMATE</span> label contain figures that require validation against real usage data once the product reaches beta. Treat cost projections and timeline estimates as directionally correct, not contractually precise.
+        </div>
+
+        <div class="three-col">
+          <div class="stat-box">
+            <span class="stat-num">$14B+</span>
+            <span class="stat-label">Global EDA Market Size (2024 est.)</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">~12%</span>
+            <span class="stat-label">Projected Annual Market Growth</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">36 mo</span>
+            <span class="stat-label">Proposed Development Horizon</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROBLEM -->
+      <div class="section-block" id="problem">
+        <span class="section-num-tag">§ 2</span>
+        <h3 class="section-title">Problem Analysis</h3>
+
+        <p>The core problem is not that existing EDA tools are bad. Altium Designer, Cadence OrCAD, and the open-source KiCad project are sophisticated, stable, and deeply capable. The problem is that they are designed for experts, require years of domain knowledge to use productively, and they do not help the user think — they only help the user draw.</p>
+
+        <p>Consider what happens when a product team decides to add wireless connectivity to an embedded system. Someone has to choose a wireless protocol (Bluetooth LE, Wi-Fi, Zigbee, Thread), then select a chip that supports it, then understand that chip's reference design, then adapt the reference design to the product's power budget and board constraints, then verify antenna placement rules, then check regulatory compliance requirements. None of that is drawing. It is design reasoning. And none of today's EDA tools do it.</p>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Quantifying the Problem</h4>
+
+          <p>Studies measuring electronic design iteration cycles consistently find that component selection, schematic review, and design-rule correction account for the majority of engineering time in early-stage prototyping. A 2022 survey by Lifecycle Insights (a well-established engineering research firm) found that engineers in hardware-intensive organizations reported spending roughly 35–45% of their productive time on non-creative tasks: searching component databases, cross-referencing datasheets, verifying footprint correctness, and resolving design-rule violations. These are tasks that a well-trained AI system can automate or substantially accelerate.</p>
+
+          <p>The secondary problem is the learning curve. KiCad, despite being free and open-source, takes most new users several weeks to become productive with. Altium Designer — the industry standard for professional work — costs several thousand dollars per seat per year and requires formal training. This means that the pool of people who can design hardware effectively is artificially small, constrained not by the availability of electronics knowledge but by the friction of the tools themselves.</p>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">The Structural Gaps No One Is Solving</h4>
+
+          <ul class="styled">
+            <li><strong>Context-free tools.</strong> No current EDA tool understands the design intent. If you draw a voltage divider, the tool does not know whether it is a sensor bias network, a battery monitor, or a reference voltage source — and therefore cannot warn you when your resistor values are inappropriate for the thermal environment or the input impedance of the load.</li>
+            <li><strong>Disconnected supply chain.</strong> Component availability, pricing, and lifecycle status change daily. Most EDA tools have no live connection to distributor inventory. Engineers routinely complete designs only to discover that a key component is out of stock for 52 weeks.</li>
+            <li><strong>Siloed simulation.</strong> SPICE simulation, signal integrity analysis, thermal analysis, and EMC analysis are separate tools with separate file formats and separate licenses. No integrated workflow ties them together.</li>
+            <li><strong>Collaboration is broken.</strong> Most EDA projects are stored in local file systems or Git repositories managed manually. Real-time collaborative editing, the kind that Google Docs normalized for documents, does not exist in mainstream EDA.</li>
+            <li><strong>Knowledge is not reused.</strong> Every engineer rebuilds from scratch. Reference designs exist in datasheets and application notes as PDFs. There is no structured, searchable, AI-queryable knowledge base of proven design patterns.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- MARKET -->
+      <div class="section-block" id="market">
+        <span class="section-num-tag">§ 3</span>
+        <h3 class="section-title">Market Opportunity</h3>
+
+        <p>The electronic design automation market is large and growing. It sits at the intersection of two significant trends: the continued expansion of electronics into every product category (automotive, medical, consumer IoT, industrial automation) and the rapid maturation of large language models capable of technical reasoning.</p>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Target Segments</h4>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <span class="feature-card-icon">🎓</span>
+              <div class="feature-card-title">Students & Hobbyists</div>
+              <div class="feature-card-body">Largest by headcount, smallest by willingness to pay. Important for brand building, community, and as a pipeline into professional tiers. Free tier serves this segment primarily.</div>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card-icon">🔬</span>
+              <div class="feature-card-title">Independent Engineers & Consultants</div>
+              <div class="feature-card-body">High willingness to pay, price-sensitive, value speed above all. These are the early adopters who will generate word-of-mouth and case studies. Pro tier is the primary revenue source here.</div>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card-icon">🏢</span>
+              <div class="feature-card-title">Hardware Startups</div>
+              <div class="feature-card-body">Small teams with broad skill requirements. AI assistance reduces the need to hire dedicated hardware engineers for every task. Team tier. High expansion potential as the company grows.</div>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card-icon">🏭</span>
+              <div class="feature-card-title">Mid-Market Hardware Companies</div>
+              <div class="feature-card-body">10–200 seat deployments. Need SSO, audit logs, private AI model hosting, and integration with existing PLM/PDM systems. Enterprise tier.</div>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card-icon">🏗️</span>
+              <div class="feature-card-title">Large OEMs & Defense</div>
+              <div class="feature-card-body">Complex procurement cycles, regulatory constraints (ITAR in the US, EAR), air-gapped deployment requirements. Addressed in a later platform phase. Longest sales cycles but highest ACV.</div>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card-icon">🎓</span>
+              <div class="feature-card-title">Universities & Research Labs</div>
+              <div class="feature-card-body">Academic licensing, grant-funded purchases. Important for legitimacy and research partnerships. Educational tier with special pricing.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Competitive Landscape</h4>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Competitor</th>
+                  <th>Strength</th>
+                  <th>Weakness</th>
+                  <th>Our Differentiation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>Altium Designer</strong></td><td>Industry-standard, mature, deep PCB capabilities</td><td>Expensive, steep learning curve, no real AI workflow</td><td>AI-first UX, 10x faster onboarding, fraction of cost</td></tr>
+                <tr><td><strong>KiCad</strong></td><td>Free, open-source, large community</td><td>No AI, no cloud collaboration, file-system-first</td><td>Everything KiCad is not — AI, collaboration, cloud</td></tr>
+                <tr><td><strong>Flux.ai</strong></td><td>Browser-native, collaboration, modern UI</td><td>Limited AI depth, early-stage PCB features</td><td>Deeper AI reasoning, local model option, simulation</td></tr>
+                <tr><td><strong>Circuit Mind</strong></td><td>AI optimization, component selection</td><td>Narrow scope, not a full EDA replacement</td><td>Full end-to-end EDA workflow, not just optimization</td></tr>
+                <tr><td><strong>CELUS</strong></td><td>AI architecture to schematic</td><td>Limited to schematic phase, no PCB</td><td>End-to-end: prompt → block → schematic → PCB → BoM</td></tr>
+                <tr><td><strong>Cadence / Synopsys</strong></td><td>Enterprise-grade, trusted by big OEMs</td><td>Extremely expensive, inaccessible to SMBs</td><td>SMB-first pricing, AI workflow, modern UX</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-label">Honest Assessment</span>
+          The AI-EDA space is moving fast. Autodesk, Cadence, and Siemens all have active AI R&amp;D programs. The window for an independent platform to establish a user base and switching costs is probably 18–30 months before incumbents release credible AI-native offerings. Speed to market matters enormously here.
+        </div>
+      </div>
+
+      <!-- ══ PART II: PRODUCT ══ -->
+      <div class="part-divider" id="vision">
+        <span class="part-label">Part II — Product</span>
+        <h2 class="part-title">Vision, Principles &amp; Core Design Philosophy</h2>
+        <p class="part-intro">What we believe about good design tools, and how those beliefs shape every feature decision.</p>
+      </div>
+
+      <div class="section-block">
+        <span class="section-num-tag">§ 4</span>
+        <h3 class="section-title">Core Design Principles</h3>
+
+        <div class="two-col">
+          <div>
+            <div class="sub-subsection-title">Principle 1: Intent First</div>
+            <p>The system should always understand what the engineer is trying to achieve, not just what they have drawn. Every component, net, and constraint should be traceable back to a design requirement. The AI should be able to explain any generated design element in terms of the original user intent.</p>
+
+            <div class="sub-subsection-title">Principle 2: Transparent AI</div>
+            <p>When the AI makes a decision — selecting a component, routing a trace, suggesting a topology — it must be able to explain that decision in plain language. Black-box suggestions are not acceptable in engineering contexts where a wrong answer can cause a product recall, a safety incident, or a regulatory violation.</p>
+
+            <div class="sub-subsection-title">Principle 3: Graceful Degradation</div>
+            <p>The platform must work well even when AI is unavailable, slow, or wrong. Every AI-generated output must be manually editable. The AI is a collaborator, not a replacement for the engineer's judgment.</p>
+          </div>
+          <div>
+            <div class="sub-subsection-title">Principle 4: Real-World Constraints</div>
+            <p>Designs that cannot be manufactured, sourced, or certified are not useful. The platform must integrate supply chain reality (live pricing, availability, lead times), manufacturing constraints (minimum trace widths, drill sizes, layer count economics), and regulatory requirements (CE, FCC, RoHS, REACH) from the start, not as an afterthought.</p>
+
+            <div class="sub-subsection-title">Principle 5: Collaboration as a First-Class Feature</div>
+            <p>No engineer works alone. The platform must support real-time multi-user editing, review workflows with comments and approvals, and version history that makes it possible to understand why a design changed, not just what changed.</p>
+
+            <div class="sub-subsection-title">Principle 6: Offline Capability</div>
+            <p>Engineers work in labs, on aircraft, in factories with no internet. The desktop application must be fully functional offline. Local AI models handle all AI tasks when offline. The cloud sync happens when connectivity is restored.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURES -->
+      <div class="section-block" id="features">
+        <span class="section-num-tag">§ 5</span>
+        <h3 class="section-title">Exhaustive Feature Set</h3>
+        <p>What follows is a comprehensive enumeration of every feature the platform must include across its full development lifecycle. Features are tagged by the phase in which they are targeted for delivery.</p>
+      </div>
+
+      <!-- 5.1 AI WORKFLOW -->
+      <div class="subsection-block" id="feat-ai">
+        <h4 class="subsection-title">5.1 — AI Design Workflow</h4>
+
+        <div class="sub-subsection-title">Natural Language Requirement Intake</div>
+        <p>The primary entry point to the platform. A user types a description such as "I need a motor controller for a 24V brushless DC motor up to 10A with CAN bus communication and overcurrent protection." The system parses this into structured requirements: supply voltage, current rating, communication interface, protection requirements. It then asks clarifying questions where the specification is ambiguous — for example, whether the CAN bus should use CAN 2.0A or CAN FD, and what overcurrent trip threshold is acceptable.</p>
+
+        <p>This intake parser must handle the full range of how engineers actually write requirements — which is not always precise. Engineers write in fragments, use abbreviations, mix metric and imperial units, and sometimes describe requirements in terms of symptoms ("it keeps browning out at startup") rather than specifications. The model must infer intent from imprecise language.</p>
+
+        <div class="sub-subsection-title">Structured Requirement Form</div>
+        <p>An alternative entry point for engineers who prefer structured input. A dynamic form that adapts based on the circuit category selected. Power supply forms ask about input voltage range, output voltage, load current, efficiency target, switching frequency preference, and form factor. Microcontroller application forms ask about peripherals needed, real-time requirements, security requirements, and code size. The form pre-populates suggested values based on best practices and prompts the user to confirm or override.</p>
+
+        <div class="sub-subsection-title">Block Diagram Generator</div>
+        <p>From requirements, the system generates a functional block diagram — a high-level view of the major subsystems and their connections. The block diagram is interactive: clicking a block opens an AI panel explaining what that block does and why it was included. Blocks can be added, removed, or swapped. Changing a block triggers an AI review to check if the change creates conflicts with other blocks.</p>
+
+        <div class="sub-subsection-title">AI Design Assistant Chat</div>
+        <p>A persistent chat panel available at every stage of the design. The assistant understands the current state of the design and can answer questions like "why did you choose this regulator over a linear one?" or "what happens to efficiency if I reduce the switching frequency?" It can also accept instructions: "switch the microcontroller to an STM32 family part" or "add USB-C power delivery." Every assistant action is logged and reversible.</p>
+
+        <div class="sub-subsection-title">Design Memory & Learning</div>
+        <p>The platform remembers design decisions made in previous projects and can surface them as suggestions. "You often use this series of capacitor values for decoupling. Should I apply the same approach here?" User preferences, preferred component vendors, and organizational design standards are stored and applied automatically. This is where the platform becomes genuinely more useful the longer someone uses it.</p>
+
+        <div class="sub-subsection-title">Multi-Modal Input</div>
+        <p>Users can upload images of hand-drawn circuit sketches, whiteboard photos, or reference design images from datasheets. The AI interprets these and converts them to structured design intent or directly to schematic elements. This is a particularly powerful feature for engineers who think on paper first.</p>
+
+        <div class="callout teal">
+          <span class="callout-label">Implementation Note</span>
+          The sketch-to-schematic feature requires a specialized vision model fine-tuned on circuit diagram images. This is a non-trivial ML task and is targeted for Phase 3, not initial release. Early versions should handle clean, printed reference designs from datasheets better than hand-drawn sketches.
+        </div>
+      </div>
+
+      <!-- 5.2 SCHEMATIC -->
+      <div class="subsection-block" id="feat-schematic">
+        <h4 class="subsection-title">5.2 — Schematic Engine</h4>
+
+        <div class="sub-subsection-title">AI Schematic Generation</div>
+        <p>From the block diagram and component selections, the system generates a complete schematic draft. This includes all components, net connections, power symbols, ground symbols, decoupling capacitors, filtering networks, and pull-up/pull-down resistors. The generated schematic follows industry-standard drawing conventions and is ready for human review.</p>
+
+        <div class="sub-subsection-title">Interactive Canvas Editor</div>
+        <p>A vector-based schematic editor built on a custom rendering engine. Features include: infinite canvas with smooth zooming, component drag-and-drop with automatic net reconnection, bus routing with proper naming conventions, hierarchical sheets for managing complex designs, and a component properties panel that shows datasheet excerpts inline.</p>
+
+        <div class="sub-subsection-title">Component Library System</div>
+        <p>A layered library system. The base layer contains millions of components sourced from manufacturer datasheets and community contributions, verified for footprint accuracy. The organizational layer allows companies to add their own approved component lists, internal part numbers, and custom symbols. The user layer holds personal frequently-used components and custom designs.</p>
+
+        <p>Library entries include: symbol, footprint, 3D model, datasheet link, reference designator prefix, default parameter values, and supply chain metadata (preferred distributors, pricing tier estimates, lifecycle status).</p>
+
+        <div class="sub-subsection-title">Electrical Rules Check (ERC)</div>
+        <p>A real-time ERC engine that flags electrical errors as the schematic is being drawn, not only when explicitly triggered. Errors caught include: unconnected pins, conflicting pin types (output driving output), missing power pins, incorrect power flag placement, and bus name mismatches. Each error includes an explanation and a suggested fix — not just a cryptic error code.</p>
+
+        <div class="sub-subsection-title">AI Schematic Reviewer</div>
+        <p>Beyond standard ERC, an AI reviewer checks for design quality issues that rule checkers cannot catch: inadequate decoupling capacitor placement, incorrect reset circuit timing, missing ESD protection on external-facing pins, overly optimistic current ratings, and thermal management gaps. This reviewer operates as a "second engineer looking over the design."</p>
+
+        <div class="sub-subsection-title">Net Classes & Constraints</div>
+        <p>Engineers can define net classes with specific constraints: power nets with minimum trace width, differential pairs with matched length requirements, high-frequency nets with impedance requirements. These constraints flow through to the PCB layout stage automatically.</p>
+
+        <div class="sub-subsection-title">Parametric Component Search</div>
+        <p>A search interface that allows engineers to find components by electrical specification rather than by part number. "Find me an NPN transistor with Vce &gt; 40V, Ic &gt; 500mA, in an SOT-23 package, with stock at Mouser or Digi-Key today." The search queries live distributor inventory APIs and returns ranked results sorted by the optimization target (cost, availability, or lifecycle preference).</p>
+      </div>
+
+      <!-- 5.3 PCB -->
+      <div class="subsection-block" id="feat-pcb">
+        <h4 class="subsection-title">5.3 — PCB Workflow</h4>
+
+        <div class="sub-subsection-title">AI-Assisted Component Placement</div>
+        <p>After the schematic is approved, the system suggests an initial component placement strategy. It groups related components by function, considers thermal management (high-power components near board edge or near thermal vias), respects keep-out zones defined by the board outline, and places decoupling capacitors as close to power pins as possible. The placement is interactive — the engineer can accept, modify, or reject individual placement decisions.</p>
+
+        <div class="sub-subsection-title">Interactive PCB Editor</div>
+        <p>A full-featured PCB editor with layer management (1 to 16+ layers), copper pour tools, differential pair routing, length-matching tools, and a 3D preview. The editor maintains a live link to the schematic; changes in either direction synchronize automatically via a back-annotation system.</p>
+
+        <div class="sub-subsection-title">AI Auto-Router</div>
+        <p>A constraint-aware auto-router that understands net class priorities, differential pair requirements, length matching constraints, and via minimization preferences. The auto-router is not a black box — it explains routing decisions and flags cases where it could not meet a constraint, with suggestions for how to resolve the conflict (adjusting placement, changing layer stackup, relaxing a constraint).</p>
+
+        <div class="sub-subsection-title">Design Rule Check (DRC)</div>
+        <p>A comprehensive DRC engine that validates the layout against both the design rules defined in the project and the manufacturer's design rules (imported from the chosen PCB fabrication service's design rule files). DRC runs continuously in the background and results are shown inline in the editor, not in a separate report window.</p>
+
+        <div class="sub-subsection-title">Manufacturer Integration</div>
+        <p>Direct integration with PCB fabrication services (JLCPCB, PCBWay, OSH Park, and others) for instant quoting, design rule import, and order placement without leaving the application. The platform also supports generating standard Gerber + drill file packages for upload to any manufacturer.</p>
+
+        <div class="sub-subsection-title">Layer Stackup Advisor</div>
+        <p>The AI recommends a layer stackup based on the design's signal integrity requirements, EMC targets, and cost constraints. For a simple 2-layer board with no high-speed signals, it recommends a standard 1.6mm FR4 stackup. For a design with DDR memory, it explains why 6 layers with specific prepreg thicknesses are needed and what the impedance targets should be for each signal layer.</p>
+
+        <div class="sub-subsection-title">Signal Integrity Analysis</div>
+        <p>Built-in transmission line analysis for high-speed nets. The system checks trace length against the signal's rise time to determine whether the trace needs to be treated as a transmission line, calculates characteristic impedance for coplanar waveguide and microstrip geometries, and checks for impedance discontinuities at vias and corners.</p>
+
+        <div class="sub-subsection-title">Thermal Analysis</div>
+        <p>A simplified thermal model that estimates component junction temperatures based on power dissipation, thermal resistance values from datasheets, and ambient temperature. Flags components at risk of thermal failure. Suggests copper pours, thermal vias, or component repositioning as mitigation.</p>
+      </div>
+
+      <!-- 5.4 SIMULATION -->
+      <div class="subsection-block" id="feat-sim">
+        <h4 class="subsection-title">5.4 — Simulation &amp; Verification</h4>
+
+        <div class="sub-subsection-title">Integrated SPICE Simulation</div>
+        <p>An ngspice-backed simulation engine accessible directly from the schematic. Users can run DC operating point analysis, AC frequency response, transient analysis, and noise analysis without leaving the platform. SPICE models for common components are bundled; the platform can also fetch SPICE models from manufacturer websites for components in the library.</p>
+
+        <p>The AI interprets simulation results in plain language. Instead of showing a Bode plot and expecting the engineer to calculate phase margin mentally, the system says: "This power supply has approximately 45° of phase margin at the crossover frequency of 12 kHz, which is acceptable. However, there is a gain peaking of 3 dB at 80 kHz caused by the ESR of the output capacitor. Consider adding a small series resistance to the feedback network."</p>
+
+        <div class="sub-subsection-title">Monte Carlo Analysis</div>
+        <p>Statistical simulation that varies component values within their specified tolerance ranges (1%, 5%, 10%) and runs many simulation iterations to show the distribution of output performance. This lets engineers understand how manufacturing variation will affect their design before a prototype is built.</p>
+
+        <div class="sub-subsection-title">EMC Pre-Compliance Checks</div>
+        <p>A rule-based checker (not full-wave electromagnetic simulation, which requires specialized tools) that identifies common EMC problems: switching power supply traces without adequate return paths, clock signals without guard traces, differential pairs with asymmetric routing, and unshielded high-frequency oscillators. Each finding links to the relevant IEC or FCC test standard.</p>
+
+        <div class="sub-subsection-title">Supply Chain Risk Simulation</div>
+        <p>A novel feature. The platform models the supply chain risk of a design by checking each component's historical availability volatility, the number of approved alternate sources, the manufacturer's production continuity record, and current distributor stock levels. It produces a "supply chain risk score" and recommends design changes (using a component with multiple alternate sources, adjusting BoM to reduce dependency on a single manufacturer) that reduce risk.</p>
+
+        <div class="sub-subsection-title">Regulatory Compliance Checker</div>
+        <p>A database-backed checker for common regulatory requirements. RoHS compliance is checked by verifying that no components in the BoM contain restricted substances above threshold concentrations. REACH compliance is checked similarly. CE marking requirements are checked against the product category and intended market. FCC Part 15 requirements are checked against the design's intentional and unintentional radiator characteristics.</p>
+
+        <div class="callout warning">
+          <span class="callout-label">Important Limitation</span>
+          The platform's regulatory compliance checker is a design aid, not a substitute for formal compliance testing. Final CE and FCC certification requires physical testing in an accredited laboratory. The platform's checks reduce the likelihood of failing those tests but cannot guarantee compliance.
+        </div>
+      </div>
+
+      <!-- 5.5 BOM -->
+      <div class="subsection-block" id="feat-bom">
+        <h4 class="subsection-title">5.5 — Bill of Materials &amp; Supply Chain Intelligence</h4>
+
+        <div class="sub-subsection-title">Live BoM Generation</div>
+        <p>The BoM is not a static document — it is a live view of the design's components with real-time pricing and availability data pulled from distributor APIs (Digi-Key, Mouser, Arrow, Avnet). The BoM updates automatically when component availability changes. Engineers can set alerts for components whose stock falls below a threshold.</p>
+
+        <div class="sub-subsection-title">Multi-Vendor Optimization</div>
+        <p>For a given BoM quantity, the platform calculates the optimal split of purchases across distributors to minimize total cost, including shipping, volume discount thresholds, and minimum order quantities. This is an optimization problem that changes daily as prices and stock levels fluctuate.</p>
+
+        <div class="sub-subsection-title">Alternate Part Management</div>
+        <p>For every component in the BoM, the platform suggests electrically equivalent alternates. Alternates are ranked by similarity (drop-in replacement vs. requires footprint modification), by cost, and by availability. The engineer can promote an alternate to primary status with a single click, which triggers a design review to check for any incompatibilities the substitution might introduce.</p>
+
+        <div class="sub-subsection-title">Lifecycle Monitoring</div>
+        <p>Components move through lifecycle stages: active, not recommended for new designs, last time buy, end of life, obsolete. The platform monitors the lifecycle status of every component in every saved design and alerts engineers when a component reaches a critical lifecycle stage, giving them time to qualify an alternate before the original becomes unavailable.</p>
+
+        <div class="sub-subsection-title">Cost Modeling at Scale</div>
+        <p>Engineers can model the BoM cost at multiple production volumes (prototype, pilot run, mass production) simultaneously. The model accounts for volume pricing tiers at each distributor and with each manufacturer, showing engineers the cost trajectory as a function of quantity. This is critical for understanding whether a design is viable at the target production volume.</p>
+
+        <div class="sub-subsection-title">Counterfeit Risk Flagging</div>
+        <p>The platform maintains a database of components with known counterfeit distribution problems, particularly in commodity semiconductors (certain timer ICs, transistors, and voltage regulators are frequently counterfeited). Components with elevated counterfeit risk are flagged, and the platform recommends sourcing them only from authorized distributors or directly from the manufacturer.</p>
+      </div>
+
+      <!-- 5.6 COLLABORATION -->
+      <div class="subsection-block" id="feat-collab">
+        <h4 class="subsection-title">5.6 — Collaboration &amp; Version Control</h4>
+
+        <div class="sub-subsection-title">Real-Time Multi-User Editing</div>
+        <p>Multiple engineers can edit the same schematic or PCB simultaneously. A conflict resolution system handles concurrent edits to the same element — the last writer wins by default, but users can be shown a conflict notification and choose to accept or reject the incoming change. Presence indicators show which users are active and where on the canvas their cursor is.</p>
+
+        <div class="sub-subsection-title">Review Workflow</div>
+        <p>A formal design review system modeled on code review workflows. An engineer submits a design for review, designating reviewers. Reviewers can add comments anchored to specific schematic elements or PCB locations, approve with conditions, or reject with required changes. The design cannot be released for manufacturing without approval from all designated reviewers.</p>
+
+        <div class="sub-subsection-title">Version History with Semantic Diffs</div>
+        <p>Every change to a design is stored. The version history shows not just what changed (component added, net rerouted) but why (linked to the AI conversation or the review comment that prompted the change). Diffs between versions are shown visually, highlighting added components in green and removed components in red on the schematic canvas.</p>
+
+        <div class="sub-subsection-title">Branching & Merging</div>
+        <p>Engineers can create branches of a design to explore different approaches simultaneously. Branches can be compared side-by-side and merged. This is modeled on Git's branching model but with a GUI that does not require command-line knowledge. Merge conflicts are shown visually and resolved interactively.</p>
+
+        <div class="sub-subsection-title">Comments & Annotations</div>
+        <p>Threaded comments can be attached to any design element. Comments support markdown formatting and can include images. Comments can be tagged as open issues, resolved, or informational. The comment system integrates with external project management tools (Jira, Linear, Asana) via webhooks.</p>
+      </div>
+
+      <!-- 5.7 SAVE & RESUME -->
+      <div class="subsection-block" id="feat-save">
+        <h4 class="subsection-title">5.7 — Save, Resume &amp; Project Continuity</h4>
+
+        <p>This feature deserves more attention than most proposals give it. Engineers do not always finish a design in one session. They are interrupted, switch priorities, return to a design months later, or hand it off to a colleague. The platform must make context recovery fast and complete.</p>
+
+        <div class="sub-subsection-title">Automatic Save & Conflict-Free State Management</div>
+        <p>All changes are saved continuously to the local database (when offline) and synchronized to the cloud when connectivity is available. There is no manual save action. No work is ever lost due to a crash, a closed browser tab, or a lost network connection. The local cache acts as a write-ahead log; the cloud is the authoritative store.</p>
+
+        <div class="sub-subsection-title">Design Resume Summary</div>
+        <p>When an engineer returns to a design they have not touched in days or weeks, the platform generates an AI-written summary: "Last time you worked on this project, you were adding the battery charging circuit. You had selected the MCP73831 charger IC and were working on the thermal calculation for the charge current limit resistor. The schematic shows an open ERC warning on pin 5 of U3. The BoM shows that two components added in the last session are currently out of stock with a 14-week lead time." This summary takes seconds to read and replaces the several minutes it normally takes to re-orient in a stale design.</p>
+
+        <div class="sub-subsection-title">Design Checkpoints</div>
+        <p>Engineers can create named checkpoints — explicit snapshots that represent meaningful milestones (schematic complete, layout complete, review passed). Checkpoints are highlighted in the version history and can be used as restore points. Checkpoints also serve as the trigger for automated processes: running the full ERC, generating the BoM, sending a review notification.</p>
+
+        <div class="sub-subsection-title">Offline-First Architecture</div>
+        <p>The desktop application stores the complete project state locally. When working offline, all features are available — including AI features that use locally-running models. The application detects network availability and synchronizes automatically. Conflict resolution happens transparently when two users have made offline changes to the same design.</p>
+
+        <div class="sub-subsection-title">Project Templates & Starting Points</div>
+        <p>Engineers can save any design as a template. The platform also ships with a library of curated starting-point templates: a generic ESP32 IoT node, a USB-powered microcontroller dev board, a 3-phase motor controller, a battery-powered sensor node with LoRaWAN. Templates are parameterized — when instantiating the "USB-powered microcontroller" template, the user is asked to specify the microcontroller family, the required peripherals, and the target PCB dimensions.</p>
+
+        <div class="sub-subsection-title">Cross-Device Continuity</div>
+        <p>A design started on the desktop application is accessible and fully editable in the browser on a different device. The UI adapts to the context — the browser version may have slightly reduced performance on very large designs, but the data is always identical. There is no "export for web" step; the same file format is used everywhere.</p>
+      </div>
+
+      <!-- 5.8 EXPORT -->
+      <div class="subsection-block" id="feat-export">
+        <h4 class="subsection-title">5.8 — Export, Import &amp; Integration</h4>
+
+        <div class="sub-subsection-title">Schematic Export Formats</div>
+        <ul class="styled">
+          <li>KiCad schematic format (.kicad_sch) — for users who want to continue in KiCad</li>
+          <li>Altium schematic format (.SchDoc) — via conversion layer</li>
+          <li>Eagle schematic format (.sch) — for legacy Autodesk Eagle users</li>
+          <li>PDF — for documentation and review</li>
+          <li>SVG / PNG — for embedding in documents or presentations</li>
+          <li>OrCAD schematic format — for enterprise users</li>
+          <li>SystemVerilog netlist — for integration with FPGA design flows</li>
+        </ul>
+
+        <div class="sub-subsection-title">PCB Export Formats</div>
+        <ul class="styled">
+          <li>Gerber RS-274X — industry-standard for PCB fabrication</li>
+          <li>Excellon drill files — for drill data</li>
+          <li>KiCad PCB format (.kicad_pcb)</li>
+          <li>Altium PCB format (.PcbDoc)</li>
+          <li>ODB++ — preferred by high-end fabricators</li>
+          <li>IPC-2581 — emerging open standard</li>
+          <li>DXF — for mechanical integration</li>
+          <li>STEP / IGES — 3D mechanical data for enclosure design</li>
+        </ul>
+
+        <div class="sub-subsection-title">BoM Export Formats</div>
+        <ul class="styled">
+          <li>CSV / Excel — for procurement</li>
+          <li>JSON — for system integration</li>
+          <li>IPC-2581 BoM — integrated with PCB data</li>
+          <li>Direct API push to Digi-Key, Mouser for quote generation</li>
+          <li>Integration with SAP, Oracle ERP (enterprise tier)</li>
+        </ul>
+
+        <div class="sub-subsection-title">External Tool Integration</div>
+        <p>REST API and webhook system for integration with external tools. Integrations include: Git repositories (push design files to GitHub or GitLab on checkpoint), Slack and Microsoft Teams (notifications for review requests, component alerts), Jira and Linear (create issues from design comments), PLM systems (Windchill, Arena, Agile PLM) for enterprise customers.</p>
+
+        <div class="sub-subsection-title">Platform API for Extensions</div>
+        <p>A public API that lets third-party developers build extensions to the platform. Extensions can add new components, new verification checks, new export formats, or new AI capabilities. This is the foundation for a marketplace that generates additional revenue and extends the platform's capabilities without requiring all development to happen in-house.</p>
+      </div>
+
+      <!-- ══ PART III: ARCHITECTURE ══ -->
+      <div class="part-divider" id="ai-strategy">
+        <span class="part-label">Part III — Architecture</span>
+        <h2 class="part-title">AI Model Strategy</h2>
+        <p class="part-intro">How we use AI without creating a fragile dependency on any single provider, while managing cost, latency, privacy, and capability appropriately across all tasks.</p>
+      </div>
+
+      <div class="section-block">
+        <span class="section-num-tag">§ 6</span>
+        <h3 class="section-title">Hybrid AI Architecture</h3>
+
+        <p>The most important architectural decision in this platform is how to use AI. A naive approach uses a single frontier model API for every task — but this creates problems. Frontier API calls are expensive, have latency measured in seconds, expose potentially proprietary design data to third parties, and stop working when the internet is unavailable. A naive opposite approach uses only local models — but capable local models for complex reasoning require hardware that most engineers do not have.</p>
+
+        <p>The correct approach is a multi-layer hybrid model. Tasks are routed to the most appropriate model based on their complexity, latency requirement, privacy sensitivity, and cost profile. The routing logic is itself a learned system that improves over time as usage data accumulates.</p>
+      </div>
+
+      <!-- 6.1 LOCAL -->
+      <div class="subsection-block" id="ai-local">
+        <h4 class="subsection-title">6.1 — Local Model Layer</h4>
+
+        <p>Local models run on the user's hardware. They offer zero latency for inference after initial load, complete privacy (no data leaves the machine), and offline capability. The tradeoff is that they are smaller and less capable than frontier cloud models for complex reasoning tasks.</p>
+
+        <div class="sub-subsection-title">Local Model Runtime</div>
+        <p>We build on <strong>Ollama</strong> as the local model runtime for the desktop application. Ollama handles model download, quantization, hardware acceleration (Apple Silicon Metal, NVIDIA CUDA, AMD ROCm, CPU fallback), and a local REST API that our application calls identically to how it calls cloud APIs. This abstraction means the application code does not need to know whether a response came from a local or cloud model.</p>
+
+        <div class="sub-subsection-title">Local Model Roster</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Size</th>
+                <th>Primary Use</th>
+                <th>Min Hardware</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Llama 3.1 8B (quantized)</strong></td><td>~5GB</td><td>Real-time autocomplete, ERC explanations, quick Q&A</td><td>8GB RAM</td></tr>
+              <tr><td><strong>Mistral 7B (quantized)</strong></td><td>~4GB</td><td>Component description generation, annotation text</td><td>8GB RAM</td></tr>
+              <tr><td><strong>Qwen2.5-Coder 7B</strong></td><td>~5GB</td><td>Code generation for firmware stubs, scripts</td><td>8GB RAM</td></tr>
+              <tr><td><strong>DeepSeek-R1 7B (quantized)</strong></td><td>~5GB</td><td>Constraint reasoning, optimization problems</td><td>12GB RAM</td></tr>
+              <tr><td><strong>Custom EDA Classifier (fine-tuned)</strong></td><td>&lt;1GB</td><td>Component category classification, net name inference</td><td>4GB RAM</td></tr>
+              <tr><td><strong>Custom OCR Model (fine-tuned)</strong></td><td>~2GB</td><td>Datasheet parsing, schematic image reading</td><td>4GB RAM</td></tr>
+              <tr><td><strong>LLaVA 7B (vision)</strong></td><td>~6GB</td><td>Sketch-to-intent, image analysis</td><td>12GB RAM</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>Users with less capable hardware get a reduced local model set and rely more on cloud models. Users with high-end hardware (e.g., Mac Studio with 192GB unified memory or a workstation with an RTX 4090) can run larger models locally for better quality. The system detects available hardware and configures accordingly.</p>
+      </div>
+
+      <!-- 6.2 CLOUD -->
+      <div class="subsection-block" id="ai-cloud">
+        <h4 class="subsection-title">6.2 — Cloud Provider Layer</h4>
+
+        <p>For tasks that require deep reasoning, broad world knowledge, or multimodal understanding beyond what local models can provide, we route to cloud frontier models. We maintain integrations with multiple providers to avoid vendor lock-in and to route to the best model for each task type.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Models</th>
+                <th>Primary Use Cases</th>
+                <th>Data Residency Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Anthropic</strong></td><td>Claude Sonnet, Claude Opus</td><td>Complex design reasoning, safety-critical analysis, nuanced Q&amp;A, long-context datasheet analysis</td><td>Anthropic's zero-data-retention API option available for enterprise</td></tr>
+              <tr><td><strong>OpenAI</strong></td><td>GPT-4o, o3-mini</td><td>General reasoning, code generation, structured data extraction from datasheets</td><td>Azure OpenAI for EU data residency</td></tr>
+              <tr><td><strong>Google</strong></td><td>Gemini 2.0 Flash, Gemini 2.5 Pro</td><td>Long-context document analysis (full datasheet PDFs), vision tasks</td><td>Vertex AI for regional data residency</td></tr>
+              <tr><td><strong>DeepSeek</strong></td><td>DeepSeek-V3, DeepSeek-R1</td><td>Cost-efficient reasoning for high-volume tasks, optimization problems</td><td>Enterprise: self-hosted DeepSeek for air-gapped environments</td></tr>
+              <tr><td><strong>Mistral AI</strong></td><td>Mistral Large, Mixtral</td><td>European data residency for EU enterprise customers (GDPR-first)</td><td>Hosted in EU, GDPR compliant by default</td></tr>
+              <tr><td><strong>Self-hosted (vLLM)</strong></td><td>Fine-tuned domain models</td><td>EDA-specific tasks: component matching, constraint solving, footprint generation</td><td>Complete data sovereignty, enterprise tier only</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout critical">
+          <span class="callout-label">Data Privacy Imperative</span>
+          By default, design data sent to cloud AI providers must be stripped of identifying information (company name, project name, internal part numbers) before transmission. Raw design data — netlists, schematics, component identifiers — is only transmitted with explicit user consent or under an enterprise agreement that includes API-level data processing agreements with each provider. This is non-negotiable and must be built into the routing layer from day one, not retrofitted later.
+        </div>
+      </div>
+
+      <!-- 6.3 ROUTING -->
+      <div class="subsection-block" id="ai-routing">
+        <h4 class="subsection-title">6.3 — Intelligent Model Routing</h4>
+
+        <p>The routing layer decides, for each AI request, which model or combination of models should handle it. The routing decisions are based on several factors, evaluated in order.</p>
+
+        <div class="code-block">
+          <span class="code-lang">ROUTING DECISION LOGIC — PSEUDOCODE</span>
+<span class="kw">function</span> <span class="fn">routeRequest</span>(request):
+  <span class="cm">// 1. Check privacy classification</span>
+  <span class="kw">if</span> request.contains_proprietary_data <span class="kw">and</span> user.privacy_mode == <span class="str">"strict"</span>:
+    <span class="kw">return</span> LOCAL_MODELS_ONLY
+
+  <span class="cm">// 2. Check offline status</span>
+  <span class="kw">if</span> not network.available:
+    <span class="kw">return</span> LOCAL_MODELS_ONLY
+
+  <span class="cm">// 3. Route by task type</span>
+  <span class="kw">switch</span> request.task_type:
+    <span class="kw">case</span> <span class="str">"autocomplete"</span>:       <span class="kw">return</span> LOCAL_FAST        <span class="cm">// &lt;50ms required</span>
+    <span class="kw">case</span> <span class="str">"erc_explanation"</span>:    <span class="kw">return</span> LOCAL_MEDIUM       <span class="cm">// offline-capable</span>
+    <span class="kw">case</span> <span class="str">"design_review"</span>:      <span class="kw">return</span> CLOUD_PREMIUM      <span class="cm">// requires deep reasoning</span>
+    <span class="kw">case</span> <span class="str">"datasheet_parse"</span>:    <span class="kw">return</span> CLOUD_VISION       <span class="cm">// multimodal needed</span>
+    <span class="kw">case</span> <span class="str">"optimization"</span>:       <span class="kw">return</span> LOCAL_OR_CLOUD     <span class="cm">// cost-based routing</span>
+
+  <span class="cm">// 4. Apply cost budget (subscription tier)</span>
+  <span class="kw">if</span> user.tier == <span class="str">"free"</span> <span class="kw">and</span> user.monthly_tokens > FREE_LIMIT:
+    <span class="kw">return</span> LOCAL_MODELS_ONLY
+
+  <span class="cm">// 5. Apply latency preference</span>
+  <span class="kw">if</span> request.latency_requirement == <span class="str">"realtime"</span>:
+    <span class="kw">return</span> LOCAL_MEDIUM
+
+  <span class="kw">return</span> OPTIMAL_CLOUD_FOR_TASK
+        </div>
+
+        <p>This routing system means users on the free tier primarily get local model quality (which, for most EDA tasks, is excellent). Users on paid tiers get access to cloud frontier models for complex tasks. Enterprise users with self-hosted deployments get full control over the routing logic.</p>
+      </div>
+
+      <!-- 6.4 FINE-TUNING -->
+      <div class="subsection-block" id="ai-finetuning">
+        <h4 class="subsection-title">6.4 — Fine-Tuning Strategy</h4>
+
+        <p>General-purpose language models know a lot about electronics — but they know it imprecisely. They know what a capacitor is but may not reliably know the correct SPICE syntax for a specific component model, the correct footprint naming conventions for IPC-7351, or the specific format of KiCad netlist files. Fine-tuning domain-specific models on EDA data is essential for the platform to be genuinely useful to professional engineers.</p>
+
+        <div class="sub-subsection-title">Training Data Sources</div>
+        <ul class="styled">
+          <li><strong>Open-source KiCad designs.</strong> GitHub contains thousands of open-source KiCad projects. These can be parsed to create schematic/netlist/layout/BoM tuples as training examples.</li>
+          <li><strong>Application notes and reference designs.</strong> Manufacturers publish thousands of application notes in PDF form. These can be OCR-processed and structured into design-intent/implementation pairs.</li>
+          <li><strong>EDA forum data.</strong> Communities like the EEVblog forum, the KiCad community forum, and the Altium community contain decades of design Q&amp;A. This can be cleaned and used for conversational design assistant fine-tuning.</li>
+          <li><strong>Synthetic data generation.</strong> Use frontier models to generate synthetic training data: given a design requirement, generate a correct implementation. Then use these pairs to fine-tune smaller models. This is the same technique used to train coding assistants.</li>
+          <li><strong>User feedback signals.</strong> When users accept, reject, or modify AI suggestions, these signals are used to improve model quality over time. This requires careful opt-in consent handling.</li>
+        </ul>
+
+        <div class="sub-subsection-title">Fine-Tuning Infrastructure</div>
+        <p>We run our own fine-tuning infrastructure on GPU clusters (initially on rented cloud GPU capacity — Lambda Labs or CoreWeave are more cost-effective than AWS for pure GPU workloads). Fine-tuning jobs run on a scheduled basis as new training data accumulates. Models are evaluated on a held-out benchmark of EDA tasks before deployment. The benchmark includes tasks like: generate a correct schematic for a given specification, identify the fault in a given ERC-failing schematic, select the correct component from a specification, and generate a valid netlist from a block diagram.</p>
+      </div>
+
+      <!-- TECH STACK -->
+      <div class="section-block" id="tech-stack">
+        <span class="section-num-tag">§ 7</span>
+        <h3 class="section-title">Technology Stack</h3>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Frontend & Desktop</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Technology</th><th>Role</th><th>Justification</th></tr></thead>
+              <tbody>
+                <tr><td><strong>React 19 + TypeScript</strong></td><td>UI framework</td><td>Large ecosystem, strict typing critical for design data models, concurrent rendering for large schematics</td></tr>
+                <tr><td><strong>Tauri 2.0</strong></td><td>Desktop shell</td><td>Rust-backed, ~4MB installer vs Electron's ~200MB, better memory isolation, system-native APIs</td></tr>
+                <tr><td><strong>Next.js 15 (App Router)</strong></td><td>Web application</td><td>SSR for authenticated pages, RSC for data-heavy views, API routes for BFF layer</td></tr>
+                <tr><td><strong>Tailwind CSS v4</strong></td><td>Styling</td><td>Utility-first, consistent design system, excellent purging for production builds</td></tr>
+                <tr><td><strong>shadcn/ui</strong></td><td>Component library</td><td>Unstyled, accessible, composable — not a visual black box</td></tr>
+                <tr><td><strong>React Flow</strong></td><td>Block diagram canvas</td><td>Purpose-built for node-edge graphs, good performance at moderate complexity</td></tr>
+                <tr><td><strong>Konva.js</strong></td><td>Schematic/PCB canvas</td><td>Canvas-based rendering, handles thousands of elements with acceptable performance</td></tr>
+                <tr><td><strong>WebGL (custom)</strong></td><td>PCB 3D preview</td><td>Three.js scene for PCB 3D visualization; STEP models rendered via custom WebGL pipeline</td></tr>
+                <tr><td><strong>Zustand</strong></td><td>Client state</td><td>Lightweight, minimal boilerplate, excellent DevTools, good for large design state trees</td></tr>
+                <tr><td><strong>TanStack Query</strong></td><td>Server state / caching</td><td>Cache management for component library queries, distributor API calls</td></tr>
+                <tr><td><strong>Monaco Editor</strong></td><td>Code/text editing</td><td>SPICE netlist editing, constraint file editing, AI prompt editing with syntax highlighting</td></tr>
+                <tr><td><strong>Yjs</strong></td><td>Real-time CRDT sync</td><td>Industry-standard CRDT library for conflict-free real-time collaborative editing</td></tr>
+                <tr><td><strong>Rust (Tauri core)</strong></td><td>Native file I/O, IPC</td><td>Parsing large KiCad files, running local SPICE, managing Ollama process — all in Rust for performance</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Backend Services</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Technology</th><th>Role</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td><strong>FastAPI (Python 3.12)</strong></td><td>Primary API layer</td><td>Async, type-annotated, auto-generates OpenAPI docs, excellent AI library ecosystem</td></tr>
+                <tr><td><strong>Pydantic v2</strong></td><td>Data validation</td><td>Fast, type-safe validation for all API inputs/outputs; used for design data models</td></tr>
+                <tr><td><strong>SQLAlchemy 2.0 (async)</strong></td><td>ORM</td><td>Async ORM for PostgreSQL, supports complex queries for component search</td></tr>
+                <tr><td><strong>Alembic</strong></td><td>DB migrations</td><td>Version-controlled schema changes, rollback support</td></tr>
+                <tr><td><strong>Celery + Redis</strong></td><td>Task queue</td><td>Background jobs: BoM pricing updates, long AI jobs, export generation, email notifications</td></tr>
+                <tr><td><strong>Redis</strong></td><td>Cache + pub/sub</td><td>Session cache, distributor price cache (TTL 1 hour), WebSocket message routing</td></tr>
+                <tr><td><strong>PostgreSQL 16</strong></td><td>Primary database</td><td>JSONB for flexible design data, full-text search for component library, pgvector for embeddings</td></tr>
+                <tr><td><strong>pgvector</strong></td><td>Vector search</td><td>Semantic search over component datasheets, similar design retrieval, RAG for design assistant</td></tr>
+                <tr><td><strong>LangChain / LangGraph</strong></td><td>AI orchestration</td><td>Agent workflows, tool use, conversation memory, RAG pipelines</td></tr>
+                <tr><td><strong>WebSocket (via FastAPI)</strong></td><td>Real-time sync</td><td>Yjs document sync, real-time collaboration presence, live BoM updates</td></tr>
+                <tr><td><strong>Kafka</strong></td><td>Event streaming</td><td>Component availability change events, audit log streaming, inter-service events at scale</td></tr>
+                <tr><td><strong>MinIO / S3</strong></td><td>Object storage</td><td>Design file storage, Gerber archives, exported PDFs, 3D model files</td></tr>
+                <tr><td><strong>ngspice</strong></td><td>SPICE engine</td><td>Open-source SPICE simulator, run as a subprocess, results parsed and returned via API</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Electronics-Specific Libraries</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Library</th><th>Use</th></tr></thead>
+              <tbody>
+                <tr><td><strong>SKiDL</strong></td><td>Programmatic schematic generation in Python; used internally by the schematic generator</td></tr>
+                <tr><td><strong>NetworkX</strong></td><td>Circuit graph representation; used for netlist analysis, connectivity checks, and routing algorithms</td></tr>
+                <tr><td><strong>PySpice</strong></td><td>Python interface to ngspice; builds simulation netlists programmatically from design data</td></tr>
+                <tr><td><strong>KiCad Python API</strong></td><td>Parsing and generating KiCad file formats; footprint library management</td></tr>
+                <tr><td><strong>OR-Tools</strong></td><td>Google's constraint optimization library; used for BoM optimization, component placement optimization</td></tr>
+                <tr><td><strong>Shapely</strong></td><td>2D geometry operations for PCB keepout zone analysis, courtyard overlap checks</td></tr>
+                <tr><td><strong>pandas + numpy</strong></td><td>BoM data manipulation, pricing analysis, statistical component availability analysis</td></tr>
+                <tr><td><strong>OpenCV</strong></td><td>Preprocessing images for the sketch-to-schematic feature and datasheet PDF image extraction</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA ARCHITECTURE -->
+      <div class="section-block" id="data-arch">
+        <span class="section-num-tag">§ 8</span>
+        <h3 class="section-title">Data Architecture</h3>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Core Data Models</h4>
+
+          <div class="schema-block">
+            <div class="schema-header">
+              <span class="schema-header-name">Project</span>
+              <span class="schema-header-type">PostgreSQL Table</span>
+            </div>
+            <div class="schema-body">
+              <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">UUID PRIMARY KEY</span><span class="sf-note">Generated on creation</span></div>
+              <div class="schema-field"><span class="sf-name">name</span><span class="sf-type">VARCHAR(255)</span><span class="sf-note">User-defined project name</span></div>
+              <div class="schema-field"><span class="sf-name">description</span><span class="sf-type">TEXT</span><span class="sf-note">AI-generated or user-written project summary</span></div>
+              <div class="schema-field"><span class="sf-name">owner_id</span><span class="sf-type">UUID FK → users</span><span class="sf-note">Owning user or service account</span></div>
+              <div class="schema-field"><span class="sf-name">org_id</span><span class="sf-type">UUID FK → organizations</span><span class="sf-note">Nullable; set for team/enterprise projects</span></div>
+              <div class="schema-field"><span class="sf-name">current_design_id</span><span class="sf-type">UUID FK → design_versions</span><span class="sf-note">Pointer to the active HEAD version</span></div>
+              <div class="schema-field"><span class="sf-name">requirements_json</span><span class="sf-type">JSONB</span><span class="sf-note">Structured requirements extracted from initial prompt</span></div>
+              <div class="schema-field"><span class="sf-name">tags</span><span class="sf-type">TEXT[]</span><span class="sf-note">User-defined and AI-suggested tags for search</span></div>
+              <div class="schema-field"><span class="sf-name">status</span><span class="sf-type">ENUM</span><span class="sf-note">draft | in_review | approved | released | archived</span></div>
+              <div class="schema-field"><span class="sf-name">visibility</span><span class="sf-type">ENUM</span><span class="sf-note">private | team | public</span></div>
+              <div class="schema-field"><span class="sf-name">created_at</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">Indexed for sorting</span></div>
+              <div class="schema-field"><span class="sf-name">last_modified_at</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">Updated on every design_version creation</span></div>
+            </div>
+          </div>
+
+          <div class="schema-block">
+            <div class="schema-header">
+              <span class="schema-header-name">DesignVersion</span>
+              <span class="schema-header-type">PostgreSQL Table — Immutable Append-Only</span>
+            </div>
+            <div class="schema-body">
+              <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">UUID PRIMARY KEY</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">project_id</span><span class="sf-type">UUID FK → projects</span><span class="sf-note">Indexed</span></div>
+              <div class="schema-field"><span class="sf-name">parent_version_id</span><span class="sf-type">UUID FK → design_versions</span><span class="sf-note">Nullable; null for first version</span></div>
+              <div class="schema-field"><span class="sf-name">branch_name</span><span class="sf-type">VARCHAR(100)</span><span class="sf-note">Default: "main"; user-named branches</span></div>
+              <div class="schema-field"><span class="sf-name">schematic_data</span><span class="sf-type">JSONB</span><span class="sf-note">Complete schematic as structured JSON; not stored separately for small designs</span></div>
+              <div class="schema-field"><span class="sf-name">schematic_file_key</span><span class="sf-type">VARCHAR</span><span class="sf-note">S3 key for large schematics stored externally</span></div>
+              <div class="schema-field"><span class="sf-name">pcb_file_key</span><span class="sf-type">VARCHAR</span><span class="sf-note">S3 key for PCB data</span></div>
+              <div class="schema-field"><span class="sf-name">bom_snapshot</span><span class="sf-type">JSONB</span><span class="sf-note">BoM at time of version creation, including pricing snapshot</span></div>
+              <div class="schema-field"><span class="sf-name">commit_message</span><span class="sf-type">TEXT</span><span class="sf-note">User or AI-generated description of changes from parent</span></div>
+              <div class="schema-field"><span class="sf-name">checkpoint_name</span><span class="sf-type">VARCHAR(255)</span><span class="sf-note">Nullable; set for named checkpoints</span></div>
+              <div class="schema-field"><span class="sf-name">created_by</span><span class="sf-type">UUID FK → users</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">created_at</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">Immutable</span></div>
+            </div>
+          </div>
+
+          <div class="schema-block">
+            <div class="schema-header">
+              <span class="schema-header-name">Component</span>
+              <span class="schema-header-type">PostgreSQL Table — Component Library</span>
+            </div>
+            <div class="schema-body">
+              <div class="schema-field"><span class="sf-name">id</span><span class="sf-type">UUID PRIMARY KEY</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">mpn</span><span class="sf-type">VARCHAR(100)</span><span class="sf-note">Manufacturer Part Number; indexed unique per manufacturer</span></div>
+              <div class="schema-field"><span class="sf-name">manufacturer</span><span class="sf-type">VARCHAR(200)</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">category</span><span class="sf-type">VARCHAR(100)</span><span class="sf-note">Hierarchical: Passive/Capacitor/Ceramic</span></div>
+              <div class="schema-field"><span class="sf-name">parameters</span><span class="sf-type">JSONB</span><span class="sf-note">Key-value electrical parameters; indexed for parametric search</span></div>
+              <div class="schema-field"><span class="sf-name">symbol_data</span><span class="sf-type">JSONB</span><span class="sf-note">Schematic symbol definition</span></div>
+              <div class="schema-field"><span class="sf-name">footprint_id</span><span class="sf-type">UUID FK → footprints</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">model_3d_key</span><span class="sf-type">VARCHAR</span><span class="sf-note">S3 key for STEP model</span></div>
+              <div class="schema-field"><span class="sf-name">datasheet_url</span><span class="sf-type">VARCHAR</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">datasheet_embedding</span><span class="sf-type">vector(1536)</span><span class="sf-note">pgvector embedding of datasheet content for semantic search</span></div>
+              <div class="schema-field"><span class="sf-name">lifecycle_status</span><span class="sf-type">ENUM</span><span class="sf-note">active | nrnd | ltb | eol | obsolete</span></div>
+              <div class="schema-field"><span class="sf-name">rohs_compliant</span><span class="sf-type">BOOLEAN</span><span class="sf-note"></span></div>
+              <div class="schema-field"><span class="sf-name">alternate_mpns</span><span class="sf-type">UUID[]</span><span class="sf-note">Array of alternate component IDs</span></div>
+              <div class="schema-field"><span class="sf-name">last_price_update</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">When distributor pricing was last fetched</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">RAG (Retrieval-Augmented Generation) Pipeline</h4>
+          <p>The AI design assistant uses RAG to ground its responses in real, verified information rather than relying solely on what a language model learned during training. The RAG pipeline works as follows: when the assistant receives a question about a specific component or design technique, it first searches the component database and indexed application notes using vector similarity search (pgvector), retrieves the most relevant passages, and injects them into the model's context before generating a response. This means the assistant's answers are based on actual datasheet content, not remembered approximations of datasheet content.</p>
+
+          <p>The RAG index contains: manufacturer datasheets (parsed from PDF, chunked, embedded), IEEE standard excerpts (public sections), manufacturer application notes, KiCad library documentation, and internal organizational design guidelines (for enterprise customers).</p>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="section-block" id="security">
+        <span class="section-num-tag">§ 9</span>
+        <h3 class="section-title">Security &amp; Compliance</h3>
+
+        <div class="callout critical">
+          <span class="callout-label">Security Priority</span>
+          Electronic design data is among the most sensitive intellectual property a hardware company possesses. A competitor who obtains a schematic and PCB layout can clone a product in weeks. Security must be treated as a product requirement, not an infrastructure afterthought.
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Authentication & Authorization</h4>
+          <ul class="styled">
+            <li><strong>Authentication provider:</strong> Clerk.dev for consumer/SMB tiers (handles OAuth, magic links, MFA, session management). Keycloak self-hosted for enterprise customers who require SAML/SSO integration with their identity provider (Okta, Azure AD, etc.).</li>
+            <li><strong>Authorization model:</strong> Role-based access control (RBAC) with organization-scoped permissions. Roles: Owner, Admin, Engineer, Reviewer, Viewer. Row-level security in PostgreSQL enforces data isolation between organizations.</li>
+            <li><strong>API authentication:</strong> JWT tokens for web/desktop, API keys for programmatic access. API keys are scoped to specific permissions (read-only, read-write, admin) and can be rotated or revoked instantly.</li>
+          </ul>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Data Encryption</h4>
+          <ul class="styled">
+            <li><strong>In transit:</strong> TLS 1.3 for all connections. Certificate pinning in the desktop application to prevent MITM attacks.</li>
+            <li><strong>At rest:</strong> AES-256 encryption for all design files in S3. Database encryption at the volume level. Encryption keys managed via AWS KMS or HashiCorp Vault, rotated on a scheduled basis.</li>
+            <li><strong>End-to-end encryption (enterprise):</strong> For customers with the highest security requirements, an E2E encryption option where design files are encrypted with a customer-managed key before leaving the user's device. The server never has access to plaintext design data. AI features requiring cloud model access are unavailable in this mode.</li>
+          </ul>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Regulatory Compliance</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Standard</th><th>Applicability</th><th>Implementation</th></tr></thead>
+              <tbody>
+                <tr><td><strong>GDPR</strong></td><td>EU user data</td><td>Data residency options in EU (Frankfurt region), right to erasure implemented, DPA with all sub-processors, cookie consent management</td></tr>
+                <tr><td><strong>SOC 2 Type II</strong></td><td>Enterprise customers</td><td>Target certification by end of Phase 3. Requires comprehensive audit logging, access controls, change management procedures</td></tr>
+                <tr><td><strong>ISO 27001</strong></td><td>Enterprise &amp; defense-adjacent</td><td>Target certification in Phase 5. Information security management system implementation</td></tr>
+                <tr><td><strong>ITAR/EAR</strong></td><td>US defense customers</td><td>Complex. Requires US-person-only data handling, specific export control procedures. Out of scope for initial phases; requires dedicated compliance work and legal counsel</td></tr>
+                <tr><td><strong>CCPA</strong></td><td>California users</td><td>Covered by GDPR-equivalent controls plus California-specific disclosures</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Threat Model</h4>
+          <p>The primary threat vectors for this platform are: unauthorized access to design files (IP theft), data exfiltration via AI model prompt injection, supply chain attacks on third-party libraries, and insider threats at the platform operator level. Each threat vector must be addressed with specific technical controls documented in a threat model maintained by the security team and reviewed quarterly.</p>
+        </div>
+      </div>
+
+      <!-- INFRA -->
+      <div class="section-block" id="infra">
+        <span class="section-num-tag">§ 10</span>
+        <h3 class="section-title">Infrastructure &amp; DevOps</h3>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Cloud Infrastructure</h4>
+          <p>Primary cloud provider: <strong>AWS</strong> (mature ecosystem, broadest compliance certifications, best enterprise sales relationships). Secondary: <strong>GCP</strong> for ML workloads where Vertex AI and TPU access is advantageous. We avoid single-region deployments: the application is deployed across at least two availability zones from day one, with a third region added when ARR reaches $1M.</p>
+
+          <p>Infrastructure as code via <strong>Terraform</strong>. All infrastructure changes go through pull requests with plan review before apply. Separate staging and production environments with identical configurations. No manual cloud console changes to production resources.</p>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Deployment Architecture</h4>
+          <p><strong>Kubernetes (EKS)</strong> for all backend services. Service mesh via <strong>Istio</strong> for inter-service authentication and traffic management. Container images built via GitHub Actions CI pipeline and pushed to AWS ECR. Deployments are rolling updates with automatic rollback on health check failure. Canary deployments for high-risk changes.</p>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Observability Stack</h4>
+          <ul class="styled">
+            <li><strong>Metrics:</strong> Prometheus + Grafana. Custom dashboards for: API latency by endpoint, AI model response times by provider, component database query performance, WebSocket connection counts.</li>
+            <li><strong>Logging:</strong> Structured JSON logs shipped to OpenSearch (or AWS CloudWatch Logs Insights). Log retention: 90 days hot, 1 year cold storage.</li>
+            <li><strong>Tracing:</strong> OpenTelemetry instrumentation across all services. Traces in Jaeger or AWS X-Ray. Critical for debugging multi-service AI request flows.</li>
+            <li><strong>Error tracking:</strong> Sentry for application errors, with PII scrubbing before transmission.</li>
+            <li><strong>Uptime monitoring:</strong> Synthetic monitoring from multiple geographic regions via Checkly or Datadog Synthetics. SLA targets: 99.9% for core API, 99.5% for AI features (which have external dependencies).</li>
+          </ul>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">CI/CD Pipeline</h4>
+          <p>GitHub Actions for CI. Pipeline stages: lint → type-check → unit tests → integration tests → build → deploy to staging → automated E2E tests → deploy to production (manual approval gate). Target: deployments multiple times per week, with &lt;30 minute pipeline duration. Desktop application releases use a separate pipeline that cross-compiles for macOS (Intel + Apple Silicon), Windows (x64 + ARM64), and Linux (x64 + ARM64), then signs binaries and uploads to the auto-update server.</p>
+        </div>
+      </div>
+
+      <!-- ══ PART IV: EXECUTION ══ -->
+      <div class="part-divider" id="lifecycle">
+        <span class="part-label">Part IV — Execution</span>
+        <h2 class="part-title">Development Lifecycle &amp; Realistic Timelines</h2>
+        <p class="part-intro">A phased roadmap that reflects real-world engineering constraints, hiring timelines, and market feedback loops. These timelines assume a small but capable founding team and early access to seed-stage funding.</p>
+      </div>
+
+      <div class="section-block">
+        <span class="section-num-tag">§ 11</span>
+        <h3 class="section-title">Development Phases</h3>
+
+        <div class="callout warning">
+          <span class="callout-label">Timeline Realism Note</span>
+          Every software project timeline is wrong. The following timelines represent a reasonably optimistic scenario with a competent team that is not blocked by hiring or capital constraints. Add 30–50% buffer for reality. The phase boundaries are also flexible — if Phase 2 AI features prove harder than expected, Phase 3 PCB features should not start until Phase 2 is stable. Shipping something broken is worse than shipping something late.
+        </div>
+
+        <div class="timeline" id="phase1">
+          <div class="timeline-item">
+            <div class="timeline-dot"><span>1</span></div>
+            <div class="timeline-content">
+              <div class="timeline-phase">Phase 1</div>
+              <div class="timeline-title">Foundation — Infrastructure, Auth, Basic UI, Data Models</div>
+              <div class="timeline-duration">Months 1–4 (16 weeks)</div>
+              <div class="timeline-body">
+                <p>This phase builds nothing the user will directly see but makes everything that follows possible. The goal is a working development environment, a deployed staging stack, core data models, authentication, and a placeholder UI that demonstrates the application shell.</p>
+                <ul class="styled">
+                  <li><strong>Week 1–2:</strong> Repository setup, CI/CD pipeline, Terraform infrastructure, PostgreSQL schema v1, Redis, S3 buckets.</li>
+                  <li><strong>Week 3–4:</strong> Authentication (Clerk), user management API, organization model, RBAC foundation.</li>
+                  <li><strong>Week 5–6:</strong> Component library schema, initial data import (KiCad's standard library as starting point), parametric search API.</li>
+                  <li><strong>Week 7–8:</strong> Frontend shell (Next.js + Tauri), routing, design layout, dark/light theme, component search UI.</li>
+                  <li><strong>Week 9–10:</strong> Project CRUD, design version model, S3 integration for file storage, basic project listing UI.</li>
+                  <li><strong>Week 11–12:</strong> Ollama integration for local model management, model download flow, first AI endpoint (simple Q&A about component).</li>
+                  <li><strong>Week 13–14:</strong> First distributor API integration (Digi-Key), live pricing display for components.</li>
+                  <li><strong>Week 15–16:</strong> Internal testing, bug fixes, load testing of component search API, security review of auth flow.</li>
+                </ul>
+                <p><strong>Team needed:</strong> 2 backend engineers, 1 frontend engineer, 1 DevOps/infra engineer. Total: 4.</p>
+                <p><strong>Phase exit criteria:</strong> Authenticated user can search for components, view datasheets, and see live pricing. Development environment is stable and deployable. No production user-facing features yet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item" id="phase2">
+            <div class="timeline-dot"><span>2</span></div>
+            <div class="timeline-content">
+              <div class="timeline-phase">Phase 2</div>
+              <div class="timeline-title">Core AI Workflow — Prompt to Block Diagram to Schematic</div>
+              <div class="timeline-duration">Months 5–10 (24 weeks) — The Hardest Phase</div>
+              <div class="timeline-body">
+                <p>This phase delivers the platform's central value proposition. It is also the most technically uncertain phase, because building a reliable prompt-to-schematic pipeline is a research problem as much as an engineering problem. Some things that seem straightforward will take three times longer than expected. Plan accordingly.</p>
+                <ul class="styled">
+                  <li><strong>Week 17–20:</strong> Requirement intake parser — NLP pipeline for extracting structured requirements from free text. Initial version handles 10 well-defined circuit categories. Integration with Claude API as primary reasoning model.</li>
+                  <li><strong>Week 21–24:</strong> Block diagram generator — produces a functional block diagram from structured requirements. Interactive React Flow canvas. Block editing, addition, removal.</li>
+                  <li><strong>Week 25–28:</strong> Component recommendation engine v1 — given a block type and requirements, suggests components from the library using a combination of parametric filtering and AI ranking. Integration with live pricing for ranked results.</li>
+                  <li><strong>Week 29–32:</strong> Schematic generator v1 — from block diagram + component selections, generates a schematic as a structured JSON representation. Konva.js schematic viewer (read-only first).</li>
+                  <li><strong>Week 33–36:</strong> Schematic editor — make the viewer interactive. Component drag, net drawing, property editing. Basic ERC (unconnected pins, type conflicts).</li>
+                  <li><strong>Week 37–40:</strong> AI design assistant chat — context-aware conversation panel. Answers questions about the current design. Can accept instructions and modify the design. Undo/redo system.</li>
+                </ul>
+                <p><strong>Team needed:</strong> Add 1 ML engineer, 1 senior frontend engineer (canvas specialist), 1 EDA domain expert (part-time consultant acceptable). Total: 7.</p>
+                <p><strong>Phase exit criteria:</strong> End-to-end demo: a user types a requirement, gets a block diagram, approves it, gets a generated schematic with component suggestions, and can view and lightly edit the schematic. Demo is shown to 10 beta users from target segments and receives positive feedback.</p>
+                <p><strong>Risk flags for this phase:</strong> Schematic generator quality may be insufficient for complex designs. Mitigation: scope the generator to 5 well-defined circuit categories for initial release. General-purpose generation comes later. Do not promise what you cannot deliver.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item" id="phase3">
+            <div class="timeline-dot"><span>3</span></div>
+            <div class="timeline-content">
+              <div class="timeline-phase">Phase 3</div>
+              <div class="timeline-title">BoM, Simulation, PCB, Real-Time Collaboration</div>
+              <div class="timeline-duration">Months 11–18 (32 weeks)</div>
+              <div class="timeline-body">
+                <p>Phase 3 transforms the platform from a schematic generator into a complete design workflow tool. This phase also launches the first paid tier — Pro — and begins generating revenue. The collaboration features are what distinguishes the platform from any existing tool.</p>
+                <ul class="styled">
+                  <li><strong>Week 41–44:</strong> BoM generation from schematic, live pricing from multiple distributors, alternate part suggestions, BoM export (CSV, Excel).</li>
+                  <li><strong>Week 45–48:</strong> ngspice integration — DC operating point and transient simulation for basic circuits. AI-interpreted results. Simulation panel in UI.</li>
+                  <li><strong>Week 49–52:</strong> ERC improvements — AI-powered design quality review beyond standard rule checks. Thermal warnings, ESD warnings, decoupling recommendations.</li>
+                  <li><strong>Week 53–56:</strong> PCB canvas v1 — component placement from schematic netlist. Layer stack definition. Basic manual routing. DRC (spacing, min width).</li>
+                  <li><strong>Week 57–60:</strong> AI placement assistant — suggests initial placement groupings. Copper pour tool. Via placement. 3D preview using Three.js.</li>
+                  <li><strong>Week 61–64:</strong> Real-time collaboration using Yjs + WebSocket. Multi-user presence, conflict resolution, live cursors.</li>
+                  <li><strong>Week 65–68:</strong> Version history UI, branch management, diff visualization. Review workflow (submit → review → approve).</li>
+                  <li><strong>Week 69–72:</strong> Pro tier launch — Stripe integration, subscription management, usage metering for cloud AI tokens. First revenue.</li>
+                </ul>
+                <p><strong>Team needed:</strong> Add 1 backend engineer (PCB/EDA specialist), 1 product designer. Total: 9.</p>
+                <p><strong>Phase exit criteria:</strong> Platform has paying customers. PCB workflow covers basic 2-layer boards. Collaboration works reliably for 2 concurrent users. Version control is stable.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item" id="phase4">
+            <div class="timeline-dot"><span>4</span></div>
+            <div class="timeline-content">
+              <div class="timeline-phase">Phase 4</div>
+              <div class="timeline-title">Enterprise, Advanced AI, Desktop, Marketplace</div>
+              <div class="timeline-duration">Months 19–27 (36 weeks)</div>
+              <div class="timeline-body">
+                <p>Phase 4 targets enterprise customers and advanced users. It also introduces the desktop application properly (with full offline AI capabilities), the marketplace, and the advanced AI features that differentiate the platform from anything else on the market.</p>
+                <ul class="styled">
+                  <li><strong>Week 73–78:</strong> Desktop application (Tauri 2.0) — full offline capability, Ollama model management, native file system integration, auto-updater.</li>
+                  <li><strong>Week 79–84:</strong> Enterprise tier features — SAML SSO, audit logs, custom component libraries, private AI model hosting option, team seat management, Jira/Linear integration.</li>
+                  <li><strong>Week 85–90:</strong> Advanced simulation — Monte Carlo analysis, AC frequency response, noise analysis. Signal integrity checks for high-speed nets.</li>
+                  <li><strong>Week 91–96:</strong> AI auto-router v1 — constraint-aware, handles 2-layer boards. Differential pair routing. Length matching.</li>
+                  <li><strong>Week 97–102:</strong> Supply chain intelligence — lifecycle monitoring alerts, counterfeit risk flags, multi-vendor BoM optimization, lead time estimation.</li>
+                  <li><strong>Week 103–108:</strong> Extensions marketplace — public API, developer documentation, first-party extension examples (custom export formats, specialized component libraries). Revenue share model for third-party extensions.</li>
+                </ul>
+                <p><strong>Team needed:</strong> Add 2 enterprise-focused backend engineers, 1 developer relations engineer, 1 customer success manager. Total: 13.</p>
+                <p><strong>Phase exit criteria:</strong> First enterprise customer signed. Desktop application has 1,000+ installs. Monthly recurring revenue exceeds $50K.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item" id="phase5">
+            <div class="timeline-dot"><span>5</span></div>
+            <div class="timeline-content">
+              <div class="timeline-phase">Phase 5</div>
+              <div class="timeline-title">Scale, Multi-Layer PCB, Advanced Simulation, AI Fine-tuning Iteration</div>
+              <div class="timeline-duration">Months 28–36 (36 weeks)</div>
+              <div class="timeline-body">
+                <p>Phase 5 is about depth, performance, and market expansion. The core platform is stable; now we make it best-in-class for professional use and pursue the mid-market and enterprise segments aggressively.</p>
+                <ul class="styled">
+                  <li>Multi-layer PCB support (4, 6, 8+ layers) with stackup editor.</li>
+                  <li>Impedance-controlled routing with layer-specific rules.</li>
+                  <li>Full-wave EM analysis integration (via third-party tool APIs — e.g., OpenEMS).</li>
+                  <li>Thermal simulation using finite element approximation for simple geometries.</li>
+                  <li>Second-generation AI models, fine-tuned on the platform's accumulated design data (with user consent), dramatically improving suggestion quality.</li>
+                  <li>PLM integration (Windchill, Arena) for enterprise customers.</li>
+                  <li>Design reuse and IP block library — searchable library of proven sub-circuits that can be instantiated into new designs.</li>
+                  <li>Multi-board design — designing several PCBs that form a system, with cross-board connector and signal management.</li>
+                  <li>ISO 27001 certification pursuit.</li>
+                  <li>First steps toward ITAR-compliant deployment option for defense-adjacent customers.</li>
+                </ul>
+                <p><strong>Team size by end of Phase 5:</strong> 20–25 people including engineering, product, design, sales, and customer success.</p>
+                <p><strong>Phase exit criteria:</strong> ARR exceeds $2M. Platform is used by at least 3 recognizable hardware companies. Net revenue retention above 110% (customers expanding their subscriptions).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="section-block" id="team">
+        <span class="section-num-tag">§ 12</span>
+        <h3 class="section-title">Team Structure &amp; Hiring Plan</h3>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Founding Team Requirements</h4>
+          <p>The founding team needs to cover three distinct areas without gaps: <strong>EDA domain expertise</strong> (someone who has used professional EDA tools, understands circuit design, and knows what makes a schematic generator correct vs. plausible-looking-but-wrong), <strong>AI/ML engineering</strong> (someone who can build and evaluate LLM-powered pipelines, not just call APIs), and <strong>full-stack product engineering</strong> (someone who can ship a good-looking, reliable application). Two of these can be the same person if you are lucky, but all three must be represented.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Phase</th>
+                <th>Priority</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Lead Backend Engineer (AI/Platform)</strong></td><td>Pre-Phase 1</td><td><span class="risk-high">Critical</span></td><td>FastAPI, PostgreSQL, LangChain. Owns AI orchestration layer.</td></tr>
+              <tr><td><strong>Senior Frontend Engineer (Canvas)</strong></td><td>Pre-Phase 1</td><td><span class="risk-high">Critical</span></td><td>Canvas rendering experience (Konva, WebGL). This is the hardest frontend hire.</td></tr>
+              <tr><td><strong>EDA Domain Expert</strong></td><td>Pre-Phase 1</td><td><span class="risk-high">Critical</span></td><td>Can be a consultant initially. Reviews all AI output for technical correctness.</td></tr>
+              <tr><td><strong>DevOps/Infrastructure Engineer</strong></td><td>Phase 1</td><td><span class="risk-high">Critical</span></td><td>Terraform, Kubernetes, CI/CD. Can be part-time/contractor in Phase 1.</td></tr>
+              <tr><td><strong>ML Engineer</strong></td><td>Phase 2</td><td><span class="risk-high">Critical</span></td><td>Fine-tuning, evaluation, RAG pipeline optimization.</td></tr>
+              <tr><td><strong>Second Backend Engineer</strong></td><td>Phase 2</td><td><span class="risk-med">High</span></td><td>Component library, distributor APIs, BoM features.</td></tr>
+              <tr><td><strong>Product Designer</strong></td><td>Phase 3</td><td><span class="risk-med">High</span></td><td>EDA UX is a specialty. Designer must understand engineering workflows.</td></tr>
+              <tr><td><strong>PCB/EDA Backend Specialist</strong></td><td>Phase 3</td><td><span class="risk-med">High</span></td><td>KiCad internals, PCB file format parsing, DRC engine.</td></tr>
+              <tr><td><strong>Enterprise Sales</strong></td><td>Phase 4</td><td><span class="risk-med">High</span></td><td>Technical sales background. Engineering degree preferred.</td></tr>
+              <tr><td><strong>Customer Success</strong></td><td>Phase 4</td><td><span class="risk-med">High</span></td><td>Onboarding, retention, expansion. Hardware engineering background.</td></tr>
+              <tr><td><strong>Security Engineer</strong></td><td>Phase 4</td><td><span class="risk-med">High</span></td><td>SOC 2, penetration testing, security architecture review.</td></tr>
+              <tr><td><strong>Developer Relations</strong></td><td>Phase 4</td><td><span class="risk-low">Medium</span></td><td>Extensions marketplace, community, documentation.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout note">
+          <span class="callout-label">Hiring Reality</span>
+          The senior frontend canvas engineer and the EDA domain expert are the two hardest hires on this list. Canvas rendering at the scale of a full PCB layout (potentially hundreds of thousands of elements) is a specialized skill with few practitioners. EDA domain experts who also want to work at a startup are rare. Budget extra time and compensation for these roles, and consider contracting as a bridge while searching for full-time hires.
+        </div>
+      </div>
+
+      <!-- ══ PART V: BUSINESS ══ -->
+      <div class="part-divider" id="revenue">
+        <span class="part-label">Part V — Business</span>
+        <h2 class="part-title">Revenue Model &amp; Financial Strategy</h2>
+        <p class="part-intro">How the platform generates money, what the unit economics look like, and what the path to a sustainable, growing business actually involves — including the things most proposals do not say out loud.</p>
+      </div>
+
+      <div class="section-block">
+        <span class="section-num-tag">§ 13</span>
+        <h3 class="section-title">Revenue Streams</h3>
+
+        <div class="subsection-block" id="pricing">
+          <h4 class="subsection-title">13.1 — Subscription Pricing Tiers</h4>
+
+          <div class="revenue-grid">
+            <div class="revenue-card">
+              <span class="revenue-tier">Free</span>
+              <div class="revenue-price">$0</div>
+              <div class="revenue-period">forever</div>
+              <ul class="revenue-features">
+                <li>3 active projects</li>
+                <li>Basic schematic editor</li>
+                <li>Community component library</li>
+                <li>Limited AI credits (local models only)</li>
+                <li>1GB storage</li>
+                <li>Web only</li>
+                <li>Public projects only</li>
+                <li>Watermarked exports</li>
+              </ul>
+            </div>
+            <div class="revenue-card" style="border-top-color: var(--red);">
+              <span class="revenue-tier" style="color:var(--red);">Pro</span>
+              <div class="revenue-price">$29</div>
+              <div class="revenue-period">per month / $290 annually</div>
+              <ul class="revenue-features">
+                <li>Unlimited projects</li>
+                <li>Full schematic + PCB editor</li>
+                <li>AI credits: 200K cloud tokens/mo</li>
+                <li>BoM with live pricing</li>
+                <li>Basic simulation</li>
+                <li>Desktop app (offline)</li>
+                <li>Private projects</li>
+                <li>10GB storage</li>
+                <li>Version history (90 days)</li>
+                <li>Gerber/KiCad export</li>
+              </ul>
+            </div>
+            <div class="revenue-card" style="border-top-color: #b8860b;">
+              <span class="revenue-tier">Team</span>
+              <div class="revenue-price">$79</div>
+              <div class="revenue-period">per seat/month (min 3 seats) / $750 annually</div>
+              <ul class="revenue-features">
+                <li>Everything in Pro</li>
+                <li>Real-time collaboration</li>
+                <li>Review workflow</li>
+                <li>Shared component library</li>
+                <li>AI credits: 1M tokens/seat/mo</li>
+                <li>50GB shared storage</li>
+                <li>Version history (1 year)</li>
+                <li>Webhook integrations</li>
+                <li>Priority support</li>
+                <li>Advanced simulation</li>
+              </ul>
+            </div>
+            <div class="revenue-card" style="border-top-color: var(--teal);">
+              <span class="revenue-tier">Enterprise</span>
+              <div class="revenue-price">Custom</div>
+              <div class="revenue-period">annual contract / $800–2000/seat/year</div>
+              <ul class="revenue-features">
+                <li>Everything in Team</li>
+                <li>SSO / SAML integration</li>
+                <li>Private AI model hosting</li>
+                <li>PLM/ERP integration</li>
+                <li>Unlimited storage</li>
+                <li>SOC 2 documentation</li>
+                <li>Audit logs</li>
+                <li>Custom component library import</li>
+                <li>SLA: 99.9% uptime</li>
+                <li>Dedicated CSM</li>
+                <li>Air-gapped deployment option</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Additional Revenue Streams</h4>
+
+          <div class="sub-subsection-title">AI Credit Top-Ups</div>
+          <p>Users who exhaust their monthly cloud AI credit allocation can purchase additional credits. Pricing: $10 for 100K tokens, $80 for 1M tokens (with volume discount). This creates a natural usage-based revenue layer on top of the subscription base. Heavy users — running many complex simulations, generating many design variants — will purchase credits regularly.</p>
+
+          <div class="sub-subsection-title">Extensions Marketplace</div>
+          <p>Third-party developers and organizations publish extensions — custom component libraries, specialized verification checks, export plugins, manufacturer-specific design kits. The platform takes a 30% revenue share on paid extensions. Manufacturers have strong incentive to publish free design kits for their components (this is how they get their parts recommended first). Value-added extensions from EMS companies, specialized component libraries for medical or automotive applications, and custom simulation models are the primary paid extension categories.</p>
+
+          <div class="sub-subsection-title">Component Library Data Partnerships</div>
+          <p>Distributors (Digi-Key, Mouser, Arrow) pay for prominent placement in component search results, access to aggregated (anonymized) demand signal data (which components designers are adding to designs most frequently), and integration priority. This is a significant potential revenue stream but requires careful handling: the platform must never compromise component recommendation quality for commercial reasons. Placement fees are disclosed to users.</p>
+
+          <div class="sub-subsection-title">Professional Services (Enterprise)</div>
+          <p>Implementation consulting for large enterprise deployments, custom integration development, migration services from legacy EDA tools. Target rate: $250/hour. Revenue from professional services helps fund enterprise customer success and de-risks the sales process.</p>
+
+          <div class="sub-subsection-title">Academic Licensing</div>
+          <p>Universities get Pro-equivalent access at $5/student/semester with a minimum cohort size. Research labs get Team-equivalent access at 50% discount with an agreement to publish papers crediting the platform. This builds legitimacy and the next generation of engineers who know the tool.</p>
+
+          <div class="sub-subsection-title">PCB Fabrication Referral Revenue</div>
+          <p>When a user orders PCBs through the platform's direct fabrication integrations (JLCPCB, PCBWay), the platform earns a referral commission (typically 3–8% depending on the fabricator agreement). This is passive revenue that scales with user activity. It also incentivizes the platform to make the ordering flow as smooth as possible — the platform's revenue aligns with user success.</p>
+        </div>
+
+        <div class="subsection-block" id="roi">
+          <h4 class="subsection-title">13.2 — ROI Analysis &amp; Financial Projections</h4>
+
+          <div class="callout warning">
+            <span class="callout-label">Projection Caveat</span>
+            All revenue projections below are illustrative, based on comparable SaaS product growth curves in the developer tools and engineering software categories. They are not forecasts. Actual results will depend on market timing, execution quality, competitive response, and many other variables that cannot be precisely modeled in advance.
+          </div>
+
+          <div class="sub-subsection-title">Cost Structure</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Cost Category</th><th>Phase 1–2 (Monthly)</th><th>Phase 3–4 (Monthly)</th><th>Phase 5 (Monthly)</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Personnel (salaries, benefits, equity)</strong></td><td>$60K–90K</td><td>$180K–250K</td><td>$350K–500K</td></tr>
+                <tr><td><strong>Cloud Infrastructure (AWS)</strong></td><td>$2K–5K</td><td>$10K–25K</td><td>$30K–60K</td></tr>
+                <tr><td><strong>AI API Costs (Anthropic, OpenAI, etc.)</strong></td><td>$1K–3K</td><td>$8K–20K</td><td>$20K–50K</td></tr>
+                <tr><td><strong>GPU Compute (fine-tuning, self-hosted models)</strong></td><td>$500–2K</td><td>$5K–15K</td><td>$15K–30K</td></tr>
+                <tr><td><strong>Component Data (distributor API fees)</strong></td><td>$500–1K</td><td>$2K–5K</td><td>$5K–10K</td></tr>
+                <tr><td><strong>Software &amp; Services (SaaS tools, legal, etc.)</strong></td><td>$3K–6K</td><td>$8K–15K</td><td>$15K–25K</td></tr>
+                <tr><td><strong>Total Monthly Burn</strong></td><td><strong>$67K–107K</strong></td><td><strong>$213K–330K</strong></td><td><strong>$435K–675K</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sub-subsection-title">Revenue Ramp Scenarios</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Milestone</th><th>Conservative</th><th>Base Case</th><th>Optimistic</th></tr></thead>
+              <tbody>
+                <tr><td>First paid customer</td><td>Month 14</td><td>Month 11</td><td>Month 9</td></tr>
+                <tr><td>$10K MRR</td><td>Month 18</td><td>Month 14</td><td>Month 12</td></tr>
+                <tr><td>$50K MRR</td><td>Month 24</td><td>Month 20</td><td>Month 17</td></tr>
+                <tr><td>$200K MRR ($2.4M ARR)</td><td>Month 36</td><td>Month 30</td><td>Month 25</td></tr>
+                <tr><td>Break-even on burn</td><td>Month 40+</td><td>Month 34</td><td>Month 28</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sub-subsection-title">Unit Economics Targets</div>
+          <div class="two-col">
+            <div>
+              <p><strong>Target Customer Acquisition Cost (CAC):</strong> $150–300 for Pro users (content marketing, community-led growth). $5,000–15,000 for Team customers (some sales involvement). $30,000–80,000 for Enterprise customers (full sales cycle).</p>
+              <p><strong>Target Lifetime Value (LTV):</strong> Pro: $700–1,200 (2–3 year average tenure at $29/mo). Team: $12,000–30,000. Enterprise: $100,000–500,000.</p>
+            </div>
+            <div>
+              <p><strong>LTV:CAC ratio targets:</strong> Pro: 4–5x (acceptable for PLG motion). Team: 3–4x (acceptable with light sales). Enterprise: 5–8x (required to justify long sales cycles).</p>
+              <p><strong>Net Revenue Retention target:</strong> 110%+ — meaning existing customers collectively pay 10% more per year than the previous year, even accounting for churn. This is the primary indicator of product-market fit in B2B SaaS.</p>
+            </div>
+          </div>
+
+          <div class="sub-subsection-title">Capital Requirements</div>
+          <p>To reach Phase 3 (first revenue) requires approximately $1.5M–2.5M in funding. To reach Phase 5 (sustainable scale) requires $6M–10M total. Seed round ($1.5M–3M) should fund through Phase 2 with some runway. Series A ($5M–10M) should be raised around Phase 3–4, when the platform has paying customers and demonstrated growth. The alternative is a bootstrapped approach, which is viable only if the founding team can operate at very low burn in the early phases — achievable but constraining on hiring speed.</p>
+        </div>
+
+        <div class="subsection-block" id="market-entry">
+          <h4 class="subsection-title">13.3 — Go-to-Market Strategy</h4>
+
+          <div class="sub-subsection-title">Phase 1 GTM: Community-Led Growth</div>
+          <p>Before the product launches, build the community. Write genuinely useful content about EDA, AI in electronics design, and circuit design tutorials. Publish on engineering communities (Hackaday, EEVblog, Reddit r/PrintedCircuitBoard, r/AskElectronics). Contribute to open-source EDA projects. The goal is that when the product launches, there is an audience already waiting.</p>
+
+          <div class="sub-subsection-title">Launch Strategy: Invite-Only Beta</div>
+          <p>Do not launch publicly with a product that is not ready. An invite-only beta with 200–500 hand-selected users (a mix of students, independent engineers, and hardware startup employees) allows controlled feedback collection and prevents negative first impressions from spreading. Beta users get lifetime Pro access as compensation. Many will become early advocates.</p>
+
+          <div class="sub-subsection-title">Product-Led Growth Motion</div>
+          <p>The free tier is the primary acquisition channel. A user discovers the platform (via community content, word of mouth, or search), signs up without credit card, and gets meaningful value immediately (can generate a simple schematic from a prompt within 5 minutes of signup). Conversion to paid happens when the user hits a limit (project count, AI credits, collaboration) that is relevant to their actual use. This conversion should feel natural, not coercive.</p>
+
+          <div class="sub-subsection-title">Partnerships</div>
+          <p>Component manufacturers have strong incentive to partner — they want their components to appear prominently in AI-generated designs. Approach the top 10 semiconductor manufacturers (NXP, STMicroelectronics, Microchip, Texas Instruments, Nordic Semiconductor, Espressif, etc.) about design kit partnerships. These partnerships provide: high-quality component library data, co-marketing with their developer communities, early access to new product information for training data, and in some cases, financial support.</p>
+
+          <p>PCB fabricators also have partnership incentive. JLCPCB and PCBWay derive revenue from PCB orders. If the platform makes it easier to complete a design and order PCBs, they benefit. Partnership terms: preferential API access, revenue sharing on orders placed through the platform, co-marketing, and design rule file maintenance.</p>
+        </div>
+      </div>
+
+      <!-- RISKS -->
+      <div class="section-block" id="risks">
+        <span class="section-num-tag">§ 14</span>
+        <h3 class="section-title">Risk Analysis</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Risk</th>
+                <th>Severity</th>
+                <th>Likelihood</th>
+                <th>Mitigation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>AI generates incorrect schematics that pass into production</strong></td>
+                <td><span class="risk-high">High</span></td>
+                <td><span class="risk-high">Certain</span></td>
+                <td>Clear labeling of all AI-generated content as "draft — requires engineer review." No automated manufacturing submission without human approval gate. Build a culture of "AI assists, engineer decides."</td>
+              </tr>
+              <tr>
+                <td><strong>Incumbent (Altium, Cadence, Siemens) launches competitive AI product</strong></td>
+                <td><span class="risk-high">High</span></td>
+                <td><span class="risk-high">Very likely by 2026–2027</span></td>
+                <td>Incumbents are slow and culturally risk-averse. Speed to market and a network-effect community moat are the primary defenses. Build the community and switching costs before incumbents ship credible AI features.</td>
+              </tr>
+              <tr>
+                <td><strong>AI API cost explosion makes unit economics non-viable</strong></td>
+                <td><span class="risk-high">High</span></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td>Aggressive local model strategy (reduces API costs to near-zero for most tasks), token budgeting per tier, fine-tuned smaller models that match frontier quality on EDA-specific tasks. Monitor AI cost as % of revenue closely.</td>
+              </tr>
+              <tr>
+                <td><strong>Component database quality is insufficient for professional use</strong></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td>Start with a high-quality curated subset (top 10,000 components by usage frequency) rather than a large low-quality corpus. Build community tools for verification and reporting. Partner with manufacturers for authoritative data.</td>
+              </tr>
+              <tr>
+                <td><strong>Canvas rendering performance degrades on large PCBs</strong></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td>Implement level-of-detail rendering (only render detail visible in the current viewport), spatial indexing (R-tree) for element lookup, WebGL acceleration for the PCB renderer. Benchmark early against a 500-component 6-layer PCB.</td>
+              </tr>
+              <tr>
+                <td><strong>Key hire failure (canvas engineer, EDA expert)</strong></td>
+                <td><span class="risk-high">High</span></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td>Start recruiting 3–6 months before the role is needed. Offer competitive equity. Consider acqui-hire from related companies. Use contractors to reduce time pressure. Do not start Phase 2 without the canvas specialist.</td>
+              </tr>
+              <tr>
+                <td><strong>IP/copyright issues with training data</strong></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td><span class="risk-low">Low-Medium</span></td>
+                <td>Use only open-source designs (GPL/MIT licensed KiCad projects), manufacturer-published application notes (typically permissive use for reference), and synthetic data. Retain legal counsel specialized in AI and copyright law. Document all training data sources and licenses.</td>
+              </tr>
+              <tr>
+                <td><strong>Security breach exposing proprietary design data</strong></td>
+                <td><span class="risk-high">Catastrophic</span></td>
+                <td><span class="risk-low">Low</span></td>
+                <td>Defense in depth: encryption at rest and in transit, RBAC, regular penetration testing, SOC 2 controls, bug bounty program. Limit blast radius via per-organization data isolation. Practice incident response procedures before they are needed.</td>
+              </tr>
+              <tr>
+                <td><strong>Distributor API terms change, breaking BoM features</strong></td>
+                <td><span class="risk-med">Medium</span></td>
+                <td><span class="risk-low">Low-Medium</span></td>
+                <td>Never rely on a single distributor API. Build abstraction layer that can switch data sources. Maintain relationships with Digi-Key, Mouser, and Arrow partner programs. Cache pricing data to provide degraded but functional experience during API outages.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BLIND SPOTS -->
+      <div class="section-block" id="blind-spots">
+        <span class="section-num-tag">§ 15</span>
+        <h3 class="section-title">Known Blind Spots &amp; Unanswered Questions</h3>
+        <p>A proposal that claims to have answers to every question is a proposal that hasn't thought hard enough. The following are genuine unknowns that will require research, experimentation, or external expertise to resolve.</p>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Technical Unknowns</h4>
+          <ul class="styled">
+            <li><strong>Schematic generator correctness rate.</strong> We do not yet know what percentage of AI-generated schematics for a given category are electrically correct and manufacturable without significant manual correction. This is the most important unknown in the product. The answer will determine how much of the AI's output can be trusted and what the review process needs to look like. It must be measured empirically in beta, not assumed.</li>
+            <li><strong>Local model performance floor.</strong> We do not know the minimum hardware that produces an acceptable user experience with local models. An engineer with a 2019 Intel MacBook Pro will have a very different experience from one with an M4 MacBook Pro. The free tier may be effectively unusable on older hardware if we rely too heavily on local models for AI features.</li>
+            <li><strong>Canvas performance at PCB scale.</strong> We know Konva.js handles reasonable schematic sizes well. We do not know whether it handles a 2,000-component, 8-layer PCB at interactive frame rates. This must be prototyped and benchmarked before Phase 3, not discovered during Phase 3.</li>
+            <li><strong>SPICE model availability.</strong> SPICE models for many components are not publicly available or are behind NDA. The simulation feature's quality is directly proportional to the number of components for which accurate SPICE models exist. This is a data problem as much as an engineering problem.</li>
+          </ul>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">Business Unknowns</h4>
+          <ul class="styled">
+            <li><strong>Conversion rate from free to paid.</strong> In developer tools, free-to-paid conversion rates vary from 1% to 15% depending on the product's value proposition and the quality of the conversion flow. We have no empirical data for this specific product. The unit economics are highly sensitive to this number.</li>
+            <li><strong>Enterprise sales cycle length.</strong> Enterprise hardware companies have notoriously slow procurement processes. A sales cycle of 6–18 months for a six-figure deal is common. We do not know where our typical enterprise customer will fall in that range. This affects hiring timelines for sales and customer success.</li>
+            <li><strong>Whether engineers will trust AI for circuit design.</strong> There is a real possibility that professional engineers resist using AI-generated schematics in production, for legitimate reasons (liability, design correctness concerns). The market for "AI that helps me design faster" may be smaller than the market for "AI that helps me learn" or "AI that handles the tedious parts" if engineers refuse to trust AI for the critical design decisions. This is a cultural question that market research can help answer but not definitively predict.</li>
+            <li><strong>Regulatory trajectory for AI in safety-critical electronics.</strong> Medical devices, automotive electronics, and aerospace electronics are subject to strict design and validation standards (IEC 62304, ISO 26262, DO-178C). None of these standards currently address AI-assisted design in a comprehensive way, but regulations will evolve. If the regulatory environment requires extensive validation of AI-generated designs, it could limit the platform's addressable market in these segments or create a compliance overhead that is expensive to manage.</li>
+          </ul>
+        </div>
+
+        <div class="subsection-block">
+          <h4 class="subsection-title">What We Should Research Before Phase 2 Begins</h4>
+          <ol class="styled">
+            <li>Conduct 30 structured interviews with target users (engineers at hardware startups, independent consultants, university researchers) to validate the problem, understand current workflows in detail, and identify which features are genuinely valued vs. which are assumed to be valued.</li>
+            <li>Build a prototype schematic generator for one specific circuit category (e.g., USB-C power delivery) and measure correctness rate with a panel of 5 experienced engineers as evaluators.</li>
+            <li>Benchmark the Konva.js canvas against a synthetic 1,000-component PCB and measure frame rate on representative hardware (2020 MacBook Pro, mid-range Windows laptop, M3 MacBook Air).</li>
+            <li>Consult an IP attorney about training data composition and the legal risks of specific data sources before beginning model fine-tuning.</li>
+            <li>Get a letter of intent or commitment to pay from at least 3 target customers before raising external capital — or be prepared to explain to investors why the market validation exists without this.</li>
+          </ol>
+        </div>
+
+        <div class="callout purple">
+          <span class="callout-label">The Founder's Honest Note</span>
+          A proposal this comprehensive can give a false sense of completeness. The real challenge is not knowing what to build — this document describes that reasonably well. The real challenge is building it correctly, shipping it, and finding customers who will pay for it. Those challenges do not yield to planning; they yield to doing. The proposal's value is in giving the team a shared understanding of direction and priorities, not in providing certainty about outcomes.
+        </div>
+      </div>
+
+      <!-- CONCLUSION -->
+      <div class="section-block" id="conclusion">
+        <span class="section-num-tag">§ 16</span>
+        <h3 class="section-title">Conclusion</h3>
+
+        <p>Electronic design is at an inflection point. The tools engineers use today were designed before large language models existed, before real-time collaborative software was normalized, and before the cost of computation fell low enough to run capable AI models on a laptop. The gap between what the best AI can do and what current EDA tools do is enormous — and that gap is the market opportunity.</p>
+
+        <p>CircuitMind AI is a bet that the right combination of AI-first design workflow, supply chain intelligence, collaboration, and a hybrid local/cloud model strategy can build a product that meaningfully reduces the time it takes to go from idea to manufactured circuit board. Not by automating engineering judgment away — but by handling the mechanical parts of the job so engineers can focus on the interesting parts.</p>
+
+        <p>The path is long. Thirty-six months to a scaled product is optimistic, not conservative. The technical challenges are real — generating correct schematics reliably, building a PCB editor that performs well, and training models that are accurate enough that engineers trust them — are all hard problems. The business challenges are equally real. But the market is large, the timing is right, and the problem is genuine.</p>
+
+        <p>The next concrete step is user research. Talk to thirty engineers. Find out exactly where the pain is sharpest. Build for that pain, and build it well. Everything else follows from that.</p>
+
+        <div class="callout success">
+          <span class="callout-label">Recommended Immediate Actions</span>
+          1. Conduct 30 user interviews in the next 6 weeks. 2. Prototype the schematic generator for one circuit category in 8 weeks and evaluate correctness with expert reviewers. 3. Begin recruiting the founding engineering team (canvas specialist + ML engineer are the long-lead items). 4. Set up basic web presence and waitlist to start building audience before product launch. 5. Consult IP/AI attorney about training data strategy.
+        </div>
+      </div>
+
+      <div class="ornament">⸺ ✦ ⸺ ✦ ⸺ ✦ ⸺</div>
+
+    </div><!-- .content-wrap -->
+  </main>
+</div><!-- .layout -->
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<footer>
+  <p>CircuitMind AI — Project Proposal v1.0 — Confidential &amp; Proprietary — May 2026</p>
+  <p style="margin-top:8px; color:#333;">This document is a working proposal. All timelines, costs, and revenue projections are directional estimates subject to revision as empirical data becomes available.</p>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop || document.body.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+
+    // Scroll to top button
+    const btn = document.getElementById('scrollTop');
+    btn.classList.toggle('visible', scrollTop > 400);
+  });
+
+  // Sidebar
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const btn = document.getElementById('menuBtn');
+    const backdrop = document.getElementById('backdrop');
+    const open = sidebar.classList.toggle('open');
+    btn.classList.toggle('open', open);
+    backdrop.classList.toggle('visible', open);
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('menuBtn').classList.remove('open');
+    document.getElementById('backdrop').classList.remove('visible');
+  }
+
+  function goTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Active TOC link
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(link => {
+          const fn = link.getAttribute('onclick') || '';
+          const match = fn.match(/goTo\('([^']+)'\)/);
+          if (match) {
+            link.classList.toggle('active', match[1] === entry.target.id);
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0% -70% 0%', threshold: 0 });
+
+  sections.forEach(sec => observer.observe(sec));
+</script>
+</body>
+</html>

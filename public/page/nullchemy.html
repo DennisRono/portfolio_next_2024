@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nullchemy — Microservice System Design Document</title>
+    <meta name="description" content="Comprehensive system design document for nullchemy — a microservice ecosystem with auth-service, user-service, notifications-service, documents-service, inventory-service, analytics-service, and audit-service, built around the tq-core shared package." />
+    <meta name="keywords" content="nullchemy, microservices, system design, FastAPI, tq-core, auth-service, notification-service, inventory-service, analytics-service, audit-service, Kubernetes, PostgreSQL, Redis, RabbitMQ" />
+    <meta name="author" content="nullchemy Engineering Team" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+    <link rel="canonical" href="https://nullchemy.io/system-design" />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="nullchemy — Microservice System Design Document" />
+    <meta property="og:description" content="Exhaustive technical specification for the nullchemy microservice platform — seven services, one shared core, deployed on Kubernetes." />
+    <meta property="og:url" content="https://nullchemy.io/system-design" />
+    <meta property="og:site_name" content="nullchemy" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="article:published_time" content="2026-06-11T00:00:00Z" />
+    <meta property="article:section" content="Technology" />
+    <meta property="article:tag" content="Microservices" />
+    <meta property="article:tag" content="System Design" />
+    <meta property="article:tag" content="FastAPI" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="nullchemy — Microservice System Design Document" />
+    <meta name="twitter:description" content="The definitive system design for the nullchemy microservice platform." />
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "TechArticle",
+            "name": "nullchemy — Microservice System Design Document",
+            "description": "Exhaustive system design covering architecture, data models, API specifications, deployment, and failure modes for the nullchemy microservice platform.",
+            "datePublished": "2026-06-11",
+            "author": { "@type": "Organization", "name": "nullchemy Engineering" },
+            "about": [
+                { "@type": "SoftwareApplication", "name": "nullchemy Platform" },
+                { "@type": "Thing", "name": "Microservice Architecture" }
+            ],
+            "keywords": "nullchemy, microservices, system design, FastAPI, tq-core, Kubernetes"
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">
+    </script>
+
+    <style>
+        :root {
+            --ink: #0d0d0d;
+            --paper: #f5f0e8;
+            --parchment: #ede6d3;
+            --parchment-dark: #e2d9c2;
+            --red: #c0392b;
+            --red-light: #f5cdc9;
+            --blue: #1a3a5c;
+            --blue-light: #d0dce8;
+            --gold: #b8860b;
+            --gold-light: #f0e0a0;
+            --green: #1a5c2e;
+            --green-light: #c9e8d5;
+            --purple: #4a1a6e;
+            --purple-light: #e0d0f0;
+            --grey: #5a5a5a;
+            --rule: #1a1a1a;
+            --accent: #8b0000;
+            --orange: #b84a0b;
+            --orange-light: #f5dac9;
+            --teal: #0b6e6e;
+            --teal-light: #c9e8e8;
+            --sidebar-w: 320px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background-color: var(--paper);
+            color: var(--ink);
+            font-size: 15px;
+            line-height: 1.75;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .masthead {
+            background: var(--ink);
+            color: var(--paper);
+            border-bottom: 4px solid var(--red);
+            flex-shrink: 0;
+        }
+        .masthead-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 40px;
+            border-bottom: 1px solid #333;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: #999;
+            letter-spacing: 0.08em;
+        }
+        .masthead-title {
+            text-align: center;
+            padding: 22px 40px 16px;
+        }
+        .masthead-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 4vw, 54px);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            color: var(--paper);
+        }
+        .masthead-title .subtitle {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.28em;
+            color: #aaa;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .masthead-rule {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+            margin: 0 40px 0;
+        }
+        .masthead-meta {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            padding: 10px 40px 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            color: #666;
+            text-transform: uppercase;
+            border-top: 1px solid #1e1e1e;
+        }
+        .masthead-meta span {
+            color: var(--gold);
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition);
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-backdrop.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            z-index: 160;
+            background: var(--ink);
+            border: none;
+            border-right: 3px solid var(--red);
+            border-top: 1px solid #2a2a2a;
+            border-bottom: 1px solid #2a2a2a;
+            color: var(--paper);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 14px 10px 12px;
+            transition: background 0.15s, border-color 0.15s;
+            user-select: none;
+        }
+        .menu-btn:hover {
+            background: #1a1a1a;
+            border-right-color: var(--gold);
+        }
+        .menu-btn:hover .menu-bars span {
+            background: var(--gold);
+        }
+        .menu-btn:hover .menu-label {
+            color: var(--gold);
+        }
+        .menu-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 18px;
+        }
+        .menu-bars span {
+            display: block;
+            height: 2px;
+            width: 100%;
+            background: var(--paper);
+            transition: background 0.15s, transform 0.25s, opacity 0.25s, width 0.25s;
+            transform-origin: center;
+        }
+        .menu-btn.open .menu-bars span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+        .menu-btn.open .menu-bars span:nth-child(2) {
+            opacity: 0;
+            width: 0;
+        }
+        .menu-btn.open .menu-bars span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+        .menu-btn.open {
+            border-right-color: var(--gold);
+        }
+        .menu-btn.open .menu-label {
+            color: var(--gold);
+        }
+        .menu-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #aaa;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transition: color 0.15s;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-w);
+            background: var(--ink);
+            border-right: 3px solid var(--red);
+            display: flex;
+            flex-direction: column;
+            z-index: 155;
+            transform: translateX(-100%);
+            transition: transform var(--transition);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px 14px;
+            border-bottom: 1px solid #2a2a2a;
+            flex-shrink: 0;
+        }
+        .sidebar-header-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .sidebar-close {
+            background: none;
+            border: 1px solid #333;
+            color: #888;
+            font-size: 14px;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+            font-family: 'IBM Plex Mono', monospace;
+            flex-shrink: 0;
+        }
+        .sidebar-close:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .sidebar-inner {
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            padding: 10px 0 32px;
+            scrollbar-width: thin;
+            scrollbar-color: #2a2a2a transparent;
+        }
+        .sidebar-inner::-webkit-scrollbar {
+            width: 3px;
+        }
+        .sidebar-inner::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-inner::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 2px;
+        }
+        .toc-chapter {
+            margin-bottom: 4px;
+        }
+        .toc-chapter-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--red);
+            padding: 14px 18px 5px;
+            display: block;
+            border-top: 1px solid #1e1e1e;
+            white-space: nowrap;
+        }
+        .toc-chapter:first-child .toc-chapter-label {
+            border-top: none;
+            padding-top: 6px;
+        }
+        .toc-link {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding: 6px 18px 6px 20px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.12s;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+        }
+        .toc-link:hover {
+            background: #1a1a1a;
+            border-left-color: var(--gold);
+        }
+        .toc-link.active {
+            background: #161616;
+            border-left-color: var(--red);
+        }
+        .toc-link .toc-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: #555;
+            flex-shrink: 0;
+            min-width: 32px;
+            transition: color 0.12s;
+        }
+        .toc-link:hover .toc-num {
+            color: var(--gold);
+        }
+        .toc-link .toc-text {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12px;
+            color: #bbb;
+            line-height: 1.35;
+            white-space: normal;
+            overflow: hidden;
+            transition: color 0.12s;
+        }
+        .toc-link:hover .toc-text {
+            color: var(--paper);
+        }
+        .toc-link.active .toc-text {
+            color: white;
+        }
+        .toc-link.sub {
+            padding-left: 36px;
+        }
+        .toc-link.sub .toc-text {
+            font-size: 11px;
+            color: #777;
+        }
+        .toc-link.sub:hover .toc-text {
+            color: #ddd;
+        }
+
+        .main {
+            flex: 1;
+            overflow: hidden;
+            min-width: 0;
+            width: 100%;
+        }
+        .content-wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 60px 64px 120px;
+        }
+
+        .part-divider {
+            margin: 96px 0 0;
+            padding-bottom: 0;
+            scroll-margin-top: 20px;
+        }
+        .part-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            color: var(--red);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .part-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(30px, 4vw, 50px);
+            font-weight: 900;
+            color: var(--ink);
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+            padding-bottom: 18px;
+            border-bottom: 4px solid var(--ink);
+            margin-bottom: 52px;
+        }
+        .part-intro {
+            font-size: 16px;
+            color: var(--grey);
+            font-style: italic;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--gold);
+            line-height: 1.65;
+        }
+
+        .section-block {
+            margin: 64px 0 0;
+            scroll-margin-top: 20px;
+        }
+        .section-num-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.28em;
+            color: var(--grey);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 7px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(19px, 2.5vw, 28px);
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.2;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--ink);
+            margin-bottom: 26px;
+        }
+        .subsection-block {
+            margin: 40px 0 0;
+            scroll-margin-top: 20px;
+        }
+        .subsection-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--blue);
+            padding-left: 14px;
+            border-left: 4px solid var(--gold);
+            margin-bottom: 18px;
+            line-height: 1.3;
+        }
+        .sub-subsection-title {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin: 28px 0 12px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+        p:last-child {
+            margin-bottom: 0;
+        }
+        strong {
+            font-weight: 600;
+        }
+        em {
+            font-style: italic;
+        }
+        a {
+            color: var(--blue);
+            text-decoration: underline;
+        }
+        a:hover {
+            color: var(--red);
+        }
+
+        .callout {
+            padding: 18px 22px;
+            margin: 24px 0;
+            border-radius: 1px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .callout-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .callout.note {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+        }
+        .callout.note .callout-label {
+            color: var(--blue);
+        }
+        .callout.warning {
+            background: var(--gold-light);
+            border-left: 4px solid var(--gold);
+        }
+        .callout.warning .callout-label {
+            color: var(--gold);
+        }
+        .callout.critical {
+            background: var(--red-light);
+            border-left: 4px solid var(--red);
+        }
+        .callout.critical .callout-label {
+            color: var(--red);
+        }
+        .callout.success {
+            background: var(--green-light);
+            border-left: 4px solid var(--green);
+        }
+        .callout.success .callout-label {
+            color: var(--green);
+        }
+        .callout.purple {
+            background: var(--purple-light);
+            border-left: 4px solid var(--purple);
+        }
+        .callout.purple .callout-label {
+            color: var(--purple);
+        }
+        .callout.teal {
+            background: var(--teal-light);
+            border-left: 4px solid var(--teal);
+        }
+        .callout.teal .callout-label {
+            color: var(--teal);
+        }
+        .callout.orange {
+            background: var(--orange-light);
+            border-left: 4px solid var(--orange);
+        }
+        .callout.orange .callout-label {
+            color: var(--orange);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 24px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+        thead {
+            background: var(--ink);
+            color: var(--paper);
+        }
+        thead th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 400;
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--parchment-dark);
+        }
+        tbody tr:nth-child(even) {
+            background: var(--parchment);
+        }
+        tbody tr:hover {
+            background: var(--gold-light);
+        }
+        tbody td {
+            padding: 10px 16px;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+        tbody td strong {
+            color: var(--blue);
+        }
+        td code,
+        th code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 1px 5px;
+            border-radius: 2px;
+        }
+
+        .code-block {
+            background: #0f1117;
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid var(--gold);
+            padding: 20px 24px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.65;
+            color: #e0e0e0;
+            scrollbar-width: thin;
+            scrollbar-color: #333 transparent;
+        }
+        .code-block .code-lang {
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1e1e1e;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .feature-card {
+            background: var(--parchment);
+            border: 1px solid var(--parchment-dark);
+            border-top: 3px solid var(--gold);
+            padding: 18px 20px;
+        }
+        .feature-card-icon {
+            font-size: 22px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .feature-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+        .feature-card-body {
+            font-size: 13px;
+            color: var(--grey);
+            line-height: 1.6;
+        }
+
+        .schema-block {
+            background: #0f1117;
+            border: 1px solid #1e2a3a;
+            border-left: 4px solid var(--blue);
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .schema-header {
+            background: #1a2233;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .schema-header-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        .schema-header-type {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.25em;
+            color: var(--gold);
+            text-transform: uppercase;
+            background: rgba(184, 134, 11, 0.1);
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+        .schema-body {
+            padding: 16px 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+        .schema-field {
+            display: flex;
+            gap: 8px;
+            padding: 3px 0;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .schema-field:last-child {
+            border-bottom: none;
+        }
+        .sf-name {
+            color: #93c5fd;
+            min-width: 200px;
+            flex-shrink: 0;
+        }
+        .sf-type {
+            color: #34d399;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        .sf-note {
+            color: #6b7280;
+            font-style: italic;
+        }
+        .sf-pk {
+            color: #f59e0b;
+        }
+        .sf-fk {
+            color: #c084fc;
+        }
+
+        .endpoint-block {
+            border: 1px solid var(--parchment-dark);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 16px;
+            background: var(--parchment);
+            border-bottom: 1px solid var(--parchment-dark);
+        }
+        .method-badge {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            padding: 3px 10px;
+            border-radius: 2px;
+            min-width: 52px;
+            text-align: center;
+        }
+        .method-get {
+            background: #1a5c2e;
+            color: #c9e8d5;
+        }
+        .method-post {
+            background: #1a3a5c;
+            color: #d0dce8;
+        }
+        .method-put {
+            background: #6e5c1a;
+            color: #f0e0a0;
+        }
+        .method-patch {
+            background: #4a1a6e;
+            color: #e0d0f0;
+        }
+        .method-delete {
+            background: #6e1a1a;
+            color: #f5cdc9;
+        }
+        .endpoint-path {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: var(--blue);
+            flex: 1;
+        }
+        .endpoint-desc {
+            font-size: 12px;
+            color: var(--grey);
+        }
+        .endpoint-body {
+            padding: 14px 18px;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+        .endpoint-body p {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        ul.styled,
+        ol.styled {
+            margin: 14px 0 14px 24px;
+            line-height: 1.75;
+        }
+        ul.styled li,
+        ol.styled li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        ul.styled li::marker {
+            color: var(--gold);
+        }
+        ol.styled li::marker {
+            color: var(--red);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+        ul.styled.compact li,
+        ol.styled.compact li {
+            margin-bottom: 3px;
+        }
+
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.07);
+            padding: 1px 5px;
+            border-radius: 2px;
+            color: var(--blue);
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 2px;
+            margin: 2px;
+        }
+        .badge-red {
+            background: var(--red-light);
+            color: var(--accent);
+        }
+        .badge-blue {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        .badge-gold {
+            background: var(--gold-light);
+            color: #7a5a00;
+        }
+        .badge-green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        .badge-grey {
+            background: #e0e0e0;
+            color: #555;
+        }
+        .badge-purple {
+            background: var(--purple-light);
+            color: var(--purple);
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 20px 0;
+        }
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 900px) {
+            .two-col,
+            .three-col {
+                grid-template-columns: 1fr;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-box {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 18px 20px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        .ornament {
+            text-align: center;
+            color: var(--gold);
+            font-size: 16px;
+            letter-spacing: 0.6em;
+            margin: 60px 0 0;
+            opacity: 0.5;
+        }
+        .ornament-sm {
+            text-align: center;
+            color: var(--gold);
+            font-size: 12px;
+            letter-spacing: 0.4em;
+            margin: 36px 0 0;
+            opacity: 0.4;
+        }
+
+        .priority {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .p1 {
+            background: var(--red);
+        }
+        .p2 {
+            background: var(--gold);
+        }
+        .p3 {
+            background: var(--green);
+        }
+        .p-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        footer {
+            background: var(--ink);
+            color: #555;
+            padding: 32px 60px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-align: center;
+            border-top: 3px solid var(--red);
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 38px;
+            height: 38px;
+            background: var(--ink);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 300;
+        }
+        .scroll-top.visible {
+            opacity: 1;
+        }
+        .scroll-top:hover {
+            background: var(--gold);
+            color: var(--ink);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--red);
+            z-index: 500;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .mermaid-container {
+            background: #fff;
+            border-radius: 6px;
+            padding: 1.5rem 1rem;
+            margin: 24px 0;
+            border: 1px solid var(--parchment-dark);
+            overflow-x: auto;
+        }
+        .mermaid-container figcaption {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12px;
+            color: var(--grey);
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--parchment-dark);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .masthead-top {
+                padding: 8px 20px;
+            }
+            .masthead-title {
+                padding: 14px 20px 10px;
+            }
+            .masthead-meta {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .content-wrap {
+                padding: 40px 24px 80px;
+            }
+            footer {
+                padding: 24px 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+            }
+            .sidebar,
+            .sidebar-backdrop,
+            .menu-btn,
+            .progress-bar,
+            .scroll-top {
+                display: none !important;
+            }
+            .masthead {
+                background: #fff;
+                color: #000;
+                border-bottom: 2px solid #000;
+            }
+            .masthead-title h1 {
+                color: #000;
+            }
+            .content-wrap {
+                max-width: 100%;
+                padding: 20px;
+            }
+            .mermaid-container {
+                border: 1px solid #ccc;
+            }
+            footer {
+                background: #fff;
+                color: #000;
+                border-top: 2px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <header class="masthead">
+        <div class="masthead-top">
+            <span>SYSTEM DESIGN · V2.0</span>
+            <span>CONFIDENTIAL</span>
+        </div>
+        <div class="masthead-title">
+            <h1>nullchemy</h1>
+            <p class="subtitle">Microservice System Design Document</p>
+        </div>
+        <div class="masthead-rule"></div>
+        <div class="masthead-meta">
+            <span>7</span> SERVICES
+            <span>1</span> SHARED CORE
+            <span>99.9%</span> SLA TARGET
+            <span>KUBERNETES</span> DEPLOYMENT
+        </div>
+    </header>
+
+    <div class="layout">
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation sidebar">
+            <div class="menu-bars"><span></span><span></span><span></span></div>
+            <span class="menu-label">Contents</span>
+        </button>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-header-label">Table of Contents</span>
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">✕</button>
+            </div>
+            <div class="sidebar-inner" id="sidebarInner">
+            </div>
+        </nav>
+
+        <main class="main">
+            <div class="content-wrap">
+
+                <!-- ══════════ PART I: FOUNDATION ══════════ -->
+                <div class="part-divider" id="part-foundation">
+                    <span class="part-label">Part I</span>
+                    <h2 class="part-title">Foundation</h2>
+                    <p class="part-intro">The architectural bedrock of nullchemy — defining the system's quantitative targets, global structure, and the shared core that binds every microservice together.</p>
+                </div>
+
+                <!-- Executive Summary -->
+                <section class="section-block" id="executive-summary">
+                    <span class="section-num-tag">Section 1.1</span>
+                    <h2 class="section-title">Executive Summary</h2>
+                    <p><strong>nullchemy</strong> is a microservice platform composed of <strong>seven independent services</strong> — <code>auth-service</code>, <code>user-service</code>, <code>notifications-service</code>, <code>documents-service</code>, <code>inventory-service</code>, <code>analytics-service</code>, and <code>audit-service</code> — all built upon a shared pip-installable core package named <code>tq-core</code>. The system is designed for horizontal scalability on Kubernetes, with asynchronous inter-service communication, strict data ownership boundaries, and a unified authentication layer at the API gateway.</p>
+
+                    <p>The architecture follows a <strong>shared-nothing</strong> principle: each service owns its database, no two services share a schema, and all cross-service data flow happens through well-defined APIs or asynchronous message channels. The core package <code>tq-core</code> eliminates duplication by providing JWT authentication, database session factories, base ORM models, Pydantic schemas, middleware, and structured logging — every service installs it as a versioned dependency.</p>
+
+                    <div class="three-col">
+                        <div class="stat-box">
+                            <span class="stat-num">10,000</span>
+                            <span class="stat-label">Peak RPS Target</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num">&lt;100ms</span>
+                            <span class="stat-label">p95 Latency Budget</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num">99.9%</span>
+                            <span class="stat-label">Availability SLA</span>
+                        </div>
+                    </div>
+
+                    <div class="callout note">
+                        <span class="callout-label">Design Principle</span>
+                        Every architectural decision in this document is anchored in quantitative reasoning. Where we choose async messaging over synchronous HTTP, we cite the p95 latency differential. Where we allocate resource limits, we base them on load-test data. No decision is made on intuition alone.
+                    </div>
+
+                    <p><strong>Key quantitative targets and design principles:</strong></p>
+                    <ul class="styled">
+                        <li><strong>Peak throughput:</strong> 10,000 requests per second across the API gateway, with each service individually capable of 1,000–3,000 RPS depending on its I/O profile.</li>
+                        <li><strong>Latency budget:</strong> p95 &lt; 100ms for all read endpoints; p95 &lt; 500ms for write endpoints that involve cross-service async communication.</li>
+                        <li><strong>Availability:</strong> 99.9% uptime SLA (approximately 8.76 hours of downtime per year), enforced via Kubernetes auto-scaling, pod anti-affinity, and multi-zone deployment.</li>
+                        <li><strong>Data consistency:</strong> Strong consistency within each service boundary; eventual consistency across services via the message broker (RabbitMQ), with a maximum staleness window of 5 seconds.</li>
+                        <li><strong>Security posture:</strong> JWT-based authentication at the gateway, TLS everywhere, network policies isolating service-to-service traffic, and a dedicated audit trail across all mutating operations.</li>
+                    </ul>
+                </section>
+
+                <!-- Architecture Overview -->
+                <section class="section-block" id="architecture-overview">
+                    <span class="section-num-tag">Section 1.2</span>
+                    <h2 class="section-title">Architecture Overview</h2>
+                    <p>The global architecture follows a <strong>gateway-perimeter pattern</strong>: all external traffic enters through Kong API Gateway, which handles JWT validation, rate limiting, and request routing before forwarding to the appropriate microservice. Services communicate with each other through a RabbitMQ message broker for asynchronous operations, and directly via HTTP for synchronous reads that require immediate consistency.</p>
+
+                    <figure class="mermaid-container">
+                        <pre class="mermaid">
+graph TD
+    Client["Client (Web/Mobile/CLI)"]
+    APIG["API Gateway (Kong)"]
+    AuthSvc["auth-service"]
+    UserSvc["user-service"]
+    NotifSvc["notifications-service"]
+    DocSvc["documents-service"]
+    InvSvc["inventory-service"]
+    AnalytSvc["analytics-service"]
+    AuditSvc["audit-service"]
+    CorePkg["tq-core (Shared Package)"]
+    DB[(PostgreSQL Cluster)]
+    Cache[(Redis Cache)]
+    MQ{{"Message Broker (RabbitMQ)"}}
+
+    Client -->|HTTPS| APIG
+    APIG -->|JWT Auth| AuthSvc
+    APIG -->|Route| UserSvc
+    APIG -->|Route| NotifSvc
+    APIG -->|Route| DocSvc
+    APIG -->|Route| InvSvc
+    APIG -->|Route| AnalytSvc
+    APIG -->|Route| AuditSvc
+    AuthSvc -->|import| CorePkg
+    UserSvc -->|import| CorePkg
+    NotifSvc -->|import| CorePkg
+    DocSvc -->|import| CorePkg
+    InvSvc -->|import| CorePkg
+    AnalytSvc -->|import| CorePkg
+    AuditSvc -->|import| CorePkg
+    AuthSvc --> DB
+    UserSvc --> DB
+    NotifSvc --> DB
+    DocSvc --> DB
+    InvSvc --> DB
+    AnalytSvc --> DB
+    AuditSvc --> DB
+    AuthSvc --> Cache
+    UserSvc --> Cache
+    NotifSvc --> Cache
+    MQ --> AuthSvc
+    MQ --> UserSvc
+    MQ --> NotifSvc
+    MQ --> DocSvc
+    MQ --> InvSvc
+    MQ --> AnalytSvc
+    MQ --> AuditSvc
+    AuthSvc --> MQ
+    UserSvc --> MQ
+    NotifSvc --> MQ
+    DocSvc --> MQ
+    InvSvc --> MQ
+    AnalytSvc --> MQ
+    AuditSvc --> MQ
+                        </pre>
+                        <figcaption>Figure 1: High-level architecture — all external requests flow through Kong API Gateway, which authenticates against the shared auth library from <code>tq-core</code>. Microservices communicate asynchronously via RabbitMQ for non-blocking operations and directly via HTTP for synchronous reads. Each service owns its database schema within a shared PostgreSQL cluster.</figcaption>
+                    </figure>
+
+                    <div class="callout warning">
+                        <span class="callout-label">Architectural Decision</span>
+                        We deliberately chose a <strong>shared PostgreSQL cluster</strong> (with per-service schemas) over fully independent database instances. This decision reduces operational overhead at the cost of introducing a partial blast radius — a cluster-wide outage affects all services. For the initial deployment scale (&lt;50K RPS), this trade-off is acceptable. A migration path to independent RDS instances per service is documented in <a href="#open-questions">Open Questions</a>.
+                    </div>
+                </section>
+
+                <!-- Core Package -->
+                <section class="section-block" id="core-package">
+                    <span class="section-num-tag">Section 1.3</span>
+                    <h2 class="section-title">Core Package: <code>tq-core</code></h2>
+                    <p><code>tq-core</code> is the shared Python package installed by every nullchemy microservice. It is versioned, published to a private PyPI registry, and pinned in each service's <code>pyproject.toml</code>. The package eliminates code duplication across seven services, ensures consistent behavior for cross-cutting concerns, and provides a single source of truth for authentication, database access, and schema definitions.</p>
+
+                    <h3 class="subsection-title">Package Structure</h3>
+                    <p>The following table lists every module exposed by <code>tq-core</code>. Each module is imported by at least five of the seven services.</p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Module</th><th>Responsibility</th><th>Used By</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>tq_core.config</code></td><td>Pydantic Settings loader — reads from <code>.env</code>, environment variables, and Kubernetes ConfigMaps. Provides a consistent <code>Settings</code> base class for all services.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.auth</code></td><td>JWT creation and verification (HS256/RS256), bcrypt password hashing, <code>get_current_user</code> FastAPI dependency, token refresh logic.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.db</code></td><td>Async SQLAlchemy engine factory using <code>asyncpg</code>, session dependency (<code>get_db</code>), connection pooling configuration, and health check utilities.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.middleware</code></td><td>Rate limiting (in-memory sliding window, Redis-backed for production), security headers (<code>X-Content-Type-Options</code>, <code>HSTS</code>, etc.), request ID propagation, and CORS configuration.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.exceptions</code></td><td>Common exception hierarchy — <code>NotFoundError</code>, <code>AuthenticationError</code>, <code>AuthorizationError</code>, <code>ValidationError</code>, <code>ConflictError</code>, <code>BusinessLogicError</code>, <code>RateLimitError</code>. Includes a <code>setup_exception_handlers(app)</code> utility.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.models.base</code></td><td>Base ORM model with UUID primary key, soft-delete (<code>is_deleted</code>, <code>deleted_at</code>, <code>deleted_by_id</code>), optimistic locking (<code>version</code>), and audit fields (<code>created_by_id</code>, <code>updated_by_id</code>). Inherits from SQLAlchemy 2.x <code>DeclarativeBase</code> with <code>AsyncAttrs</code>.</td><td>6 services (all except analytics-service, which uses a time-series schema)</td></tr>
+                                <tr><td><code>tq_core.schemas.base</code></td><td>Pydantic v2 base schemas — <code>BaseSchema</code> (with audit fields), <code>PaginatedResponse[T]</code> (with links and meta), and <code>PaginatedResponse.create()</code> factory method.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.logging</code></td><td>Structured logging setup — JSON format in production, console in development. Configurable log level via <code>LOG_LEVEL</code> env var. Exports a pre-configured <code>logger</code> instance.</td><td>All 7 services</td></tr>
+                                <tr><td><code>tq_core.cache</code></td><td>Redis client wrapper — async get/set/delete with TTL, cache key generation utilities, and a decorator for caching function results.</td><td>5 services (auth, user, inventory, notifications, analytics)</td></tr>
+                                <tr><td><code>tq_core.messaging</code></td><td>RabbitMQ publisher/consumer abstractions — connection pooling, automatic retry with exponential backoff, dead-letter queue configuration, and typed message schemas.</td><td>6 services (all except analytics-service, which uses Kafka for event ingestion)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout note">
+                        <span class="callout-label">Versioning Strategy</span>
+                        <code>tq-core</code> follows <strong>semantic versioning</strong> (MAJOR.MINOR.PATCH). Breaking changes (e.g., removing a field from <code>BaseSchema</code>) trigger a MAJOR bump. All services pin to a specific MINOR version (e.g., <code>tq-core==2.3.*</code>) and upgrade during scheduled maintenance windows. A CI pipeline runs integration tests across all services whenever a new <code>tq-core</code> version is published.
+                    </div>
+                </section>
+
+                <div class="ornament">◆ ◆ ◆</div>
+
+                <!-- ══════════ PART II: MICROSERVICES ══════════ -->
+                <div class="part-divider" id="part-microservices">
+                    <span class="part-label">Part II</span>
+                    <h2 class="part-title">Microservices</h2>
+                    <p class="part-intro">Each service is an independent deployable unit with its own database schema, API contract, and scaling policy. Together they form the nullchemy platform — each designed to do one thing well, with clear ownership boundaries and well-defined integration points.</p>
+                </div>
+
+                <!-- auth-service -->
+                <section class="section-block" id="service-auth-service">
+                    <span class="section-num-tag">Section 2.1</span>
+                    <h2 class="section-title">auth-service</h2>
+                    <p><strong>Role:</strong> The identity provider for the entire platform. Handles user registration, login, token issuance and refresh, password management, and multi-factor authentication (MFA). It is the <strong>only service</strong> that stores password hashes and issues JWTs.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>auth</code> schema within the shared PostgreSQL cluster. Tables: <code>users</code> (core identity), <code>sessions</code> (active refresh tokens), <code>mfa_devices</code>, <code>password_reset_tokens</code>. No other service reads from this schema directly — all identity lookups go through the auth-service API or the validated JWT claims.</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/register</code></td><td>Register a new user account. Returns access + refresh tokens.</td><td>None</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/login</code></td><td>Authenticate with email + password. Returns token pair.</td><td>None</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/refresh</code></td><td>Exchange a valid refresh token for a new access token.</td><td>Refresh Token</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/auth/me</code></td><td>Return the authenticated user's identity and profile.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/logout</code></td><td>Invalidate the current refresh token (server-side revocation).</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/forgot-password</code></td><td>Send a password reset email with a time-limited token.</td><td>None</td></tr>
+                                <tr><td><span class="badge badge-purple">PATCH</span></td><td><code>/api/v1/auth/reset-password</code></td><td>Reset password using a valid reset token.</td><td>Reset Token</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/auth/mfa/enroll</code></td><td>Enroll a TOTP device for multi-factor authentication.</td><td>Bearer JWT</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="subsection-title">Entity Schema: <code>users</code> (auth schema)</h3>
+                    <div class="schema-block">
+                        <div class="schema-header">
+                            <span class="schema-header-name">User (auth.users)</span>
+                            <span class="schema-header-type">PostgreSQL Table</span>
+                        </div>
+                        <div class="schema-body">
+                            <div class="schema-field"><span class="sf-name sf-pk">id</span><span class="sf-type">UUID (PK)</span><span class="sf-note">Primary key, generated by the application</span></div>
+                            <div class="schema-field"><span class="sf-name">email</span><span class="sf-type">VARCHAR(255) UNIQUE</span><span class="sf-note">Login identifier, case-insensitive</span></div>
+                            <div class="schema-field"><span class="sf-name">password_hash</span><span class="sf-type">VARCHAR(128)</span><span class="sf-note">bcrypt hash, never exposed via API</span></div>
+                            <div class="schema-field"><span class="sf-name">is_active</span><span class="sf-type">BOOLEAN</span><span class="sf-note">Soft disable without deletion</span></div>
+                            <div class="schema-field"><span class="sf-name">is_verified</span><span class="sf-type">BOOLEAN</span><span class="sf-note">Email verification status</span></div>
+                            <div class="schema-field"><span class="sf-name">mfa_enabled</span><span class="sf-type">BOOLEAN</span><span class="sf-note">Whether MFA is required for login</span></div>
+                            <div class="schema-field"><span class="sf-name">role</span><span class="sf-type">VARCHAR(50)</span><span class="sf-note">RBAC role: superadmin, admin, user, readonly</span></div>
+                            <div class="schema-field"><span class="sf-name">created_at</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">Server-generated on insert</span></div>
+                            <div class="schema-field"><span class="sf-name">updated_at</span><span class="sf-type">TIMESTAMPTZ</span><span class="sf-note">Auto-updated on modification</span></div>
+                        </div>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, exceptions, logging), <code>notifications-service</code> (async — for sending welcome emails, password reset emails via RabbitMQ), <code>audit-service</code> (async — all login/logout events are published to the audit queue).</p>
+
+                    <div class="callout success">
+                        <span class="callout-label">Scaling Note</span>
+                        The auth-service is stateless except for the refresh token table. Under expected load (5,000 logins/hour peak), a single pod with 2 CPU and 512Mi memory handles the load comfortably. The critical path — JWT verification — is cached at the API gateway, so downstream services do not call auth-service on every request.
+                    </div>
+                </section>
+
+                <!-- user-service -->
+                <section class="section-block" id="service-user-service">
+                    <span class="section-num-tag">Section 2.2</span>
+                    <h2 class="section-title">user-service</h2>
+                    <p><strong>Role:</strong> Manages user profiles, preferences, and account-level settings. This service owns the <strong>extended user data</strong> — everything about a user that is not authentication-related: display names, avatars, contact details, notification preferences, and account metadata.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>users</code> schema. Tables: <code>profiles</code> (1:1 with auth.users via <code>auth_user_id</code> FK reference — logical, not enforced by DB constraint since tables reside in different schemas), <code>preferences</code>, <code>avatars</code>. The user-service never stores passwords or handles authentication directly.</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/users/me</code></td><td>Return the current user's full profile.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-purple">PATCH</span></td><td><code>/api/v1/users/me</code></td><td>Update the current user's profile fields.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/users/{id}</code></td><td>Retrieve another user's public profile.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/users</code></td><td>List users with pagination, filtering, and search (admin only).</td><td>Bearer JWT + Admin</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/users/avatar</code></td><td>Upload a new avatar image (delegates to documents-service for storage).</td><td>Bearer JWT</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, schemas, exceptions, logging, cache), <code>auth-service</code> (sync HTTP — validates user existence on profile creation), <code>documents-service</code> (sync HTTP — avatar uploads), <code>audit-service</code> (async — profile changes are audited).</p>
+                </section>
+
+                <!-- notifications-service -->
+                <section class="section-block" id="service-notifications-service">
+                    <span class="section-num-tag">Section 2.3</span>
+                    <h2 class="section-title">notifications-service</h2>
+                    <p><strong>Role:</strong> Centralized notification delivery engine. Handles email (SMTP + SendGrid), SMS (Twilio), and push notifications (Firebase Cloud Messaging). Other services publish notification requests to a RabbitMQ queue; this service consumes them, renders templates, and dispatches to the appropriate channel.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>notifications</code> schema. Tables: <code>templates</code> (Jinja2 templates stored in DB for runtime editing), <code>messages</code> (outbox of all sent notifications with status tracking), <code>delivery_logs</code> (per-channel delivery status with timestamps), <code>preferences</code> (per-user channel opt-in/opt-out).</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/notifications/send</code></td><td>Queue a notification for delivery (used by other services).</td><td>Service Token</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/notifications/history</code></td><td>Retrieve notification history for the authenticated user.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-purple">PATCH</span></td><td><code>/api/v1/notifications/preferences</code></td><td>Update channel preferences for the authenticated user.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/notifications/templates</code></td><td>List all notification templates (admin only).</td><td>Bearer JWT + Admin</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, messaging, logging), RabbitMQ (consumes notification requests from all other services), external providers (SendGrid, Twilio, Firebase).</p>
+                </section>
+
+                <!-- documents-service -->
+                <section class="section-block" id="service-documents-service">
+                    <span class="section-num-tag">Section 2.4</span>
+                    <h2 class="section-title">documents-service</h2>
+                    <p><strong>Role:</strong> Document storage, retrieval, versioning, and metadata management. Supports upload of any file type with content-type validation, generates thumbnails for images, and provides signed URLs for secure downloads. Integrates with object storage (S3-compatible) for binary data.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>documents</code> schema. Tables: <code>documents</code> (metadata — filename, MIME type, size, S3 key, version chain), <code>document_versions</code> (version history with content hashes), <code>tags</code>, <code>document_tags</code> (many-to-many). Binary data is stored in S3/MinIO, not in PostgreSQL.</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/documents/upload</code></td><td>Upload a new document. Returns metadata + signed download URL.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/documents/{id}</code></td><td>Retrieve document metadata.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/documents/{id}/download</code></td><td>Generate a signed download URL and redirect.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/documents/{id}/versions</code></td><td>Upload a new version of an existing document.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-red">DELETE</span></td><td><code>/api/v1/documents/{id}</code></td><td>Soft-delete a document (marks as deleted, retains in S3 for 30 days).</td><td>Bearer JWT</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, exceptions, logging), S3-compatible object storage (MinIO in development, AWS S3 in production), <code>audit-service</code> (async — document access and version changes).</p>
+                </section>
+
+                <!-- inventory-service -->
+                <section class="section-block" id="service-inventory-service">
+                    <span class="section-num-tag">Section 2.5</span>
+                    <h2 class="section-title">inventory-service</h2>
+                    <p><strong>Role:</strong> Manages stock items, categories, warehouses, and inventory movements. Tracks quantities across multiple locations, handles stock reservations, and emits low-stock alerts. Designed for eventual consistency with the analytics-service for real-time inventory dashboards.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>inventory</code> schema. Tables: <code>items</code> (SKU, name, description, unit), <code>categories</code> (hierarchical), <code>warehouses</code> (locations), <code>stock_levels</code> (item + warehouse + quantity with optimistic locking), <code>movements</code> (audit trail of all stock changes — inbound, outbound, transfer, adjustment).</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/inventory/items</code></td><td>List items with pagination, category filter, and search.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/inventory/items</code></td><td>Create a new inventory item.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/inventory/items/{id}/stock</code></td><td>Get current stock levels across all warehouses for an item.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/inventory/movements</code></td><td>Record a stock movement (inbound, outbound, transfer).</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/inventory/low-stock</code></td><td>List all items below their reorder threshold.</td><td>Bearer JWT</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, schemas, cache, messaging, logging), <code>notifications-service</code> (async — low-stock alerts via RabbitMQ), <code>analytics-service</code> (async — stock movement events for dashboard aggregation), <code>audit-service</code> (async — all movements).</p>
+                </section>
+
+                <!-- analytics-service -->
+                <section class="section-block" id="service-analytics-service">
+                    <span class="section-num-tag">Section 2.6</span>
+                    <h2 class="section-title">analytics-service</h2>
+                    <p><strong>Role:</strong> Event ingestion, metrics aggregation, and reporting. Consumes events from a dedicated Kafka topic (high-throughput event stream) and RabbitMQ (lower-throughput operational events). Provides aggregated dashboards, time-series queries, and CSV/PDF report generation.</p>
+                    <p><strong>Database strategy:</strong> Uses a <strong>time-series optimized schema</strong> separate from the standard <code>tq-core</code> base model. Tables in the <code>analytics</code> schema: <code>events_raw</code> (append-only event log, partitioned by month), <code>metrics_hourly</code> (pre-aggregated hourly rollups), <code>metrics_daily</code> (daily rollups), <code>reports</code> (scheduled report definitions). Also queries a read replica of the inventory schema for real-time stock analytics.</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/analytics/dashboard</code></td><td>Return aggregated KPIs for the main dashboard.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/analytics/metrics</code></td><td>Query time-series data with time range and granularity params.</td><td>Bearer JWT</td></tr>
+                                <tr><td><span class="badge badge-blue">POST</span></td><td><code>/api/v1/analytics/events</code></td><td>Ingest a new event (also available via Kafka for high throughput).</td><td>Service Token</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/analytics/reports</code></td><td>List available reports and their generation status.</td><td>Bearer JWT</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (config, auth, logging, schemas), Kafka (primary event ingestion), RabbitMQ (operational events from other services), PostgreSQL with partitioning support.</p>
+                </section>
+
+                <!-- audit-service -->
+                <section class="section-block" id="service-audit-service">
+                    <span class="section-num-tag">Section 2.7</span>
+                    <h2 class="section-title">audit-service</h2>
+                    <p><strong>Role:</strong> Immutable audit trail for all mutating operations across the platform. Consumes audit events from a dedicated RabbitMQ queue, writes them to an append-only table, and provides query APIs for compliance and investigation. Designed for <strong>write-once, read-infrequently</strong> access patterns.</p>
+                    <p><strong>Database strategy:</strong> Owns the <code>audit</code> schema. Primary table: <code>audit_log</code> — append-only, partitioned by month, with BRIN indexes on <code>timestamp</code>. Columns: <code>event_id</code>, <code>timestamp</code>, <code>service_name</code>, <code>user_id</code>, <code>action</code>, <code>resource_type</code>, <code>resource_id</code>, <code>old_values</code> (JSONB), <code>new_values</code> (JSONB), <code>ip_address</code>, <code>user_agent</code>, <code>correlation_id</code>. No UPDATE or DELETE operations are ever performed on this table.</p>
+
+                    <h3 class="subsection-title">Key API Endpoints</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Auth</th></tr></thead>
+                            <tbody>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/audit/logs</code></td><td>Query audit logs with filters (user, service, date range, action).</td><td>Bearer JWT + Admin</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/audit/logs/{event_id}</code></td><td>Retrieve a single audit event in full detail.</td><td>Bearer JWT + Admin</td></tr>
+                                <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/v1/audit/export</code></td><td>Export audit logs as CSV for a given time range (async — returns a download link).</td><td>Bearer JWT + Admin</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Dependencies:</strong> <code>tq-core</code> (auth, db, messaging, logging), RabbitMQ (consumes audit events from all services). This service has <strong>zero outbound dependencies</strong> — it never calls another service.</p>
+                </section>
+
+                <div class="ornament">◆ ◆ ◆</div>
+
+                <!-- ══════════ PART III: COMMUNICATION & DATA ══════════ -->
+                <div class="part-divider" id="part-communication">
+                    <span class="part-label">Part III</span>
+                    <h2 class="part-title">Communication &amp; Data</h2>
+                    <p class="part-intro">How the seven services talk to each other, how data flows through the system, and where consistency boundaries are drawn.</p>
+                </div>
+
+                <!-- Authentication Flow -->
+                <section class="section-block" id="authentication-flow">
+                    <span class="section-num-tag">Section 3.1</span>
+                    <h2 class="section-title">Authentication &amp; Authorization Flow</h2>
+                    <p>The authentication flow begins at the API gateway and propagates through every service via signed JWTs. The gateway validates the token on every request (using the shared secret from <code>tq-core</code>), extracts the user identity and role, and forwards them as headers to downstream services. This eliminates the need for each service to call auth-service on every request.</p>
+
+                    <figure class="mermaid-container">
+                        <pre class="mermaid">
+sequenceDiagram
+    participant C as Client
+    participant G as API Gateway (Kong)
+    participant A as auth-service
+    participant Core as tq-core (Shared)
+    participant T as Target Service
+    participant Audit as audit-service
+
+    C->>G: POST /login (email + password)
+    G->>A: Forward login request
+    A->>Core: verify_password(plain, hash)
+    Core-->>A: password valid
+    A->>Core: create_access_token(user_data)
+    Core-->>A: signed JWT
+    A->>Core: create_refresh_token(user_data)
+    Core-->>A: signed refresh token
+    A->>Audit: Publish login event (async via RabbitMQ)
+    A-->>G: access + refresh tokens
+    G-->>C: tokens (HTTPOnly cookies)
+
+    Note over C,T: All subsequent API calls
+
+    C->>G: GET /users/me (Bearer token)
+    G->>G: Validate JWT signature via tq-core
+    G->>T: Proxy request + X-User-ID + X-User-Role headers
+    T->>Core: get_current_user(headers)
+    Core-->>T: UserData object
+    T->>T: Authorize based on role
+    T-->>G: Response
+    G-->>C: JSON payload
+                        </pre>
+                        <figcaption>Figure 2: Login and authenticated request flow. The shared <code>tq-core</code> package provides password hashing, token creation, and token verification used by both the auth-service and every downstream service. The API gateway caches JWT validation for 5 minutes, reducing auth-service load.</figcaption>
+                    </figure>
+
+                    <div class="callout note">
+                        <span class="callout-label">Gateway Caching</span>
+                        Kong caches the JWT validation result (user ID + role) for 5 minutes with a configurable TTL. This means a token revocation will take up to 5 minutes to propagate. For immediate revocation needs (e.g., security incident), the auth-service publishes a token invalidation event to RabbitMQ, which the gateway listens for to purge its cache.
+                    </div>
+                </section>
+
+                <!-- Inter-Service Communication -->
+                <section class="section-block" id="inter-service-communication">
+                    <span class="section-num-tag">Section 3.2</span>
+                    <h2 class="section-title">Inter-Service Communication</h2>
+                    <p>nullchemy uses a <strong>hybrid communication model</strong>: synchronous HTTP for reads that require immediate consistency, and asynchronous messaging via RabbitMQ for operations that can tolerate eventual consistency or have high latency.</p>
+
+                    <figure class="mermaid-container">
+                        <pre class="mermaid">
+graph LR
+    subgraph Sync["Synchronous (HTTP)"]
+        US["user-service"] -->|"GET /verify-user"| AS["auth-service"]
+        DS["documents-service"] -->|"GET /users/{id}"| US
+        IS["inventory-service"] -->|"GET /documents/{id}"| DS
+    end
+
+    subgraph Async["Asynchronous (RabbitMQ)"]
+        AS2["auth-service"] -->|"user.registered"| NS["notifications-service"]
+        IS2["inventory-service"] -->|"stock.low"| NS
+        IS2 -->|"stock.changed"| AN["analytics-service"]
+        US2["user-service"] -->|"profile.updated"| AU["audit-service"]
+        AS2 -->|"user.login"| AU
+        DS2["documents-service"] -->|"document.accessed"| AU
+    end
+                        </pre>
+                        <figcaption>Figure 3: Inter-service communication topology. Solid lines represent synchronous HTTP calls; dashed lines represent asynchronous messages published to RabbitMQ. The audit-service consumes from all services but never initiates communication.</figcaption>
+                    </figure>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Communication Pattern</th><th>Use Case</th><th>Justification</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Sync HTTP</strong></td><td>user-service → auth-service (verify user exists)</td><td>Profile creation must fail immediately if the auth identity doesn't exist; async would leave the user in an inconsistent state.</td></tr>
+                                <tr><td><strong>Sync HTTP</strong></td><td>documents-service → user-service (resolve owner)</td><td>Document metadata responses include owner display name; p99 latency of user lookup is &lt;15ms, within the documents-service SLO.</td></tr>
+                                <tr><td><strong>Async (RabbitMQ)</strong></td><td>auth-service → notifications-service (welcome email)</td><td>Email delivery p95 is 300ms–2s (SendGrid); blocking the login endpoint on email delivery would blow the auth-service latency budget.</td></tr>
+                                <tr><td><strong>Async (RabbitMQ)</strong></td><td>inventory-service → analytics-service (stock changes)</td><td>Analytics ingestion is designed for eventual consistency; a 1–5 second delay in dashboard updates is acceptable per product requirements.</td></tr>
+                                <tr><td><strong>Async (RabbitMQ)</strong></td><td>All services → audit-service</td><td>Audit logging must never block or fail the primary operation. If the audit queue is unavailable, services buffer events in memory for up to 60 seconds before dropping (with a logged warning).</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout warning">
+                        <span class="callout-label">Circuit Breakers</span>
+                        All synchronous HTTP calls between services are wrapped with a circuit breaker (via the <code>tq-core.messaging</code> module's HTTP client). After 5 consecutive failures in a 30-second window, the circuit opens for 60 seconds. During this period, the calling service returns a degraded response (e.g., document metadata without owner display name) rather than failing entirely.
+                    </div>
+                </section>
+
+                <!-- Data Flow & Storage -->
+                <section class="section-block" id="data-flow-and-storage">
+                    <span class="section-num-tag">Section 3.3</span>
+                    <h2 class="section-title">Data Flow &amp; Storage</h2>
+                    <p>Each service owns its data domain exclusively. No service directly accesses another service's database — all cross-domain data access happens through APIs. This enforces <strong>strong encapsulation</strong> and allows each service to evolve its schema independently.</p>
+
+                    <figure class="mermaid-container">
+                        <pre class="mermaid">
+graph TD
+    subgraph PostgreSQL["PostgreSQL Cluster"]
+        subgraph SchemaAuth["auth schema"]
+            AuthUsers["users"]
+            AuthSessions["sessions"]
+        end
+        subgraph SchemaUsers["users schema"]
+            UserProfiles["profiles"]
+            UserPrefs["preferences"]
+        end
+        subgraph SchemaNotif["notifications schema"]
+            NotifTemplates["templates"]
+            NotifMessages["messages"]
+        end
+        subgraph SchemaDocs["documents schema"]
+            DocsMeta["documents"]
+            DocsVersions["document_versions"]
+        end
+        subgraph SchemaInv["inventory schema"]
+            InvItems["items"]
+            InvStock["stock_levels"]
+            InvMovements["movements"]
+        end
+        subgraph SchemaAnalyt["analytics schema"]
+            AnalytEvents["events_raw"]
+            AnalytMetrics["metrics_hourly"]
+        end
+        subgraph SchemaAudit["audit schema"]
+            AuditLog["audit_log"]
+        end
+    end
+
+    S3["S3/MinIO (Binary Storage)"]
+    Redis["Redis (Cache & Sessions)"]
+    Kafka["Kafka (Event Stream)"]
+
+    DocsMeta -->|"S3 key reference"| S3
+    AuthSessions -->|"Session cache"| Redis
+    AnalytEvents -->|"High-throughput ingest"| Kafka
+                        </pre>
+                        <figcaption>Figure 4: Data storage topology. Each service owns one schema within the shared PostgreSQL cluster. Binary documents are stored in S3-compatible object storage with metadata in PostgreSQL. Redis serves as a shared cache layer. Kafka is used exclusively by the analytics-service for high-throughput event ingestion.</figcaption>
+                    </figure>
+
+                    <h3 class="subsection-title">Consistency Boundaries</h3>
+                    <ul class="styled">
+                        <li><strong>Strong consistency:</strong> Within each service's schema — all reads after a write within the same service reflect the latest state (PostgreSQL's default <code>READ COMMITTED</code> isolation).</li>
+                        <li><strong>Eventual consistency:</strong> Cross-service data propagation via RabbitMQ — maximum staleness of 5 seconds under normal operating conditions, up to 60 seconds during peak load with message backlog.</li>
+                        <li><strong>Cache consistency:</strong> Redis entries have explicit TTLs (5 minutes for user profiles, 1 minute for stock levels). Write-through invalidation is used: when a service updates data, it publishes a cache invalidation event that all interested services consume.</li>
+                    </ul>
+                </section>
+
+                <div class="ornament">◆ ◆ ◆</div>
+
+                <!-- ══════════ PART IV: OPERATIONS ══════════ -->
+                <div class="part-divider" id="part-operations">
+                    <span class="part-label">Part IV</span>
+                    <h2 class="part-title">Operations</h2>
+                    <p class="part-intro">Deployment, technology choices, security, failure modes, and open questions — everything needed to run nullchemy in production.</p>
+                </div>
+
+                <!-- Deployment Architecture -->
+                <section class="section-block" id="deployment-architecture">
+                    <span class="section-num-tag">Section 4.1</span>
+                    <h2 class="section-title">Deployment Architecture</h2>
+                    <p>nullchemy is deployed on <strong>Kubernetes</strong> (k8s) with a minimum of three worker nodes across two availability zones. Each microservice runs in its own namespace with dedicated service accounts, resource quotas, and network policies. The deployment is managed via Helm charts stored alongside each service's source code.</p>
+
+                    <figure class="mermaid-container">
+                        <pre class="mermaid">
+graph TD
+    subgraph K8s["Kubernetes Cluster"]
+        subgraph NS1["namespace: nullchemy-system"]
+            Ingress["Ingress (nginx)"]
+            Kong["Kong API Gateway"]
+        end
+        subgraph NS2["namespace: nullchemy-services"]
+            AuthPod["auth-service (3 replicas)"]
+            UserPod["user-service (2 replicas)"]
+            NotifPod["notifications-service (2 replicas)"]
+            DocPod["documents-service (2 replicas)"]
+            InvPod["inventory-service (3 replicas)"]
+            AnalytPod["analytics-service (2 replicas)"]
+            AuditPod["audit-service (2 replicas)"]
+        end
+        subgraph NS3["namespace: nullchemy-data"]
+            PG["PostgreSQL (StatefulSet)"]
+            RedisST["Redis (StatefulSet)"]
+            RabbitST["RabbitMQ (StatefulSet)"]
+            KafkaST["Kafka (StatefulSet)"]
+        end
+    end
+
+    Internet["Internet"] --> Ingress
+    Ingress --> Kong
+    Kong --> AuthPod
+    Kong --> UserPod
+    Kong --> NotifPod
+    Kong --> DocPod
+    Kong --> InvPod
+    Kong --> AnalytPod
+    Kong --> AuditPod
+    AuthPod --> PG
+    UserPod --> PG
+    NotifPod --> PG
+    DocPod --> PG
+    InvPod --> PG
+    AnalytPod --> PG
+    AuditPod --> PG
+    AuthPod --> RedisST
+    UserPod --> RedisST
+    NotifPod --> RabbitST
+    InvPod --> RabbitST
+    AnalytPod --> KafkaST
+    AuditPod --> RabbitST
+                        </pre>
+                        <figcaption>Figure 5: Kubernetes deployment topology. Services are grouped into three namespaces: system (ingress and gateway), services (application pods), and data (stateful workloads). Network policies restrict cross-namespace traffic to only the documented communication paths.</figcaption>
+                    </figure>
+
+                    <h3 class="subsection-title">Resource Allocations</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Service</th><th>Replicas (min)</th><th>CPU Request / Limit</th><th>Memory Request / Limit</th><th>HPA Target</th></tr></thead>
+                            <tbody>
+                                <tr><td>auth-service</td><td>3</td><td>250m / 1 CPU</td><td>256Mi / 512Mi</td><td>CPU 70%</td></tr>
+                                <tr><td>user-service</td><td>2</td><td>250m / 1 CPU</td><td>256Mi / 512Mi</td><td>CPU 70%</td></tr>
+                                <tr><td>notifications-service</td><td>2</td><td>500m / 2 CPU</td><td>512Mi / 1Gi</td><td>Queue depth &gt;100</td></tr>
+                                <tr><td>documents-service</td><td>2</td><td>250m / 2 CPU</td><td>512Mi / 1Gi</td><td>CPU 70%</td></tr>
+                                <tr><td>inventory-service</td><td>3</td><td>500m / 2 CPU</td><td>512Mi / 1Gi</td><td>CPU 70%</td></tr>
+                                <tr><td>analytics-service</td><td>2</td><td>1 CPU / 4 CPU</td><td>1Gi / 4Gi</td><td>CPU 70%</td></tr>
+                                <tr><td>audit-service</td><td>2</td><td>250m / 1 CPU</td><td>256Mi / 512Mi</td><td>CPU 70%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout note">
+                        <span class="callout-label">Auto-Scaling</span>
+                        Horizontal Pod Autoscaler (HPA) is configured for every service with CPU utilization as the primary metric. The notifications-service uses a custom metric (RabbitMQ queue depth) as its scaling trigger, since its CPU usage is low but its processing latency is queue-sensitive. Minimum and maximum replicas are set per service based on load-test data; the cluster autoscaler provisions additional nodes when pending pods exceed capacity.
+                    </div>
+                </section>
+
+                <!-- Technology Stack -->
+                <section class="section-block" id="technology-stack">
+                    <span class="section-num-tag">Section 4.2</span>
+                    <h2 class="section-title">Technology Stack</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Category</th><th>Choice</th><th>Justification</th></tr></thead>
+                            <tbody>
+                                <tr><td>API Framework</td><td>FastAPI (Python 3.11+)</td><td>Async-native, automatic OpenAPI, Pydantic v2 integration — high throughput for I/O-bound services. Benchmarked at 8,000+ RPS per pod for simple read endpoints.</td></tr>
+                                <tr><td>Core Shared Library</td><td>tq-core (pip package)</td><td>Ensures consistency across 7 services; reduces code duplication by an estimated 40%; single source of truth for auth, DB, and schema concerns.</td></tr>
+                                <tr><td>Database</td><td>PostgreSQL 15</td><td>Strong ACID compliance, JSONB for flexible audit data, full-text search via <code>tsvector</code>, mature async support via <code>asyncpg</code>, table partitioning for time-series data.</td></tr>
+                                <tr><td>Message Broker</td><td>RabbitMQ 3.12</td><td>Reliable delivery with publisher confirms, flexible routing via exchanges, dead-letter queues for failed messages. Kafka considered for analytics ingestion (&gt;50K msg/s) but RabbitMQ suffices for current scale.</td></tr>
+                                <tr><td>Event Stream</td><td>Kafka (for analytics-service)</td><td>High-throughput event ingestion (100K+ events/sec), log compaction for replay capability, partitioned by event type for parallel consumption.</td></tr>
+                                <tr><td>Cache</td><td>Redis 7</td><td>In-memory, sub-millisecond latency, supports rate limiting, session storage, and pub/sub for cache invalidation.</td></tr>
+                                <tr><td>Object Storage</td><td>AWS S3 / MinIO</td><td>S3-compatible API; MinIO for local development and CI; AWS S3 for production with lifecycle policies for archival.</td></tr>
+                                <tr><td>API Gateway</td><td>Kong 3.x</td><td>JWT validation at the edge, rate limiting, request transformation, plugin ecosystem, Prometheus metrics export.</td></tr>
+                                <tr><td>Container Orchestration</td><td>Kubernetes 1.29</td><td>Auto-scaling, self-healing, declarative config, pod anti-affinity for HA, namespaces for multi-tenancy isolation.</td></tr>
+                                <tr><td>Observability</td><td>OpenTelemetry + Jaeger + Prometheus + Grafana</td><td>Distributed tracing across all 7 services, metrics for RED (Rate/Error/Duration) dashboards, structured JSON logging to Loki.</td></tr>
+                                <tr><td>CI/CD</td><td>GitHub Actions + ArgoCD</td><td>GitOps workflow: CI builds and pushes container images; ArgoCD syncs Kubernetes manifests from the repo to the cluster.</td></tr>
+                                <tr><td>Secrets Management</td><td>Kubernetes Secrets + External Secrets Operator</td><td>Secrets stored in AWS Secrets Manager, synced to Kubernetes via External Secrets Operator, never committed to Git.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Cross-Cutting Concerns -->
+                <section class="section-block" id="cross-cutting-concerns">
+                    <span class="section-num-tag">Section 4.3</span>
+                    <h2 class="section-title">Cross-Cutting Concerns</h2>
+                    <p>This section is a stub. Once the following information becomes available, it will cover:</p>
+                    <ul class="styled">
+                        <li><strong>Distributed tracing strategy:</strong> Full OpenTelemetry instrumentation across all 7 services — trace context propagation through Kong, HTTP headers, and RabbitMQ message headers. Jaeger as the trace backend with sampling rate of 10% in production, 100% in staging.</li>
+                        <li><strong>Centralized configuration management:</strong> Kubernetes ConfigMaps for non-sensitive settings, with a migration plan to a dedicated configuration service (or HashiCorp Consul) for runtime reloading without pod restarts.</li>
+                        <li><strong>Global rate limiting and throttling:</strong> Tiered rate limits — per-IP at the Kong gateway (100 req/min), per-user at the service level (1,000 req/min), and per-endpoint for sensitive operations like password reset (5 req/hour).</li>
+                        <li><strong>Audit trail requirements:</strong> All mutating operations (POST, PUT, PATCH, DELETE) across all services must produce an audit event with user ID, timestamp, resource identifier, and old/new values. Retention period: 7 years for compliance, with automated archival to cold storage after 90 days.</li>
+                        <li><strong>Data retention and archival policies:</strong> Per-service data retention rules — audit logs (7 years), notification delivery logs (2 years), analytics raw events (1 year), document versions (all versions retained until parent document deletion + 30 days).</li>
+                    </ul>
+                </section>
+
+                <!-- Security Considerations -->
+                <section class="section-block" id="security-considerations">
+                    <span class="section-num-tag">Section 4.4</span>
+                    <h2 class="section-title">Security Considerations</h2>
+
+                    <div class="two-col">
+                        <div class="feature-card">
+                            <span class="feature-card-icon">🔐</span>
+                            <h4 class="feature-card-title">Authentication</h4>
+                            <p class="feature-card-body">JWT-based with HS256 (symmetric) for inter-service communication and RS256 (asymmetric) planned for external clients. Refresh tokens are stored server-side and can be revoked. MFA via TOTP is enforced for admin accounts.</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-card-icon">🛡️</span>
+                            <h4 class="feature-card-title">Authorization</h4>
+                            <p class="feature-card-body">Role-based access control (RBAC) with four tiers: superadmin, admin, user, readonly. Each endpoint declares required roles via a dependency. The API gateway enforces coarse-grained access; services enforce fine-grained ownership checks.</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-card-icon">🔒</span>
+                            <h4 class="feature-card-title">TLS Everywhere</h4>
+                            <p class="feature-card-body">All external traffic is TLS-terminated at the ingress (cert-manager with Let's Encrypt). Internal service-to-service traffic is encrypted via Kubernetes network policies with mTLS (Istio sidecar, planned for Phase 2).</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-card-icon">🔑</span>
+                            <h4 class="feature-card-title">Secrets Management</h4>
+                            <p class="feature-card-body">No secrets in environment variables, code, or ConfigMaps. All secrets (DB passwords, API keys, JWT signing keys) are stored in AWS Secrets Manager and injected via the External Secrets Operator at pod startup.</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-card-icon">🌐</span>
+                            <h4 class="feature-card-title">Network Policies</h4>
+                            <p class="feature-card-body">Kubernetes NetworkPolicies restrict pod-to-pod communication to only the documented paths. The audit-service, for example, can only receive from RabbitMQ — it cannot initiate any outbound connections.</p>
+                        </div>
+                        <div class="feature-card">
+                            <span class="feature-card-icon">📋</span>
+                            <h4 class="feature-card-title">Audit Compliance</h4>
+                            <p class="feature-card-body">Every mutating operation is logged with user ID, IP address, timestamp, and before/after values. Audit logs are immutable (append-only table, no UPDATE/DELETE permissions for application users).</p>
+                        </div>
+                    </div>
+
+                    <div class="callout critical">
+                        <span class="callout-label">Critical Security Requirement</span>
+                        The JWT signing secret (<code>SECRET_KEY</code>) must be rotated every 90 days. Rotation is performed by generating a new key, adding it to the <code>tq-core</code> configuration as a secondary validation key, waiting for all tokens signed with the old key to expire (8 days, based on refresh token lifetime), and then removing the old key. This process is documented in the runbook.
+                    </div>
+                </section>
+
+                <!-- Failure Modes & Resilience -->
+                <section class="section-block" id="failure-modes">
+                    <span class="section-num-tag">Section 4.5</span>
+                    <h2 class="section-title">Failure Modes &amp; Resilience</h2>
+                    <p>The following table catalogs the top failure scenarios, their estimated probability, impact severity, and the mitigation strategy in place. Probabilities are based on industry data for similar Kubernetes-deployed microservice platforms operating at comparable scale.</p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Failure Scenario</th><th>Probability</th><th>Impact</th><th>Mitigation</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>auth-service outage</strong> — all auth-service pods become unavailable</td>
+                                    <td><span class="badge badge-green">Low</span><br><small>HA deployment (3 replicas, anti-affinity)</small></td>
+                                    <td><span class="badge badge-red">High</span><br><small>No new logins; existing tokens continue working for 5 min (gateway cache)</small></td>
+                                    <td>API gateway caches JWT validation for 5 minutes. During outage window, existing sessions continue uninterrupted. New logins queue at the gateway and are served when auth-service recovers. HPA scales to 5 replicas under load.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PostgreSQL cluster failure</strong> — primary database becomes unavailable</td>
+                                    <td><span class="badge badge-green">Low</span><br><small>Managed PostgreSQL with automated failover</small></td>
+                                    <td><span class="badge badge-red">Critical</span><br><small>All services lose read/write capability</small></td>
+                                    <td>Automated failover to a read replica (promoted to primary) within 60 seconds. Services use connection pooling with <code>pool_pre_ping=True</code> to detect stale connections. Write operations queue in RabbitMQ (buffer up to 5 min of inventory movements). Read-heavy services (analytics) continue serving from read replicas.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RabbitMQ broker outage</strong> — message broker unavailable</td>
+                                    <td><span class="badge badge-gold">Medium</span><br><small>StatefulSet with persistent volumes</small></td>
+                                    <td><span class="badge badge-gold">Medium</span><br><small>Async operations delayed; sync operations unaffected</small></td>
+                                    <td>Services buffer outgoing messages in memory for up to 60 seconds. After buffer exhaustion, messages are dropped with a logged warning. Audit events are the highest priority — if the audit queue is unreachable, services continue operating but emit metric alerts. Notifications may be delayed by up to 5 minutes.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Memory leak in a service</strong> — gradual OOM across replicas</td>
+                                    <td><span class="badge badge-gold">Medium</span><br><small>Python's garbage collector mitigates most leaks</small></td>
+                                    <td><span class="badge badge-gold">Medium</span><br><small>Degraded performance, cascading pod restarts</small></td>
+                                    <td>Kubernetes liveness probes detect OOM conditions and restart pods. HPA scales up replicas to absorb traffic during restarts. Memory limits are set at 2× the steady-state usage to provide headroom. Prometheus alerts trigger when memory usage exceeds 80% of limit for &gt;5 minutes.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DDoS attack on the API gateway</strong> — volumetric traffic spike</td>
+                                    <td><span class="badge badge-gold">Medium</span><br><small>Public-facing APIs are always targets</small></td>
+                                    <td><span class="badge badge-red">High</span><br><small>Gateway overload leads to request queuing and timeouts</small></td>
+                                    <td>Kong rate limiting at the edge (100 req/min per IP, configurable). Cloud-level DDoS protection (AWS Shield / Cloudflare). Ingress configured with <code>max_connections</code> limits. WAF rules block known attack patterns. Excess traffic is shed with HTTP 429 responses rather than queuing indefinitely.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout warning">
+                        <span class="callout-label">Graceful Degradation</span>
+                        When a dependent service is unavailable, callers are designed to degrade gracefully rather than fail. For example, the documents-service returns document metadata without the owner's display name if the user-service is unreachable (the field is populated as <code>null</code> with a <code>degraded: true</code> flag in the response). This ensures partial functionality while the dependency recovers.
+                    </div>
+                </section>
+
+                <!-- Open Questions -->
+                <section class="section-block" id="open-questions">
+                    <span class="section-num-tag">Section 4.6</span>
+                    <h2 class="section-title">Open Questions</h2>
+                    <p>This section is a stub. Once the following information becomes available, it will cover:</p>
+                    <ul class="styled">
+                        <li><strong>Database instance strategy:</strong> Whether to migrate from a shared PostgreSQL cluster (with per-service schemas) to independent RDS instances per service. The trigger for this migration is either (a) exceeding 50K sustained RPS, (b) a service requiring a different database engine (e.g., DynamoDB for analytics), or (c) operational isolation requirements from a specific compliance framework.</li>
+                        <li><strong>Service mesh adoption:</strong> Evaluation of Istio or Linkerd for mTLS, traffic splitting, and fine-grained observability. The current NetworkPolicy-based approach is sufficient for the initial deployment but may not scale to 20+ services.</li>
+                        <li><strong>Event sourcing for inventory:</strong> Whether to adopt a full event-sourcing pattern (Kafka-backed) for the inventory domain, which would enable temporal queries ("what was the stock level at time T?") and simplify the analytics integration. Trade-off: increased operational complexity vs. richer query capabilities.</li>
+                        <li><strong>Multi-region deployment:</strong> Requirements for active-active or active-passive multi-region deployment. This impacts database replication strategy (PostgreSQL logical replication vs. Aurora Global Database), DNS routing (Route 53 latency-based vs. GeoDNS), and data residency compliance.</li>
+                        <li><strong>API versioning policy:</strong> Formalizing the API versioning strategy — currently <code>/api/v1/</code> is used, but the deprecation window, backward compatibility guarantees, and version sunset process need to be defined with product stakeholders.</li>
+                    </ul>
+                </section>
+
+                <div class="ornament">◆ ◆ ◆</div>
+
+                <p style="text-align:center;font-family:'Playfair Display',serif;font-style:italic;color:var(--grey);margin-top:60px;">
+                    End of System Design Document · nullchemy v2.0 · June 2026
+                </p>
+
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        Confidential — nullchemy System Design — Page <span class="page-counter"></span> · Generated 2026-06-11 · Classification: Internal
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            fontFamily: 'IBM Plex Sans, sans-serif',
+        });
+
+        // Progress bar
+        const progressBar = document.getElementById('progressBar');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = progress + '%';
+        });
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebarClose = document.getElementById('sidebarClose');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            backdrop.classList.add('visible');
+            menuBtn.classList.add('open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            backdrop.classList.remove('visible');
+            menuBtn.classList.remove('open');
+        }
+
+        menuBtn.addEventListener('click', () => {
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        sidebarClose.addEventListener('click', closeSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+
+        // Close sidebar on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                closeSidebar();
+            }
+        });
+
+        // Dynamically generate TOC
+        function buildTOC() {
+            const sidebarInner = document.getElementById('sidebarInner');
+            const headings = document.querySelectorAll('.content-wrap h2.section-title, .content-wrap h2.part-title');
+            const partLabels = document.querySelectorAll('.part-label');
+            const partTitles = document.querySelectorAll('.part-title');
+
+            // Build a map of part dividers and their following sections
+            const partDividers = document.querySelectorAll('.part-divider');
+            let html = '';
+            let sectionIndex = 0;
+
+            partDividers.forEach((divider, pi) => {
+                const partLabel = divider.querySelector('.part-label');
+                const partTitle = divider.querySelector('.part-title');
+                const partId = divider.id;
+
+                html += '<div class="toc-chapter">';
+                html +=
+                    '<span class="toc-chapter-label">' + (partLabel ? partLabel.textContent : 'Part ' + (pi + 1)) +
+                    '</span>';
+
+                // Find all section-blocks between this part divider and the next
+                let currentNode = divider.nextElementSibling;
+                const nextPartDivider = partDividers[pi + 1] || null;
+                let secNum = 0;
+
+                while (currentNode && currentNode !== nextPartDivider) {
+                    if (currentNode.classList.contains('section-block')) {
+                        secNum++;
+                        const sectionTitle = currentNode.querySelector('.section-title');
+                        const sectionId = currentNode.id;
+                        if (sectionTitle && sectionId) {
+                            html += '<a class="toc-link sub" href="#' + sectionId + '" data-target="' + sectionId +
+                                '">';
+                            html += '<span class="toc-num">' + (pi + 1) + '.' + secNum + '</span>';
+                            html += '<span class="toc-text">' + sectionTitle.textContent + '</span>';
+                            html += '</a>';
+                        }
+                    }
+                    currentNode = currentNode.nextElementSibling;
+                }
+                html += '</div>';
+            });
+
+            sidebarInner.innerHTML = html;
+
+            // Add click handlers to TOC links
+            const tocLinks = sidebarInner.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        closeSidebar();
+                        setTimeout(() => {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 350);
+                    }
+                });
+            });
+
+            // Highlight active TOC link on scroll
+            const allSectionBlocks = document.querySelectorAll('.section-block');
+            window.addEventListener('scroll', () => {
+                let currentSectionId = null;
+                allSectionBlocks.forEach(block => {
+                    const rect = block.getBoundingClientRect();
+                    if (rect.top <= 150) {
+                        currentSectionId = block.id;
+                    }
+                });
+                tocLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-target') === currentSectionId) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        buildTOC();
+
+        // Page counter in footer
+        document.querySelector('.page-counter').textContent = '1';
+    </script>
+</body>
+</html>
