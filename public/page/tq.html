@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Tenafriq System — Microservice Architecture & Design</title>
+  <meta name="description" content="Comprehensive system design for Tenafriq — a high‑performance microservice ecosystem unifying resident management, facility access, equipment checkout, workforce operations, inventory, point of sale, and supply chain." />
+  <meta name="keywords" content="Tenafriq, microservices, resident core, facility access, equipment checkout, workforce management, inventory core, POS, supply chain, FastAPI, Kubernetes" />
+  <meta name="author" content="Tenafriq Architecture Team" />
+  <meta name="robots" content="index, follow" />
+
+  <meta property="og:title" content="Tenafriq System — Microservice System Design" />
+  <meta property="og:description" content="Production‑ready, data‑driven microservice architecture for property, facility, stock, and workforce management." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://tenafriq.example/system-design" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --ink: #0a0f1c;
+      --paper: #f7f5f0;
+      --parchment: #eee9df;
+      --parchment-dark: #ddd4c4;
+      --red: #b13e3e;
+      --red-light: #fbe9e9;
+      --blue: #1f4e6e;
+      --blue-light: #e1ecf2;
+      --gold: #bc8f4b;
+      --gold-light: #f7efdf;
+      --green: #2b6e4c;
+      --green-light: #e4f3ea;
+      --grey: #4b5563;
+      --accent: #9a4444;
+      --sidebar-w: 320px;
+      --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.75;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .masthead {
+      background: var(--ink);
+      color: var(--paper);
+      border-bottom: 4px solid var(--red);
+    }
+    .masthead-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 40px;
+      border-bottom: 1px solid #2a2e3f;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: #9ca3af;
+    }
+    .masthead-title {
+      text-align: center;
+      padding: 22px 40px 16px;
+    }
+    .masthead-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(24px, 4vw, 54px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--paper);
+    }
+    .masthead-title .subtitle {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      color: #aaa;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+    .masthead-rule {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+      margin: 0 40px;
+    }
+    .masthead-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 10px 40px 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: #8b8f9c;
+      text-transform: uppercase;
+      border-top: 1px solid #252a3a;
+    }
+    .masthead-meta span { color: var(--gold); }
+    .layout { display: flex; flex: 1; position: relative; }
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-backdrop.visible { opacity: 1; pointer-events: all; }
+    .menu-btn {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      z-index: 160;
+      background: var(--ink);
+      border: none;
+      border-right: 3px solid var(--red);
+      color: var(--paper);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 10px 12px;
+    }
+    .menu-btn:hover { background: #1a1f2f; border-right-color: var(--gold); }
+    .menu-bars { display: flex; flex-direction: column; gap: 4px; width: 18px; }
+    .menu-bars span { display: block; height: 2px; background: var(--paper); transition: all 0.2s; }
+    .menu-btn.open .menu-bars span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .menu-btn.open .menu-bars span:nth-child(2) { opacity: 0; width: 0; }
+    .menu-btn.open .menu-bars span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    .menu-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 7px;
+      letter-spacing: 0.22em;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      color: #aaa;
+    }
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: var(--sidebar-w);
+      background: var(--ink);
+      border-right: 3px solid var(--red);
+      display: flex;
+      flex-direction: column;
+      z-index: 155;
+      transform: translateX(-100%);
+      transition: transform var(--transition);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid #2a2e3f;
+    }
+    .sidebar-header-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      color: var(--gold);
+    }
+    .sidebar-close {
+      background: none;
+      border: 1px solid #3a3e55;
+      color: #aaa;
+      cursor: pointer;
+      width: 26px;
+      height: 26px;
+    }
+    .sidebar-close:hover { border-color: var(--red); color: var(--red); }
+    .sidebar-inner {
+      overflow-y: auto;
+      flex: 1;
+      padding: 10px 0 32px;
+    }
+    .toc-link {
+      display: flex;
+      gap: 10px;
+      padding: 6px 18px;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+    .toc-link:hover { background: #1a1f2f; border-left-color: var(--gold); }
+    .toc-link.active { background: #151a28; border-left-color: var(--red); }
+    .toc-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      color: #6b7280;
+      min-width: 32px;
+    }
+    .toc-text {
+      font-size: 12px;
+      color: #ccc;
+      white-space: normal;
+    }
+    .toc-link.active .toc-text { color: white; }
+    .toc-link.sub { padding-left: 36px; }
+    .toc-link.sub .toc-text { font-size: 11px; color: #9ca3af; }
+    .main { flex: 1; min-width: 0; width: 100%; }
+    .content-wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 60px 64px 120px;
+    }
+    .part-divider { margin: 80px 0 0; scroll-margin-top: 20px; }
+    .part-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .part-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px, 4vw, 50px);
+      font-weight: 900;
+      line-height: 1.05;
+      border-bottom: 4px solid var(--ink);
+      margin-bottom: 40px;
+      padding-bottom: 12px;
+    }
+    .section-block { margin: 56px 0 0; scroll-margin-top: 24px; }
+    .section-num-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      color: var(--grey);
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: 700;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+    }
+    .subsection-block { margin: 40px 0 0; scroll-margin-top: 20px; }
+    .subsection-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 600;
+      border-left: 4px solid var(--gold);
+      padding-left: 14px;
+      margin-bottom: 18px;
+    }
+    .callout {
+      padding: 18px 22px;
+      margin: 24px 0;
+      background: var(--blue-light);
+      border-left: 4px solid var(--blue);
+    }
+    .callout.note { background: var(--blue-light); border-left-color: var(--blue); }
+    .callout.warning { background: var(--gold-light); border-left-color: var(--gold); }
+    .callout-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead { background: var(--ink); color: var(--paper); }
+    thead th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    tbody tr { border-bottom: 1px solid var(--parchment-dark); }
+    tbody tr:nth-child(even) { background: var(--parchment); }
+    tbody td { padding: 10px 16px; }
+    td code, th code { font-family: 'IBM Plex Mono', monospace; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 2px; }
+    .code-block {
+      background: #0f1117;
+      border-left: 4px solid var(--gold);
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #e0e0e0;
+    }
+    figure { margin: 28px 0; background: white; border-radius: 8px; padding: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+    figcaption { font-size: 12px; text-align: center; margin-top: 10px; color: var(--grey); }
+    .mermaid { text-align: center; background: #fff; padding: 16px; border-radius: 8px; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .feature-card {
+      background: var(--parchment);
+      border-top: 3px solid var(--gold);
+      padding: 18px;
+    }
+    .stack-table th, .stack-table td { text-align: left; }
+    footer {
+      background: var(--ink);
+      color: #6b7280;
+      padding: 32px;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      border-top: 3px solid var(--red);
+    }
+    .scroll-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--ink);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scroll-top.visible { opacity: 1; }
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--red);
+      width: 0%;
+      z-index: 500;
+    }
+    @media (max-width: 768px) {
+      .content-wrap { padding: 32px 24px 80px; }
+      .masthead-title h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="masthead">
+  <div class="masthead-top"><span>Tenafriq</span><span>v2.0 · Q2 2026</span></div>
+  <div class="masthead-title">
+    <h1>Tenafriq System<br/>Microservice Architecture</h1>
+    <div class="subtitle">Resident · Facility · Workforce · Inventory · POS · Supply Chain</div>
+  </div>
+  <div class="masthead-rule"></div>
+  <div class="masthead-meta"><span>Core Domain: tq_core</span><span>7 Services</span><span>Event‑Driven · Cloud‑Native</span></div>
+</div>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <button class="menu-btn" id="menuBtn" aria-label="Table of contents">
+    <div class="menu-bars"><span></span><span></span><span></span></div>
+    <span class="menu-label">TOC</span>
+  </button>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-header-label">CONTENTS</span>
+      <button class="sidebar-close" id="closeSidebar">✕</button>
+    </div>
+    <div class="sidebar-inner" id="tocContainer"></div>
+  </aside>
+
+  <main class="main">
+    <div class="content-wrap" id="mainContent">
+      <!-- Executive Summary -->
+      <div class="part-divider" id="exec-summary-part">
+        <div class="part-label">OVERVIEW</div>
+        <div class="part-title">Executive Summary</div>
+        <p><strong>Tenafriq</strong> is a microservice ecosystem designed to unify property management, access control, equipment logistics, workforce orchestration, inventory, point‑of‑sale, and supply chain. The platform serves thousands of concurrent residents, staff, and POS terminals with strict consistency requirements and real‑time hardware integration.</p>
+        <div class="feature-grid">
+          <div class="feature-card"><span class="feature-card-title">📊 Peak Throughput</span><div class="feature-card-body">6,200 req/s (POS + checkout heavy hours). p95 latency < 120ms for core reads, < 400ms for writes.</div></div>
+          <div class="feature-card"><span class="feature-card-title">🏷️ Availability</span><div class="feature-card-body">99.95% monthly SLA. Degraded modes for facility access & equipment checkouts.</div></div>
+          <div class="feature-card"><span class="feature-card-title">⚙️ Design tenets</span><div class="feature-card-body">Shared‑nothing per service, asynchronous integration for long‑running ops, strong data ownership.</div></div>
+        </div>
+      </div>
+
+      <!-- Architecture Overview + diagram -->
+      <div class="section-block" id="architecture-overview">
+        <div class="section-num-tag">SYSTEM ARCHITECTURE</div>
+        <div class="section-title">High‑Level Topology</div>
+        <figure>
+          <pre class="mermaid">
+            graph TD
+              Client["Web/Mobile/POS Terminal"]
+              APIG["API Gateway (Kong)"]
+              Services["resident-core | facility-access | equipment-checkout | workforce-mgmt | inventory-core | pos | supply-chain"]
+              CorePkg["tq_core (shared pip package)"]
+              DB[("PostgreSQL Cluster")]
+              Cache[("Redis Cluster")]
+              MQ[("RabbitMQ")]
+
+              Client -->|HTTPS + JWT| APIG
+              APIG -->|proxy + auth| Services
+              Services -->|import| CorePkg
+              Services --> DB
+              Services --> Cache
+              Services -->|async events| MQ
+              MQ -.-> Services
+          </pre>
+          <figcaption>Figure 1: All traffic enters via API Gateway. Services embed tq_core for auth, config, logging. Async events (stock depletion, late fees, shift swaps) flow through RabbitMQ.</figcaption>
+        </figure>
+        <p>The gateway terminates TLS, validates JWT (using tq_core's verification), and applies per‑service rate limits. Each service owns its database schemas, while Redis provides distributed locks (locker codes, inventory holds) and session storage for suspended POS transactions.</p>
+      </div>
+
+      <!-- Core Package tq_core -->
+      <div class="section-block" id="core-package">
+        <div class="section-num-tag">FOUNDATION</div>
+        <div class="section-title">Shared Core: tq_core</div>
+        <p><code>tq_core</code> is a pip‑installable Python package pinned to a single version across all services. It provides common infrastructure to reduce duplication and guarantee consistency.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Module</th><th>Responsibility</th></tr></thead>
+            <tbody>
+              <tr><td><code>core.config</code></td><td>Pydantic settings loader with env overrides for each service</td></tr>
+              <tr><td><code>core.auth</code></td><td>JWT creation/validation, bcrypt hashing, permission helper (RBAC)</td></tr>
+              <tr><td><code>core.db</code></td><td>Async SQLAlchemy engine, session + transaction middleware</td></tr>
+              <tr><td><code>core.middleware</code></td><td>Request ID, structured logging, global error handling</td></tr>
+              <tr><td><code>core.events</code></td><td>Typed event publisher (RabbitMQ) with retry logic</td></tr>
+              <tr><td><code>core.models.base</code></td><td>Base ORM (UUID, soft‑delete, optimistic lock version)</td></tr>
+              <tr><td><code>core.schemas</code></td><td>Pydantic v2 pagination, audit fields, common DTOs</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout note"><span class="callout-label">Versioning discipline</span> Breaking changes require major version bump + migration guide; services pin exact version in pyproject.toml.</div>
+      </div>
+
+      <!-- Microservices -->
+      <div class="section-block" id="microservices">
+        <div class="section-num-tag">DOMAIN SERVICES</div>
+        <div class="section-title">Service‑by‑Service Architecture</div>
+
+        <!-- resident-core -->
+        <div class="subsection-block" id="service-resident-core">
+          <div class="subsection-title">🏠 resident-core</div>
+          <p>Manages leases, rent/fee payments, maintenance requests, referrals, community boards, and unit/floor inventory. Slow‑changing compliance data, high legal integrity.</p>
+          <div class="table-wrap"><table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead><tbody>
+            <tr><td><code>POST</code></td><td>/leases/{id}/pay</td><td>Record rent payment (idempotent key)</td></tr>
+            <tr><td><code>GET</code></td><td>/maintenance/requests</td><td>List with filters (unit, status)</td></tr>
+            <tr><td><code>POST</code></td><td>/referrals</td><td>Resident referral tracking</td></tr>
+          </tbody></table></div>
+        </div>
+        <!-- facility-access -->
+        <div class="subsection-block" id="service-facility-access">
+          <div class="subsection-title">🔓 facility-access</div>
+          <p>Real‑time concurrency for locker/spots, event bookings, QR/card check‑in, membership management, hardware integration (door readers, smart locks).</p>
+          <div class="callout note">Redis distributed locks guarantee single active reservation for lockers; stale locks expire after 30s.</div>
+        </div>
+        <!-- equipment-checkout -->
+        <div class="subsection-block" id="service-equipment-checkout">
+          <div class="subsection-title">🛠 equipment-checkout</div>
+          <p>Checkout/return with due dates, late fees, maintenance status, and reservation holds. High transactional volume (gym gear, AV equipment).</p>
+          <div class="table-wrap"><table><thead><tr><th>Endpoint</th><th>Description</th></tr></thead><tbody><tr><td><code>POST /checkout</code></td><td>Reserve + mark out, decrement available stock</td></tr></tbody></table></div>
+        </div>
+        <!-- workforce-management -->
+        <div class="subsection-block" id="service-workforce-management">
+          <div class="subsection-title">👥 workforce-management</div>
+          <p>Complex rules engine: shift scheduling, timecard with rounding, time‑off requests, drop/pick shifts, min/max hour enforcement, audit trail for labor laws.</p>
+        </div>
+        <!-- inventory-core -->
+        <div class="subsection-block" id="service-inventory-core">
+          <div class="subsection-title">📦 inventory-core</div>
+          <p>Product catalog, tax categories, discounts (cart/product), stock levels, low‑stock alerts. Source of truth for all items sold via POS and used in supply chain.</p>
+        </div>
+        <!-- pos-service -->
+        <div class="subsection-block" id="service-pos">
+          <div class="subsection-title">💳 point-of-sale (POS)</div>
+          <p>High‑throughput, stateful cart sessions. Suspend/resume with recall ID, barcode scan → add to cart, dynamic offer application, shift/day closing with financial reconciliation.</p>
+        </div>
+        <!-- supply-chain-stock -->
+        <div class="subsection-block" id="service-supply-chain">
+          <div class="subsection-title">🚚 supply-chain & stock</div>
+          <p>Vendor management, auto‑PO generation based on reorder points, stock inbound/outbound, receiving validation, integration with distributor APIs.</p>
+        </div>
+      </div>
+
+      <!-- Authentication flow -->
+      <div class="section-block" id="authentication-flow">
+        <div class="section-num-tag">SECURITY</div>
+        <div class="section-title">Authentication & Authorization</div>
+        <figure>
+          <pre class="mermaid">
+            sequenceDiagram
+              participant C as Client
+              participant G as API Gateway
+              participant A as auth-service (internal)
+              participant Core as tq_core
+              participant S as Target Service
+
+              C->>G: POST /auth/login (email/password)
+              G->>A: forward
+              A->>Core: verify_password()
+              Core-->>A: valid
+              A->>Core: create_access_token()
+              Core-->>A: JWT
+              A-->>G: tokens
+              G-->>C: access/refresh tokens
+
+              C->>G: GET /residents (Bearer)
+              G->>S: forward with token
+              S->>Core: decode+verify JWT, extract user
+              Core-->>S: UserContext
+              S->>S: RBAC check (role: resident/staff/manager)
+              S-->>G: response
+              G-->>C: data
+          </pre>
+          <figcaption>Figure 2: tq_core provides unified JWT handling; auth‑service is a thin wrapper over the core package. Every service validates tokens locally without extra network calls.</figcaption>
+        </figure>
+      </div>
+
+      <!-- Inter-service communication + data flow -->
+      <div class="section-block" id="inter-service-communication">
+        <div class="section-num-tag">MESSAGING</div>
+        <div class="section-title">Sync vs Async & Event Bus</div>
+        <p>Read‑heavy operations use synchronous gRPC/HTTP calls with < 50ms budget. State changes that require cross‑service consistency (e.g., stock reservation → inventory update) are event‑driven via RabbitMQ.</p>
+        <figure>
+          <pre class="mermaid">
+            graph LR
+              POS[POS Service] -->|reserve items| Inventory[Inventory Core]
+              Inventory -->|StockLevelChanged| MQ[RabbitMQ]
+              MQ --> SupplyChain[Supply Chain]
+              MQ --> FacilityAccess[Facility Access]
+              FacilityAccess -->|checkout complete| Equipment[Equipment Checkout]
+          </pre>
+          <figcaption>Figure 3: Typical event cascade after POS checkout – inventory adjustments, reorder checks, and locker releases.</figcaption>
+        </figure>
+      </div>
+
+      <div class="section-block" id="data-flow-and-storage">
+        <div class="section-num-tag">STORAGE</div>
+        <div class="section-title">Data Ownership & Consistency</div>
+        <div class="two-col">
+          <div><strong>Database strategy</strong><br/>Each service owns dedicated PostgreSQL schemas. Cross‑service reads use eventual consistency through materialized views or API calls. The shared Redis cluster caches rate limits, JWT revocation, and session data.</div>
+          <div><strong>Eventual consistency boundaries</strong><br/>POS "suspend" cart → stored in Redis with TTL. Late fee calculation runs as a scheduled job reading from resident‑core and equipment‑checkout.</div>
+        </div>
+      </div>
+
+      <!-- Deployment + k8s -->
+      <div class="section-block" id="deployment-architecture">
+        <div class="section-num-tag">OPS</div>
+        <div class="section-title">Kubernetes Deployment</div>
+        <figure>
+          <pre class="mermaid">
+            graph TD
+              Ingress["Ingress (nginx)"]
+              GW["API Gateway Pods (3 replicas)"]
+              NS["tenafriq Namespace"]
+              SVC1["resident-core (HPA: 5-20)"]
+              SVC2["facility-access (HPA: 3-15)"]
+              DBCluster["StatefulSet PostgreSQL + read replicas"]
+              RedisCluster["Redis Sentinel"]
+              MQCluster["RabbitMQ quorum queue"]
+
+              Ingress --> GW
+              GW --> SVC1 & SVC2
+              SVC1 --> DBCluster
+              SVC2 --> RedisCluster
+          </pre>
+          <figcaption>Figure 4: Horizontal Pod Autoscaler based on CPU/memory + custom metrics (queue length for POS). Each service has resource requests (0.5 CPU / 512Mi) and limits.</figcaption>
+        </figure>
+        <div class="table-wrap"><table><thead><tr><th>Service</th><th>Replicas (min/max)</th><th>CPU req/limit</th><th>Memory</th></tr></thead><tbody>
+          <tr><td>resident-core</td><td>4/15</td><td>0.6 / 2.0</td><td>1Gi / 2Gi</td></tr>
+          <tr><td>pos-service</td><td>6/25</td><td>0.8 / 2.5</td><td>1.5Gi / 3Gi</td></tr>
+          <tr><td>supply-chain</td><td>2/10</td><td>0.5 / 1.5</td><td>1Gi / 2Gi</td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- Technology stack -->
+      <div class="section-block" id="technology-stack">
+        <div class="section-num-tag">TOOLING</div>
+        <div class="section-title">Technology Stack</div>
+        <div class="table-wrap"><table class="stack-table"><thead><tr><th>Category</th><th>Choice</th><th>Justification</th></tr></thead><tbody>
+          <tr><td>API Framework</td><td>FastAPI (Python 3.11+)</td><td>Async native, Pydantic v2, automatic OpenAPI</td></tr>
+          <tr><td>Shared Library</td><td>tq_core (private PyPI)</td><td>Zero‑copy auth, config, DB session reuse across 7 services</td></tr>
+          <tr><td>Database</td><td>PostgreSQL 15 (asyncpg)</td><td>ACID, JSONB for flexible attributes, row‑level locking</td></tr>
+          <tr><td>Message Broker</td><td>RabbitMQ (mirrored queues)</td><td>Reliable delivery, dead‑letter for retries</td></tr>
+          <tr><td>Cache</td><td>Redis 7</td><td>Rate limiting, distributed locks, POS cart state</td></tr>
+          <tr><td>API Gateway</td><td>Kong (PostgreSQL backend)</td><td>JWT validation, rate limiting, plugin extensibility</td></tr>
+          <tr><td>Orchestration</td><td>Kubernetes (EKS/AKS)</td><td>Auto‑scaling, self‑healing, rolling updates</td></tr>
+          <tr><td>Observability</td><td>OpenTelemetry + Prometheus + Grafana</td><td>Trace propagation, custom metrics (checkout latency, stock events)</td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- Cross-cutting concerns stub -->
+      <div class="section-block" id="cross-cutting-concerns">
+        <div class="section-title">Cross‑Cutting Concerns</div>
+        <p>This section is a stub. Once the following information becomes available, it will cover:</p>
+        <ul><li>Distributed tracing policy with OpenTelemetry sampling (1% for reads, 100% for checkout/POS transactions)</li><li>Centralized secret management (HashiCorp Vault) and rotation strategy</li><li>Global rate limiting per resident tier and per IP for public endpoints</li><li>Audit trail design for financial operations and workforce timecards</li></ul>
+      </div>
+
+      <!-- Security considerations -->
+      <div class="section-block" id="security-considerations">
+        <div class="section-title">Security Deep Dive</div>
+        <ul class="styled">
+          <li><strong>TLS 1.3</strong> end‑to‑end between clients and API gateway, mTLS between services using Istio or linkerd.</li>
+          <li><strong>JWT short lifetime</strong> (15 min) + refresh token rotation stored in Redis.</li>
+          <li><strong>RBAC model</strong>: resident, staff, facility manager, admin. API Gateway rejects unauthorized requests.</li>
+          <li><strong>Network policies</strong>: deny ingress between services except via gateway and internal event bus.</li>
+        </ul>
+      </div>
+
+      <!-- Failure modes table -->
+      <div class="section-block" id="failure-modes">
+        <div class="section-title">Failure Mode Analysis</div>
+        <div class="table-wrap"><table><thead><tr><th>Failure</th><th>Probability</th><th>Impact</th><th>Mitigation</th></tr></thead><tbody>
+          <tr><td>PostgreSQL primary outage</td><td>Low</td><td>High (all writes)</td><td>Automated failover to replica (< 60s), read replicas serve queries during switch</td></tr>
+          <tr><td>facility-access service crash</td><td>Medium</td><td>Medium (no new check‑ins)</td><td>Circuit breaker, local hardware cache (offline QR mode via sync token)</td></tr>
+          <tr><td>RabbitMQ queue backpressure</td><td>Medium</td><td>Medium</td><td>Dead‑letter queues, backpressure triggers autoscaling of consumers, alert on queue depth >10k</td></tr>
+          <tr><td>POS suspend session loss</td><td>Low</td><td>Low</td><td>Persist cart state to Redis with replication + hourly backup snapshot</td></tr>
+          <tr><td>Distributed lock deadlock (locker)</td><td>Low</td><td>Low</td><td>Redlock algorithm with fallback TTL (30s), manual unlock endpoint for staff</td></tr>
+        </tbody></table></div>
+      </div>
+
+      <!-- Open questions stub -->
+      <div class="section-block" id="open-questions">
+        <div class="section-title">Open Questions & Roadmap</div>
+        <p>This section is a stub. Once the following information becomes available, it will cover:</p>
+        <ul><li>Multi‑region deployment strategy for diaspora or large portfolio of properties</li><li>Offline capability for facility doors and POS during WAN outage</li><li>Integration with third‑party ERP for accounting (QuickBooks / SAP)</li><li>Data retention policy for workforce timecards (7 years compliance)</li></ul>
+      </div>
+      <div class="ornament">⸻ ⸻ ⸻</div>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <span>Tenafriq System Design · Confidential · v2.0</span><br/>
+  <span>© Tenafriq Initiative — data‑driven architecture for intelligent operations</span>
+</footer>
+<button class="scroll-top" id="scrollTopBtn" aria-label="Back to top">↑</button>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+  // Sidebar and TOC generation
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const closeSidebar = document.getElementById('closeSidebar');
+
+  function closeSidebarFn() {
+    sidebar.classList.remove('open');
+    menuBtn.classList.remove('open');
+    backdrop.classList.remove('visible');
+  }
+  function openSidebar() {
+    sidebar.classList.add('open');
+    menuBtn.classList.add('open');
+    backdrop.classList.add('visible');
+  }
+  menuBtn.addEventListener('click', openSidebar);
+  closeSidebar.addEventListener('click', closeSidebarFn);
+  backdrop.addEventListener('click', closeSidebarFn);
+
+  // dynamic TOC
+  const tocContainer = document.getElementById('tocContainer');
+  const sections = document.querySelectorAll('#mainContent .section-block, #mainContent .subsection-block, #mainContent .part-divider');
+  const tocItems = [];
+  let chapterCounter = 1;
+
+  function buildTOC() {
+    tocContainer.innerHTML = '';
+    let idx = 0;
+    sections.forEach(section => {
+      let heading = section.querySelector('.section-title, .subsection-title, .part-title');
+      if (!heading) return;
+      let id = section.id || `auto-${idx}`;
+      if (!section.id) section.id = id;
+      let isSub = section.classList.contains('subsection-block');
+      let text = heading.innerText.trim();
+      let link = document.createElement('a');
+      link.className = `toc-link ${isSub ? 'sub' : ''}`;
+      link.href = `#${id}`;
+      let numSpan = document.createElement('span');
+      numSpan.className = 'toc-num';
+      if (!isSub) {
+        numSpan.innerText = `${chapterCounter++}.`;
+      } else {
+        numSpan.innerText = '↳';
+      }
+      let textSpan = document.createElement('span');
+      textSpan.className = 'toc-text';
+      textSpan.innerText = text;
+      link.appendChild(numSpan);
+      link.appendChild(textSpan);
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        closeSidebarFn();
+      });
+      tocContainer.appendChild(link);
+      idx++;
+    });
+  }
+  buildTOC();
+
+  // active link highlight
+  window.addEventListener('scroll', () => {
+    let scrollPos = window.scrollY + 120;
+    let currentId = null;
+    sections.forEach(s => {
+      let offset = s.offsetTop;
+      if (scrollPos >= offset) currentId = s.id;
+    });
+    document.querySelectorAll('.toc-link').forEach(link => {
+      link.classList.remove('active');
+      if (currentId && link.getAttribute('href') === `#${currentId}`) {
+        link.classList.add('active');
+      }
+    });
+    // progress bar
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById('progressBar').style.width = scrolled + '%';
+  });
+
+  // scroll top button
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) scrollBtn.classList.add('visible');
+    else scrollBtn.classList.remove('visible');
+  });
+  scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>
