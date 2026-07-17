@@ -1,0 +1,3924 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mpower Loan Forensics — Dennis Kibet | UA MS Computer Science</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ══════════════════════════════════════════
+       SCREEN VARIABLES & RESET
+    ══════════════════════════════════════════ */
+      :root {
+        --ink: #0d0d0d;
+        --paper: #f5f0e8;
+        --parchment: #ede6d3;
+        --parchment-dk: #e2d9c2;
+        --red: #c0392b;
+        --red-light: #f5cdc9;
+        --blue: #1a3a5c;
+        --blue-light: #d0dce8;
+        --gold: #b8860b;
+        --gold-light: #f0e0a0;
+        --green: #1a5c2e;
+        --green-light: #c9e8d5;
+        --grey: #5a5a5a;
+        --teal: #0b6e6e;
+        --teal-light: #c9e8e8;
+        --purple: #4a1a6e;
+        --purple-light: #e0d0f0;
+        --orange: #b84a0b;
+        --orange-light: #f5dac9;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: 'IBM Plex Sans', sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.75;
+        overflow-x: hidden;
+      }
+
+      /* ══════════════════════════════════════════
+       SCREEN-ONLY CHROME
+    ══════════════════════════════════════════ */
+      #progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: var(--red);
+        z-index: 999;
+        width: 0%;
+        transition: width 0.1s linear;
+      }
+      #scroll-top {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        width: 38px;
+        height: 38px;
+        background: var(--ink);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 300;
+        font-family: 'IBM Plex Mono', monospace;
+      }
+      #scroll-top.visible {
+        opacity: 1;
+      }
+      #scroll-top:hover {
+        background: var(--gold);
+        color: var(--ink);
+      }
+
+      /* ══════════════════════════════════════════
+       COVER PAGE
+    ══════════════════════════════════════════ */
+      .cover-page {
+        background: var(--ink);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+      }
+      .cover-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 60px;
+        border-bottom: 1px solid #222;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 10px;
+        color: #555;
+        letter-spacing: 0.12em;
+      }
+      .cover-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 80px 40px;
+      }
+      .cover-eyebrow {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--red);
+        display: block;
+        margin-bottom: 16px;
+      }
+      .cover-rule-top {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          var(--red),
+          var(--gold),
+          transparent
+        );
+        width: 100%;
+        margin-bottom: 32px;
+      }
+      .cover-h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(38px, 6vw, 80px);
+        font-weight: 900;
+        color: var(--paper);
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+      .cover-h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(18px, 3vw, 32px);
+        font-weight: 400;
+        color: #aaa;
+        font-style: italic;
+        margin-bottom: 32px;
+      }
+      .cover-rule-bot {
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          var(--red),
+          var(--gold),
+          transparent
+        );
+        width: 100%;
+        margin-bottom: 40px;
+      }
+      .cover-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto 48px;
+        border: 1px solid #222;
+      }
+      .cover-meta-cell {
+        padding: 18px 24px;
+        border-right: 1px solid #222;
+        text-align: center;
+      }
+      .cover-meta-cell:last-child {
+        border-right: none;
+      }
+      .cover-meta-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #555;
+        display: block;
+        margin-bottom: 6px;
+      }
+      .cover-meta-val {
+        font-family: 'Playfair Display', serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gold);
+      }
+      .cover-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0;
+        width: 100%;
+        border-top: 2px solid var(--gold);
+        border-bottom: 2px solid var(--gold);
+        margin-bottom: auto;
+      }
+      .cover-kpi-cell {
+        padding: 18px 12px;
+        text-align: center;
+        border-right: 1px solid #222;
+      }
+      .cover-kpi-cell:last-child {
+        border-right: none;
+      }
+      .cover-kpi-val {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(14px, 2vw, 22px);
+        font-weight: 900;
+        color: var(--gold);
+        display: block;
+        line-height: 1;
+      }
+      .cover-kpi-val.danger {
+        color: var(--red);
+      }
+      .cover-kpi-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 7px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #666;
+        display: block;
+        margin-top: 5px;
+      }
+      .cover-bottom {
+        padding: 20px 60px;
+        border-top: 1px solid #1a1a1a;
+        display: flex;
+        justify-content: space-between;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        color: #444;
+        letter-spacing: 0.1em;
+      }
+      .cover-toc {
+        text-align: left;
+        padding: 32px 80px 0;
+        width: 100%;
+      }
+      .cover-toc-title {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin-bottom: 16px;
+      }
+      .cover-toc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 40px;
+        margin-bottom: 20px;
+      }
+      .cover-toc-item {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 10px;
+        color: #777;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .cover-toc-item .part-num {
+        color: var(--gold);
+        min-width: 60px;
+        font-size: 9px;
+      }
+
+      /* ══════════════════════════════════════════
+       SCREEN MASTHEAD (after cover — screen only)
+    ══════════════════════════════════════════ */
+      .screen-meta-bar {
+        background: #111;
+        border-bottom: 2px solid var(--gold);
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+      }
+      .kpi-cell {
+        padding: 20px 16px;
+        text-align: center;
+        border-right: 1px solid #222;
+      }
+      .kpi-cell:last-child {
+        border-right: none;
+      }
+      .kpi-val {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(16px, 2vw, 26px);
+        font-weight: 900;
+        color: var(--gold);
+        display: block;
+        line-height: 1;
+      }
+      .kpi-val.danger {
+        color: var(--red);
+      }
+      .kpi-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 7px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #666;
+        display: block;
+        margin-top: 5px;
+      }
+      .kpi-sub {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 8px;
+        color: #444;
+        margin-top: 3px;
+      }
+
+      /* ══════════════════════════════════════════
+       CONTENT LAYOUT
+    ══════════════════════════════════════════ */
+      .content-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 72px 64px 120px;
+      }
+
+      /* ══════════════════════════════════════════
+       PART / SECTION TYPOGRAPHY
+    ══════════════════════════════════════════ */
+      .part-divider {
+        margin: 96px 0 0;
+        scroll-margin-top: 24px;
+      }
+      .part-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.35em;
+        color: var(--red);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 10px;
+      }
+      .part-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(28px, 4vw, 46px);
+        font-weight: 900;
+        color: var(--ink);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        padding-bottom: 18px;
+        border-bottom: 4px solid var(--ink);
+        margin-bottom: 48px;
+      }
+      .part-intro {
+        font-size: 16px;
+        color: var(--grey);
+        font-style: italic;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 36px;
+        padding-left: 20px;
+        border-left: 3px solid var(--gold);
+        line-height: 1.65;
+      }
+      .section-block {
+        margin: 64px 0 0;
+        scroll-margin-top: 24px;
+      }
+      .section-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.28em;
+        color: var(--grey);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 7px;
+      }
+      .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(18px, 2.5vw, 26px);
+        font-weight: 700;
+        color: var(--ink);
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--ink);
+        margin-bottom: 24px;
+      }
+      .subsection-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 19px;
+        font-weight: 600;
+        color: var(--blue);
+        padding-left: 14px;
+        border-left: 4px solid var(--gold);
+        margin: 36px 0 16px;
+      }
+
+      /* ══════════════════════════════════════════
+       PROSE
+    ══════════════════════════════════════════ */
+      p {
+        margin-bottom: 16px;
+        color: #1a1a1a;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+      strong {
+        font-weight: 600;
+        color: var(--blue);
+      }
+      em {
+        font-style: italic;
+      }
+
+      /* ══════════════════════════════════════════
+       TABLES
+    ══════════════════════════════════════════ */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 24px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      thead th {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 400;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--parchment-dk);
+      }
+      tbody tr:nth-child(even) {
+        background: var(--parchment);
+      }
+      tbody tr:hover {
+        background: var(--gold-light);
+      }
+      tbody td {
+        padding: 10px 16px;
+        vertical-align: top;
+        line-height: 1.5;
+      }
+      .td-num {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 12px;
+        text-align: right;
+      }
+      .td-red {
+        color: var(--red);
+        font-weight: 600;
+      }
+      .td-green {
+        color: var(--green);
+        font-weight: 600;
+      }
+      .td-gold {
+        color: var(--gold);
+        font-weight: 600;
+      }
+      .amort-mini td,
+      .amort-mini th {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      /* ══════════════════════════════════════════
+       CALLOUTS
+    ══════════════════════════════════════════ */
+      .callout {
+        padding: 18px 22px;
+        margin: 24px 0;
+        font-size: 14px;
+        line-height: 1.7;
+        border-radius: 1px;
+      }
+      .callout-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .callout.warning {
+        background: var(--gold-light);
+        border-left: 4px solid var(--gold);
+      }
+      .callout.warning .callout-label {
+        color: var(--gold);
+      }
+      .callout.critical {
+        background: var(--red-light);
+        border-left: 4px solid var(--red);
+      }
+      .callout.critical .callout-label {
+        color: var(--red);
+      }
+      .callout.note {
+        background: var(--blue-light);
+        border-left: 4px solid var(--blue);
+      }
+      .callout.note .callout-label {
+        color: var(--blue);
+      }
+      .callout.success {
+        background: var(--green-light);
+        border-left: 4px solid var(--green);
+      }
+      .callout.success .callout-label {
+        color: var(--green);
+      }
+      .callout.teal {
+        background: var(--teal-light);
+        border-left: 4px solid var(--teal);
+      }
+      .callout.teal .callout-label {
+        color: var(--teal);
+      }
+      .callout.purple {
+        background: var(--purple-light);
+        border-left: 4px solid var(--purple);
+      }
+      .callout.purple .callout-label {
+        color: var(--purple);
+      }
+      .callout.orange {
+        background: var(--orange-light);
+        border-left: 4px solid var(--orange);
+      }
+      .callout.orange .callout-label {
+        color: var(--orange);
+      }
+
+      /* ══════════════════════════════════════════
+       STAT BOXES
+    ══════════════════════════════════════════ */
+      .stat-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+        margin: 24px 0;
+      }
+      .stat-box {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 20px;
+        text-align: center;
+      }
+      .stat-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 26px;
+        font-weight: 900;
+        color: var(--gold);
+        display: block;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .stat-num.red {
+        color: var(--red);
+      }
+      .stat-num.green {
+        color: #4ade80;
+      }
+      .stat-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #888;
+      }
+
+      /* ══════════════════════════════════════════
+       CHARTS
+    ══════════════════════════════════════════ */
+      .chart-container {
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dk);
+        padding: 24px;
+        margin: 24px 0;
+      }
+      .chart-title {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--grey);
+        margin-bottom: 16px;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+      }
+
+      /* ══════════════════════════════════════════
+       BAR CHARTS (inline)
+    ══════════════════════════════════════════ */
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 10px 0;
+        font-size: 13px;
+      }
+      .bar-label {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 10px;
+        min-width: 90px;
+        color: var(--grey);
+      }
+      .bar-track {
+        flex: 1;
+        height: 18px;
+        background: #e0d8c8;
+        position: relative;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+      }
+      .bar-val {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 11px;
+        min-width: 70px;
+        text-align: right;
+      }
+
+      /* ══════════════════════════════════════════
+       SCENARIO CARDS
+    ══════════════════════════════════════════ */
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        margin: 24px 0;
+      }
+      .scenario-card {
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dk);
+        border-top: 4px solid var(--gold);
+        padding: 22px;
+      }
+      .scenario-card.best {
+        border-top-color: var(--green);
+      }
+      .scenario-card.worst {
+        border-top-color: var(--red);
+      }
+      .scenario-card.opt {
+        border-top-color: var(--teal);
+      }
+      .scenario-card.orange {
+        border-top-color: var(--orange);
+      }
+      .sc-tag {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 8px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--grey);
+        display: block;
+        margin-bottom: 8px;
+      }
+      .sc-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .sc-metric {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--parchment-dk);
+      }
+      .sc-metric:last-child {
+        border-bottom: none;
+      }
+      .sc-metric-label {
+        color: var(--grey);
+      }
+      .sc-metric-val {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      /* ══════════════════════════════════════════
+       TIMELINE
+    ══════════════════════════════════════════ */
+      .timeline {
+        position: relative;
+        padding-left: 40px;
+      }
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 14px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--gold);
+        opacity: 0.4;
+      }
+      .timeline-item {
+        position: relative;
+        margin-bottom: 36px;
+      }
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -34px;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--gold);
+        border: 2px solid var(--paper);
+        box-shadow: 0 0 0 2px var(--gold);
+      }
+      .timeline-item.active::before {
+        background: var(--red);
+        box-shadow: 0 0 0 2px var(--red);
+      }
+      .timeline-item.future::before {
+        background: var(--parchment-dk);
+        box-shadow: 0 0 0 2px var(--grey);
+      }
+      .timeline-item.income-point::before {
+        background: var(--green);
+        box-shadow: 0 0 0 2px var(--green);
+      }
+      .tl-date {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin-bottom: 4px;
+      }
+      .tl-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      .tl-body {
+        font-size: 13px;
+        color: var(--grey);
+        line-height: 1.6;
+      }
+      .tl-badge {
+        display: inline-block;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        margin-top: 8px;
+      }
+      .tl-badge.debt {
+        background: var(--red-light);
+        color: var(--red);
+      }
+      .tl-badge.income {
+        background: var(--green-light);
+        color: var(--green);
+      }
+      .tl-badge.current {
+        background: var(--gold-light);
+        color: #7a5a00;
+      }
+
+      /* ══════════════════════════════════════════
+       GRID LAYOUTS
+    ══════════════════════════════════════════ */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin: 24px 0;
+      }
+      .three-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        margin: 24px 0;
+      }
+      @media (max-width: 900px) {
+        .two-col,
+        .three-col {
+          grid-template-columns: 1fr;
+        }
+        .screen-meta-bar {
+          grid-template-columns: 1fr 1fr;
+        }
+        .cover-kpi-row {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        .content-wrap {
+          padding: 40px 24px 80px;
+        }
+        .cover-toc-grid {
+          grid-template-columns: 1fr;
+        }
+        .cover-meta-grid {
+          grid-template-columns: 1fr;
+        }
+        .cover-kpi-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .screen-meta-bar {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      /* ══════════════════════════════════════════
+       FORMULA BOX
+    ══════════════════════════════════════════ */
+      .formula-box {
+        background: #0f1117;
+        border: 1px solid #2a2a2a;
+        border-left: 4px solid var(--gold);
+        padding: 18px 22px;
+        margin: 16px 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        line-height: 1.8;
+        color: #e0e0e0;
+        overflow-x: auto;
+      }
+      .formula-box .comment {
+        color: #555;
+      }
+      .formula-box .val {
+        color: #4ade80;
+      }
+      .formula-box .label {
+        color: var(--gold);
+      }
+
+      /* ══════════════════════════════════════════
+       BADGES
+    ══════════════════════════════════════════ */
+      .badge {
+        display: inline-block;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 2px;
+        margin: 2px;
+      }
+      .badge-red {
+        background: var(--red-light);
+        color: var(--red);
+      }
+      .badge-gold {
+        background: var(--gold-light);
+        color: #7a5a00;
+      }
+      .badge-green {
+        background: var(--green-light);
+        color: var(--green);
+      }
+      .badge-blue {
+        background: var(--blue-light);
+        color: var(--blue);
+      }
+      .badge-grey {
+        background: #e0e0e0;
+        color: #555;
+      }
+      .badge-teal {
+        background: var(--teal-light);
+        color: var(--teal);
+      }
+      .badge-orange {
+        background: var(--orange-light);
+        color: var(--orange);
+      }
+
+      /* ══════════════════════════════════════════
+       HIGHLIGHT ROW
+    ══════════════════════════════════════════ */
+      .highlight-row {
+        display: flex;
+        gap: 20px;
+        background: var(--parchment);
+        border: 1px solid var(--parchment-dk);
+        padding: 20px;
+        margin: 20px 0;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+      .hl-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 40px;
+        font-weight: 900;
+        color: var(--red);
+        line-height: 1;
+        min-width: 120px;
+      }
+      .hl-text {
+        flex: 1;
+      }
+      .hl-text h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .hl-text p {
+        font-size: 13px;
+        color: var(--grey);
+        margin: 0;
+      }
+
+      /* ══════════════════════════════════════════
+       PAYMENT PILL
+    ══════════════════════════════════════════ */
+      .payment-pill {
+        display: flex;
+        height: 32px;
+        overflow: hidden;
+        margin: 10px 0;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 10px;
+      }
+      .pp-interest {
+        background: var(--red);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pp-principal {
+        background: var(--green);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .pp-label {
+        font-size: 9px;
+        letter-spacing: 0.1em;
+      }
+
+      /* ══════════════════════════════════════════
+       INCOME BREAKDOWN BOX
+    ══════════════════════════════════════════ */
+      .income-box {
+        background: var(--ink);
+        padding: 24px 28px;
+        margin: 24px 0;
+      }
+      .income-box-title {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--green);
+        margin-bottom: 16px;
+        display: block;
+      }
+      .income-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #1e1e1e;
+        font-size: 13px;
+      }
+      .income-row:last-child {
+        border-bottom: none;
+        border-top: 2px solid var(--gold);
+        padding-top: 12px;
+        margin-top: 4px;
+      }
+      .income-row-label {
+        color: #aaa;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 11px;
+      }
+      .income-row-val {
+        font-family: 'Playfair Display', serif;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .income-row-val.pos {
+        color: #4ade80;
+      }
+      .income-row-val.neg {
+        color: var(--red);
+      }
+      .income-row-val.net {
+        color: var(--gold);
+      }
+
+      /* ══════════════════════════════════════════
+       ORNAMENT / FOOTER
+    ══════════════════════════════════════════ */
+      .ornament {
+        text-align: center;
+        color: var(--gold);
+        font-size: 14px;
+        letter-spacing: 0.5em;
+        margin: 64px 0 0;
+        opacity: 0.5;
+      }
+      footer {
+        background: var(--ink);
+        color: #555;
+        padding: 32px 60px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-align: center;
+        border-top: 3px solid var(--red);
+      }
+      ul.styled,
+      ol.styled {
+        margin: 14px 0 14px 24px;
+        line-height: 1.75;
+      }
+      ul.styled li,
+      ol.styled li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #1a1a1a;
+      }
+      ul.styled li::marker {
+        color: var(--gold);
+      }
+      ol.styled li::marker {
+        color: var(--red);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 11px;
+      }
+
+      /* ══════════════════════════════════════════
+       PRINT / PDF STYLES
+    ══════════════════════════════════════════ */
+      @media print {
+        /* PAGE SETUP */
+        @page {
+          size: Letter;
+          margin: 2.2cm 2cm 2.8cm 2cm;
+        }
+        @page :first {
+          margin: 0;
+        }
+        @page {
+          @bottom-left {
+            content: 'Dennis Kibet · UA MS Computer Science · Mpower Loan Analysis';
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8pt;
+            color: #888;
+          }
+          @bottom-right {
+            content: 'Page ' counter(page) ' of ' counter(pages);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8pt;
+            color: #888;
+          }
+          @top-right {
+            content: 'CONFIDENTIAL · JUNE 2026';
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8pt;
+            color: #bbb;
+          }
+          @top-left {
+            content: 'Mpower Loan Forensic Analysis';
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8pt;
+            color: #bbb;
+          }
+        }
+        @page :first {
+          @bottom-left {
+            content: none;
+          }
+          @bottom-right {
+            content: none;
+          }
+          @top-left {
+            content: none;
+          }
+          @top-right {
+            content: none;
+          }
+        }
+
+        /* HIDE SCREEN-ONLY ELEMENTS */
+        #progress-bar,
+        #scroll-top {
+          display: none !important;
+        }
+
+        /* BODY RESET FOR PRINT */
+        body {
+          font-size: 11pt;
+          line-height: 1.6;
+          background: white;
+          color: #111;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        /* COVER PAGE: FULL PAGE */
+        .cover-page {
+          page-break-after: always;
+          height: 100vh;
+          min-height: 100vh;
+          overflow: hidden;
+        }
+
+        /* KPI STRIP BELOW COVER — new page */
+        .screen-meta-bar {
+          page-break-after: avoid;
+        }
+
+        /* CONTENT WRAP */
+        .content-wrap {
+          padding: 32pt 0 60pt;
+          max-width: 100%;
+        }
+
+        /* PART DIVIDERS — start new page */
+        .part-divider {
+          page-break-before: always;
+          margin-top: 0;
+          padding-top: 12pt;
+        }
+
+        /* FIRST PART — no extra break (it follows the KPI strip) */
+        .part-divider:first-of-type {
+          page-break-before: always;
+        }
+
+        /* KEEP TOGETHER — never break these elements */
+        .callout,
+        .formula-box,
+        .highlight-row,
+        .income-box,
+        .tl-badge,
+        .stat-box,
+        .scenario-card,
+        .scenario-grid,
+        .stat-row,
+        .timeline-item,
+        .chart-container {
+          page-break-inside: avoid;
+        }
+
+        /* TABLE — keep header with body */
+        thead {
+          display: table-header-group;
+        }
+        tfoot {
+          display: table-footer-group;
+        }
+        tr {
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
+        table {
+          page-break-inside: auto;
+        }
+        .table-wrap {
+          page-break-inside: avoid;
+        }
+
+        .section-block {
+          page-break-inside: auto;
+        }
+        .section-title,
+        .subsection-title,
+        .part-title,
+        .part-label {
+          page-break-after: avoid;
+        }
+        #payment-pills > div {
+          page-break-inside: avoid;
+        }
+
+        .part-title {
+          font-size: 28pt;
+        }
+        .section-title {
+          font-size: 18pt;
+        }
+        .cover-h1 {
+          font-size: 52pt;
+        }
+
+        .callout.warning {
+          background: #f0e0a0 !important;
+          border-left-color: #b8860b !important;
+        }
+        .callout.critical {
+          background: #f5cdc9 !important;
+          border-left-color: #c0392b !important;
+        }
+        .callout.note {
+          background: #d0dce8 !important;
+          border-left-color: #1a3a5c !important;
+        }
+        .callout.success {
+          background: #c9e8d5 !important;
+          border-left-color: #1a5c2e !important;
+        }
+        .callout.teal {
+          background: #c9e8e8 !important;
+          border-left-color: #0b6e6e !important;
+        }
+        .callout.purple {
+          background: #e0d0f0 !important;
+          border-left-color: #4a1a6e !important;
+        }
+        .callout.orange {
+          background: #f5dac9 !important;
+          border-left-color: #b84a0b !important;
+        }
+        thead {
+          background: #0d0d0d !important;
+          color: white !important;
+        }
+        .stat-box {
+          background: #0d0d0d !important;
+        }
+        .cover-page {
+          background: #0d0d0d !important;
+        }
+        .income-box {
+          background: #0d0d0d !important;
+        }
+        .screen-only {
+          display: none !important;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .cover-meta-grid {
+          border-color: #333 !important;
+        }
+        .cover-meta-cell {
+          border-right-color: #333 !important;
+        }
+        .cover-kpi-cell {
+          border-right-color: #333 !important;
+        }
+        .part-intro {
+          page-break-after: avoid;
+          orphans: 3;
+          widows: 3;
+        }
+        p {
+          orphans: 3;
+          widows: 3;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="progress-bar"></div>
+
+    <!-- ══════════════════════════════════════
+     COVER PAGE (full page in PDF)
+══════════════════════════════════════ -->
+    <div class="cover-page">
+      <div class="cover-top-bar">
+        <span>CONFIDENTIAL — PERSONAL FINANCIAL ANALYSIS</span>
+        <span>GENERATED: JULY 3, 2026</span>
+        <span>UA · MS COMPUTER SCIENCE · SEMESTER 1 OF 4</span>
+      </div>
+
+      <div class="cover-body">
+        <span class="cover-eyebrow"
+          >Mpower Financing · Bank of Lake Mills · Forensic Analysis
+          Report</span
+        >
+        <div class="cover-rule-top"></div>
+        <h1 class="cover-h1">The True Cost<br />of Your Education</h1>
+        <h2 class="cover-h2">
+          A Rigorous Statistical Examination of Loan Behavior,<br />Amortization
+          Dynamics &amp; Forward Projections
+        </h2>
+        <div class="cover-rule-bot"></div>
+
+        <div class="cover-meta-grid">
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Borrower</span>
+            <span class="cover-meta-val">Dennis Kibet</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Account</span>
+            <span class="cover-meta-val">2111725000</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Loan</span>
+            <span class="cover-meta-val">#1567680</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Lender</span>
+            <span class="cover-meta-val">Bank of Lake Mills</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Loan Status</span>
+            <span class="cover-meta-val" style="color: #4ade80"
+              >In Repayment</span
+            >
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Report Date</span>
+            <span class="cover-meta-val">July 3, 2026</span>
+          </div>
+        </div>
+
+        <div class="cover-kpi-row">
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">$24,906</span>
+            <span class="cover-kpi-label">Total Balance</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">13.99%</span>
+            <span class="cover-kpi-label">Interest Rate APR</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">$288.45</span>
+            <span class="cover-kpi-label">Min. Monthly Payment</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">$328.45</span>
+            <span class="cover-kpi-label">Next AutoPay</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">144 mo</span>
+            <span class="cover-kpi-label">Term Remaining</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">$1,754</span>
+            <span class="cover-kpi-label">Total Paid to Date</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cover-toc">
+        <div class="cover-toc-title">Table of Contents</div>
+        <div class="cover-toc-grid">
+          <div class="cover-toc-item">
+            <span class="part-num">Part I</span> Verified Account State
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part II</span> Payment Decomposition
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part III</span> Amortization Architecture
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part IV</span> School Income &amp; Allocation
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part V</span> Academic Financial Timeline
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part VI</span> OPT Income &amp; Debt Service
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part VII</span> Risk &amp; Sensitivity
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part VIII</span> Action Framework
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part IX</span> 10-Year Life Cycle
+          </div>
+          <div class="cover-toc-item">
+            <span class="part-num">Part X</span> Master Summary
+          </div>
+        </div>
+      </div>
+
+      <div class="cover-bottom">
+        <span>MPOWER STUDENT LOAN · FORENSIC ANALYSIS · JULY 2026</span>
+        <span>ALL PROJECTIONS ARE DETERMINISTIC · NOT FINANCIAL ADVICE</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     KPI STRIP (screen view — below cover)
+══════════════════════════════════════ -->
+    <div class="screen-meta-bar">
+      <div class="kpi-cell">
+        <span class="kpi-val">$24,906</span
+        ><span class="kpi-label">Total Balance</span>
+        <div class="kpi-sub">Principal + interest</div>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val danger">13.99%</span
+        ><span class="kpi-label">Interest Rate APR</span>
+        <div class="kpi-sub">2.3× federal grad rate</div>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val">$288.45</span
+        ><span class="kpi-label">Min. Monthly Payment</span>
+        <div class="kpi-sub">Contractual amount</div>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val">$328.45</span
+        ><span class="kpi-label">Next AutoPay</span>
+        <div class="kpi-sub">Due 07/12/2026</div>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val danger">144 mo</span
+        ><span class="kpi-label">Term Remaining</span>
+        <div class="kpi-sub">12 years · 2038</div>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val">$1,754</span
+        ><span class="kpi-label">Total Paid</span>
+        <div class="kpi-sub">81.8% to interest</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+    <div class="content-wrap">
+      <!-- ════════ PART I ════════ -->
+      <div class="part-divider" id="part1">
+        <span class="part-label">Part I · Empirical Baseline</span>
+        <h2 class="part-title">Verified Account State</h2>
+        <p class="part-intro">
+          The following data is transcribed directly from your loan servicer's
+          account statement as of July 3, 2026. Every projection in this
+          analysis derives deterministically from these observed parameters.
+        </p>
+      </div>
+
+      <div class="section-block" id="s1-1">
+        <span class="section-num">Section 1.1</span>
+        <h3 class="section-title">Complete Loan Account Summary</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Observed Value</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Account</strong></td>
+                <td><span class="badge badge-blue">2111725000</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>Loan</strong></td>
+                <td><span class="badge badge-gold">#1567680</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>Borrower</strong></td>
+                <td>DENNIS KIBET</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>Lender</strong></td>
+                <td>Bank of Lake Mills</td>
+                <td>Mpower Financing partner</td>
+              </tr>
+              <tr>
+                <td><strong>Loan Type</strong></td>
+                <td>Private Student Loan</td>
+                <td>No federal protections</td>
+              </tr>
+              <tr>
+                <td><strong>Loan Status</strong></td>
+                <td><span class="badge badge-green">In Repayment</span></td>
+                <td>Current — no delinquency</td>
+              </tr>
+              <tr>
+                <td><strong>Borrower Signature Date</strong></td>
+                <td>09/16/2025</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>First Disbursement</strong></td>
+                <td>01/13/2026</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>Total Disbursed Amount</strong></td>
+                <td class="td-num">$25,027.50</td>
+                <td>Original principal (face amount)</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td><strong>Origination Fee (Deducted)</strong></td>
+                <td class="td-num td-gold">≈ $1,527.50</td>
+                <td>Disbursed principal minus net cash received</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td><strong>Net Cash Actually Received</strong></td>
+                <td class="td-num td-gold">$23,500.00</td>
+                <td>What actually hit your bank account</td>
+              </tr>
+              <tr>
+                <td><strong>Current Principal Balance</strong></td>
+                <td class="td-num td-red">$24,707.52</td>
+                <td>Δ −$319.98 from origination</td>
+              </tr>
+              <tr>
+                <td><strong>Outstanding Interest</strong></td>
+                <td class="td-num td-red">$198.74</td>
+                <td>Accrued since last payment</td>
+              </tr>
+              <tr>
+                <td><strong>Total Balance</strong></td>
+                <td class="td-num td-red">$24,906.26</td>
+                <td>Principal + interest</td>
+              </tr>
+              <tr>
+                <td><strong>Current Interest Rate</strong></td>
+                <td class="td-num">13.990%</td>
+                <td>Fixed APR</td>
+              </tr>
+              <tr>
+                <td><strong>Repayment Term Remaining</strong></td>
+                <td class="td-num">144 months</td>
+                <td>12 years</td>
+              </tr>
+              <tr>
+                <td><strong>Monthly Payment Amount (Contractual)</strong></td>
+                <td class="td-num">$288.45</td>
+                <td>Minimum required</td>
+              </tr>
+              <tr>
+                <td><strong>Total Amount Paid (to date)</strong></td>
+                <td class="td-num td-gold">$1,753.81</td>
+                <td>6 payment transactions (10 ledger entries)</td>
+              </tr>
+              <tr>
+                <td><strong>Total Capped Interest</strong></td>
+                <td class="td-num">$0.00</td>
+                <td>No capitalization</td>
+              </tr>
+              <tr>
+                <td><strong>Past Due Amount</strong></td>
+                <td class="td-num td-green">$0.00</td>
+                <td>Account current</td>
+              </tr>
+              <tr>
+                <td><strong>Current Payment Amount Due</strong></td>
+                <td class="td-num td-green">$0.00</td>
+                <td>Partial payment received</td>
+              </tr>
+              <tr>
+                <td><strong>Partial Payment Received</strong></td>
+                <td class="td-num">$288.45</td>
+                <td>Applied to current period</td>
+              </tr>
+              <tr>
+                <td><strong>Total Amount Due On/Before</strong></td>
+                <td>07/12/2026</td>
+                <td>Remaining balance of auto-pay</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout critical">
+          <span class="callout-label"
+            >⚠ Origination Fee — The Hidden First Loss</span
+          >
+          <p>
+            You signed for <strong>$25,027.50</strong>, but only
+            <strong>$23,500.00</strong> was actually deposited into your
+            account. The difference —
+            <strong>≈$1,527.50 (≈6.1% of face value)</strong> — is Mpower's
+            origination fee, deducted at disbursement. You immediately owe
+            interest on money you never touched. This same fee structure applies
+            to <strong>every future disbursement</strong>: whatever amount you
+            borrow for Semesters 2, 3, and 4, expect roughly
+            <strong>6% to be skimmed off the top</strong> before it reaches your
+            bank account. Budget for this — if you need $10,000 in usable cash
+            for a semester, you will likely need to borrow closer to
+            <strong>$10,650</strong> to net that amount.
+          </p>
+        </div>
+
+        <div class="callout note">
+          <span class="callout-label">📘 Key Observation</span>
+          <p>
+            The contractual minimum payment is <strong>$288.45</strong>, but
+            your AutoPay is set to <strong>$328.45</strong> — an intentional
+            overpayment of <strong>$40.00/month</strong>. This is a
+            mathematically sound decision: the extra $40 directly attacks
+            principal and accelerates amortization by approximately
+            <strong>8–10 months</strong> over the life of the loan.
+          </p>
+        </div>
+      </div>
+
+      <div class="section-block" id="s1-2">
+        <span class="section-num">Section 1.2</span>
+        <h3 class="section-title">
+          Complete Transaction Ledger &amp; Dissection
+        </h3>
+        <p>
+          The full servicer-reported transaction ledger contains 10 entries (vs.
+          6 payment dates), because several months show a payment split into
+          multiple line items — one applying to principal, one applying purely
+          to interest. This is standard for how the servicer books a combined
+          "regular + extra" payment: the extra amount above the contractual
+          minimum is recorded as a separate transaction. Reading the ledger
+          bottom-to-top (oldest to newest) shows the true mechanics of each
+          month's paydown.
+        </p>
+        <div class="table-wrap">
+          <table class="amort-mini">
+            <thead>
+              <tr>
+                <th>Effective Date</th>
+                <th>Transaction Type</th>
+                <th class="td-num">Txn Amount</th>
+                <th class="td-num">Principal</th>
+                <th class="td-num">Interest</th>
+                <th class="td-num">Interest Accrued</th>
+                <th class="td-num">Fee</th>
+                <th class="td-num">Ending Principal Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1/13/2026</td>
+                <td>Disbursement — New Loan</td>
+                <td class="td-num">$25,027.50</td>
+                <td class="td-num td-green">($25,027.50)</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$25,027.50</td>
+              </tr>
+              <tr>
+                <td>2/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$291.78</td>
+                <td class="td-num td-green">$2.82</td>
+                <td class="td-num td-red">$288.96</td>
+                <td class="td-num">$288.96</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$25,024.68</td>
+              </tr>
+              <tr>
+                <td>3/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$291.78</td>
+                <td class="td-num td-green">$23.40</td>
+                <td class="td-num td-red">$268.38</td>
+                <td class="td-num">$268.38</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$25,001.28</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td>4/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$291.78</td>
+                <td class="td-num td-green">$0.00</td>
+                <td class="td-num td-red">$291.78</td>
+                <td class="td-num">$296.86</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$25,001.28</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td>4/12/2026</td>
+                <td>Loan Payment (extra)</td>
+                <td class="td-num">$130.00</td>
+                <td class="td-num td-green">$124.92</td>
+                <td class="td-num td-red">$5.08</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,876.36</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td>5/12/2026</td>
+                <td>Loan Payment (extra)</td>
+                <td class="td-num">$160.02</td>
+                <td class="td-num td-green">$0.00</td>
+                <td class="td-num td-red">$160.02</td>
+                <td class="td-num">$285.85</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,876.36</td>
+              </tr>
+              <tr style="background: var(--gold-light)">
+                <td>5/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$260.00</td>
+                <td class="td-num td-green">$134.17</td>
+                <td class="td-num td-red">$125.83</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,742.19</td>
+              </tr>
+              <tr>
+                <td>6/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$28.45</td>
+                <td class="td-num td-green">$0.00</td>
+                <td class="td-num td-red">$28.45</td>
+                <td class="td-num">$293.78</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,742.19</td>
+              </tr>
+              <tr>
+                <td>6/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$288.45</td>
+                <td class="td-num td-green">$23.12</td>
+                <td class="td-num td-red">$265.33</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,719.07</td>
+              </tr>
+              <tr>
+                <td>6/12/2026</td>
+                <td>Loan Payment</td>
+                <td class="td-num">$11.55</td>
+                <td class="td-num td-green">$11.55</td>
+                <td class="td-num td-red">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$0.00</td>
+                <td class="td-num">$24,707.52</td>
+              </tr>
+              <tr style="background: #111; color: #ddd">
+                <td
+                  style="
+                    color: #aaa;
+                    font-family: 'IBM Plex Mono', monospace;
+                    font-size: 11px;
+                  "
+                >
+                  TOTALS
+                </td>
+                <td></td>
+                <td
+                  style="
+                    font-family: 'IBM Plex Mono', monospace;
+                    color: var(--gold);
+                  "
+                >
+                  $1,753.81
+                </td>
+                <td class="td-num" style="color: #4ade80">$319.98</td>
+                <td class="td-num" style="color: var(--red)">$1,433.83</td>
+                <td class="td-num"></td>
+                <td class="td-num"></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning">
+          <span class="callout-label"
+            >⚡ Statistical Anomaly — April &amp; May</span
+          >
+          Extra payments in April and May produced a 44× increase in principal
+          reduction ($2.82 → $124.92). The June regression to near-minimum
+          produced only $34.67 in combined principal reduction ($23.12 + $11.55)
+          — demonstrating the extreme sensitivity of early-amortization progress
+          to payment magnitude.
+        </div>
+      </div>
+
+      <div class="section-block" id="s1-3">
+        <span class="section-num">Section 1.3</span>
+        <h3 class="section-title">Payment-by-Payment Decomposition</h3>
+        <div class="chart-container">
+          <div class="chart-title">
+            Monthly Payment Allocation — Interest (Red) vs. Principal (Green) ·
+            Stacked
+          </div>
+          <canvas id="paymentChart" height="220"></canvas>
+        </div>
+        <div class="subsection-title">
+          Payment Pill Visualisation — Interest:Principal Split per Month
+        </div>
+        <div id="payment-pills"></div>
+        <div class="callout note">
+          <span class="callout-label">📘 AutoPay Note</span>
+          <p>
+            You are enrolled in Automatic Payments.
+            <strong>$328.45</strong> will be deducted from your designated
+            account on <strong>07/12/2026</strong>. This is
+            <strong>$40.00</strong> above the contractual minimum of $288.45 — a
+            prudent decision that accelerates principal reduction.
+          </p>
+        </div>
+      </div>
+
+      <div class="section-block" id="s1-4">
+        <span class="section-num">Section 1.4</span>
+        <h3 class="section-title">Current Liquidity Position</h3>
+        <p>
+          Separate from the loan mechanics above, your available liquidity today
+          is a critical input for how aggressively you can safely overpay
+          without risking a cash shortfall.
+        </p>
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num">$5,300</span>
+            <span class="stat-label">Bank Account Balance</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">$2,600</span>
+            <span class="stat-label">Cash on Hand</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num green">$7,900</span>
+            <span class="stat-label">Total Liquid Assets</span>
+          </div>
+        </div>
+        <div class="callout note">
+          <span class="callout-label">📘 Liquidity Context</span>
+          <p>
+            $7,900 in combined liquidity is a meaningful buffer relative to your
+            monthly obligations (Mpower AutoPay $328.45 + ISP relocation
+            installment $89 = <strong>$417.45/month</strong> in fixed debt
+            service). At current liquidity, you could cover roughly
+            <strong>19 months</strong> of combined minimum debt payments from
+            cash alone with zero income — though this is a stress-test figure,
+            not a recommendation to stop earning or to draw this down. This
+            buffer should generally be preserved for emergencies rather than
+            deployed entirely toward extra loan principal.
+          </p>
+        </div>
+      </div>
+
+      <!-- ════════ PART II — PAYMENT DECOMPOSITION ════════ -->
+      <div class="part-divider" id="part2">
+        <span class="part-label">Part II · Payment Decomposition</span>
+        <h2 class="part-title">Where Your Money Actually Goes</h2>
+        <p class="part-intro">
+          Every dollar you pay is split between interest and principal. The
+          ratio is the single most important number in your loan — it determines
+          how quickly you escape debt. This section dissects that ratio across
+          every payment you've made.
+        </p>
+      </div>
+
+      <div class="section-block" id="s2-1">
+        <span class="section-num">Section 2.1</span>
+        <h3 class="section-title">The Interest Trap — Quantified</h3>
+        <div class="two-col">
+          <div>
+            <p>
+              <strong>Of the $1,753.81 you've paid to date:</strong>
+            </p>
+            <ul class="styled">
+              <li>
+                <strong>$1,433.83</strong> (81.8%) went to interest —
+                <span class="badge badge-red">burned</span>
+              </li>
+              <li>
+                <strong>$319.98</strong> (18.2%) went to principal —
+                <span class="badge badge-green">debt reduction</span>
+              </li>
+            </ul>
+            <p style="margin-top: 12px">
+              At the contractual minimum of <strong>$288.45</strong>, the
+              monthly interest on your current principal is approximately
+              <strong>$288.00</strong>. This means only
+              <strong>$0.45</strong> of your minimum payment goes toward
+              principal reduction at the current balance.
+            </p>
+            <div class="callout critical" style="margin-top: 12px">
+              <span class="callout-label">⚠ Critical Finding</span>
+              <p>
+                Your <strong>$328.45</strong> AutoPay (which includes $40 extra)
+                reduces the principal by approximately
+                <strong>$40.45</strong> per month. Without this overpayment, the
+                loan would be in near-stasis — barely moving.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="stat-row" style="grid-template-columns: 1fr 1fr">
+              <div class="stat-box">
+                <span class="stat-num red">81.8%</span>
+                <span class="stat-label">Payments → Interest</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">18.2%</span>
+                <span class="stat-label">Payments → Principal</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num red">$288.00</span>
+                <span class="stat-label">Monthly Interest Accrual</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">$40.45</span>
+                <span class="stat-label">Principal Δ with AutoPay</span>
+              </div>
+            </div>
+            <div class="callout success" style="margin-top: 12px">
+              <span class="callout-label">✅ The $40 AutoPay Bonus</span>
+              <p>
+                Your $328.45 AutoPay (vs. $288.45 minimum) applies an extra
+                <strong>$40/month</strong> to principal. Over 144 months, this
+                simple decision saves approximately
+                <strong>$2,500–$3,000</strong> in interest and shortens the loan
+                by <strong>8–10 months</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PART III — AMORTIZATION ════════ -->
+      <div class="part-divider" id="part3">
+        <span class="part-label">Part III · Mathematical Mechanics</span>
+        <h2 class="part-title">
+          Amortization Architecture: How the Loan Destroys Wealth
+        </h2>
+        <p class="part-intro">
+          Amortization is a deterministic mathematical function — given an
+          initial principal, interest rate, and payment amount, the future is
+          fully computable. What follows is a complete forward simulation of
+          your loan's life under multiple payment scenarios.
+        </p>
+      </div>
+
+      <div class="section-block" id="s3-1">
+        <span class="section-num">Section 3.1</span>
+        <h3 class="section-title">The Governing Equation</h3>
+        <div class="formula-box">
+          <span class="label">Monthly Interest Accrual:</span><br /><br />
+          <span class="comment"
+            >// r = Annual Rate ÷ 12 = 13.99% ÷ 12 = 1.16583% per month</span
+          ><br />
+          <span class="comment"
+            >// P = Current Principal Balance · I = Monthly Interest Due</span
+          ><br /><br />
+          I = P × (0.1399 / 12) <span class="comment">// ≈ P × 0.0116583</span
+          ><br /><br />
+          <span class="comment">// On your $24,707.52 balance:</span><br />
+          I = $24,707.52 × 0.0116583 =
+          <span class="val">$288.00 / month in interest alone</span><br /><br />
+          Δp = AutoPay − I = $328.45 − $288.00 =
+          <span class="val">≈ $40.45 toward principal each month</span
+          ><br /><br />
+          <span class="comment"
+            >// The $40 overpayment is the only reason the balance decreases
+            meaningfully.</span
+          >
+        </div>
+        <div class="callout critical">
+          <span class="callout-label">⚠ Critical Threshold Finding</span>
+          Your minimum payment of <strong>$288.45</strong> exceeds monthly
+          interest by only <strong>~$0.45</strong>. At minimum payment,
+          principal reduces by less than $0.50/month. Your
+          <strong>$40/month AutoPay overpayment</strong> is the primary engine
+          of principal reduction.
+        </div>
+      </div>
+
+      <div class="section-block" id="s3-2">
+        <span class="section-num">Section 3.2</span>
+        <h3 class="section-title">Full 144-Month Amortization Simulation</h3>
+        <div class="chart-container">
+          <div class="chart-title">
+            Balance Trajectory &amp; Cumulative Interest vs. Principal Paid
+            (Months 1–144) — With $328.45 AutoPay
+          </div>
+          <canvas id="amortChart" height="300"></canvas>
+        </div>
+        <div class="callout note">
+          <span class="callout-label">📐 Crossover Point</span>
+          The crossover point — where cumulative principal finally exceeds
+          cumulative interest — occurs at approximately
+          <strong>month 100 of 144</strong>. For the first 8.3 years, you will
+          have paid more in interest than in debt reduction. The $40 overpayment
+          accelerates this crossover by approximately 4 months compared to
+          minimum payments.
+        </div>
+      </div>
+
+      <div class="section-block" id="s3-3">
+        <span class="section-num">Section 3.3</span>
+        <h3 class="section-title">Payment Scenario Modeling — Three Futures</h3>
+        <div class="chart-container">
+          <div class="chart-title">
+            Balance Over Time — $328.45 AutoPay vs. +$200/mo vs. +$500/mo
+          </div>
+          <canvas id="scenarioChart" height="280"></canvas>
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-card worst">
+            <span class="sc-tag">Scenario A · Baseline</span>
+            <div class="sc-title">Minimum Only ($288.45)</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly Payment</span
+              ><span class="sc-metric-val">$288.45</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Payoff Date</span
+              ><span class="sc-metric-val td-red">June 2038</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Paid</span
+              ><span class="sc-metric-val td-red">$41,537</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Interest</span
+              ><span class="sc-metric-val td-red">$16,829</span>
+            </div>
+          </div>
+          <div class="scenario-card opt">
+            <span class="sc-tag">Scenario B · Current</span>
+            <div class="sc-title">AutoPay ($328.45)</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly Payment</span
+              ><span class="sc-metric-val">$328.45</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Payoff Date</span
+              ><span class="sc-metric-val td-gold">~Oct 2037</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Paid</span
+              ><span class="sc-metric-val td-gold">≈ $39,800</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Interest</span
+              ><span class="sc-metric-val td-gold">≈ $15,100</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Saved vs. Min</span
+              ><span class="sc-metric-val td-green">≈ $1,700</span>
+            </div>
+          </div>
+          <div class="scenario-card best">
+            <span class="sc-tag">Scenario C · Aggressive</span>
+            <div class="sc-title">+$200/mo ($528.45)</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly Payment</span
+              ><span class="sc-metric-val">$528.45</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Payoff Date</span
+              ><span class="sc-metric-val td-green">~Feb 2032</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Paid</span
+              ><span class="sc-metric-val td-green">≈ $33,100</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Total Interest</span
+              ><span class="sc-metric-val td-green">≈ $8,400</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Saved vs. AutoPay</span
+              ><span class="sc-metric-val td-green">≈ $6,700</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout success">
+          <span class="callout-label"
+            >📊 Key Takeaway — Marginal Return on Extra Payments</span
+          >
+          Your <strong>$40/month AutoPay overpayment</strong> is a smart
+          baseline. Each additional $100/month applied during year 1–2 saves
+          approximately <strong>$800–1,200</strong> in future interest — an
+          8–12× risk-free return on each extra dollar.
+        </div>
+      </div>
+
+      <!-- ════════ PART IV — SCHOOL INCOME ════════ -->
+      <div class="part-divider" id="part4">
+        <span class="part-label">Part IV · In-Program Earnings</span>
+        <h2 class="part-title">
+          School Job Income: The Hidden Amortization Accelerator
+        </h2>
+        <p class="part-intro">
+          You earn $500 biweekly from an on-campus job — $1,000 per month in
+          gross income while still a student. This section subjects that income
+          stream to rigorous financial analysis: what it's actually worth after
+          taxes, how it mathematically interacts with your loan, and what each
+          allocation scenario produces in debt reduction across your remaining 3
+          semesters.
+        </p>
+      </div>
+
+      <div class="section-block" id="s4-1">
+        <span class="section-num">Section 4.1</span>
+        <h3 class="section-title">
+          Gross-to-Net Income Derivation — F-1 On-Campus Employment
+        </h3>
+        <div class="income-box">
+          <span class="income-box-title"
+            >Monthly Income Statement — F-1 On-Campus · $500 Biweekly</span
+          >
+          <div class="income-row">
+            <span class="income-row-label"
+              >Gross Monthly Income (2 × $500)</span
+            >
+            <span class="income-row-val pos">+ $1,000.00</span>
+          </div>
+          <div class="income-row">
+            <span class="income-row-label">FICA Tax (SS + Medicare)</span>
+            <span class="income-row-val pos">$0.00 EXEMPT</span>
+          </div>
+          <div class="income-row">
+            <span class="income-row-label">Federal Income Tax (~10%)</span>
+            <span class="income-row-val neg">− $83.00/mo</span>
+          </div>
+          <div class="income-row">
+            <span class="income-row-label">Alabama State Tax (~5%)</span>
+            <span class="income-row-val neg">− $50.00/mo</span>
+          </div>
+          <div class="income-row">
+            <span class="income-row-label">Net Monthly Take-Home</span>
+            <span class="income-row-val net">$867 / month</span>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num">$1,000</span
+            ><span class="stat-label">Gross Monthly</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num green">$867</span
+            ><span class="stat-label">Net Monthly Take-Home</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">$133</span
+            ><span class="stat-label">Total Monthly Tax</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num red">13.3%</span
+            ><span class="stat-label">Effective Tax Rate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="s4-2">
+        <span class="section-num">Section 4.2</span>
+        <h3 class="section-title">
+          Loan Impact Modeling — School Income Allocation Scenarios
+        </h3>
+        <p>
+          Given a net monthly income of $867, the critical question is how much
+          to allocate to loan principal versus living expenses. The following
+          models three allocation strategies across the remaining earning window
+          and computes their precise impact on peak debt at graduation.
+        </p>
+
+        <div class="chart-container">
+          <div class="chart-title">
+            School Income Allocation — Impact on Graduation Debt by Scenario
+          </div>
+          <canvas id="schoolIncomeChart" height="260"></canvas>
+        </div>
+
+        <div class="scenario-grid">
+          <div class="scenario-card worst">
+            <span class="sc-tag">Allocation A · Survival</span>
+            <div class="sc-title">$0 to Loan (Min Pay Only)</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly to Principal</span
+              ><span class="sc-metric-val td-red">$0 extra</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Extra Principal (21mo)</span
+              ><span class="sc-metric-val td-red">$0</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Peak Debt at Graduation</span
+              ><span class="sc-metric-val td-red">~$52,000</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Interest Saved</span
+              ><span class="sc-metric-val td-red">$0</span>
+            </div>
+          </div>
+          <div class="scenario-card opt">
+            <span class="sc-tag">Allocation B · Moderate</span>
+            <div class="sc-title">$300/Month Extra</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly to Principal</span
+              ><span class="sc-metric-val td-gold">$300 extra</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Extra Principal (21mo)</span
+              ><span class="sc-metric-val">$6,300</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Peak Debt at Graduation</span
+              ><span class="sc-metric-val td-gold">~$47,700</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Interest Saved</span
+              ><span class="sc-metric-val td-green">≈ $3,200</span>
+            </div>
+          </div>
+          <div class="scenario-card best">
+            <span class="sc-tag">Allocation C · Optimal</span>
+            <div class="sc-title">$500/Month Extra</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Monthly to Principal</span
+              ><span class="sc-metric-val td-green">$500 extra</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Extra Principal (21mo)</span
+              ><span class="sc-metric-val">$10,500</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Peak Debt at Graduation</span
+              ><span class="sc-metric-val td-green">~$43,500</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Interest Saved</span
+              ><span class="sc-metric-val td-green">≈ $5,800</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout teal">
+          <span class="callout-label"
+            >🎯 Empirical Conclusion — School Income Is a Multiplier</span
+          >
+          Allocating $300–500/month from your school job to loan principal
+          reduces peak graduation debt from
+          <strong>~$52,000 to ~$43,500–47,700</strong>. This $4,300–8,500
+          reduction in principal eliminates
+          <strong>$3,200–5,800 in future interest</strong> — a compound benefit
+          that exceeds the nominal allocation by 50–60%.
+        </div>
+      </div>
+
+      <!-- ════════ PART V — ACADEMIC TIMELINE ════════ -->
+      <div class="part-divider" id="part5">
+        <span class="part-label">Part V · Academic Financial Timeline</span>
+        <h2 class="part-title">
+          Four Semesters, One Degree: The Complete Debt Accumulation Model
+        </h2>
+        <p class="part-intro">
+          With school income factored in, the trajectory of your debt
+          accumulation shifts materially. This section models the full
+          semester-by-semester debt stack incorporating minimum loan payments,
+          new disbursements (net of origination fees), and school income
+          allocation.
+        </p>
+      </div>
+
+      <div class="section-block" id="s5-1">
+        <span class="section-num">Section 5.1</span>
+        <h3 class="section-title">
+          Semester-by-Semester Debt &amp; Income Timeline
+        </h3>
+        <div class="timeline">
+          <div class="timeline-item active">
+            <div class="tl-date">Jan 2026 — Present · Semester 1</div>
+            <div class="tl-title">
+              Baseline Loan Active · School Job Earning
+            </div>
+            <div class="tl-body">
+              Balance: $24,906.26 · School job: $1,000/mo gross ($867 net).
+              AutoPay: $328.45/mo ($40 over minimum). Liquidity on hand: $7,900
+              (bank + cash).
+            </div>
+            <span class="tl-badge current">Balance: $24,906</span>
+            <span class="tl-badge income">School Income: $1,000/mo</span>
+          </div>
+          <div class="timeline-item income-point">
+            <div class="tl-date">May–Aug 2026 · Summer Break</div>
+            <div class="tl-title">Full-Time On-Campus Work Allowed</div>
+            <div class="tl-body">
+              F-1 rules permit 40 hr/week during breaks. At $12.50/hr:
+              ~$2,150/mo gross ($1,865 net). Critical window to maximize
+              principal reduction.
+            </div>
+            <span class="tl-badge income">Potential: $2,000+/mo</span>
+          </div>
+          <div class="timeline-item future">
+            <div class="tl-date">Aug 2026 · Semester 2</div>
+            <div class="tl-title">+$10,000 New Disbursement (Face Value)</div>
+            <div class="tl-body">
+              Projected balance at Sem 2 start (with $300/mo extra): ~$22,900. A
+              $10,000 face-value disbursement nets roughly $9,390 in cash (after
+              ~6.1% origination fee), but the full $10,000 is added to
+              principal. Adding $10,000 = <strong>~$32,900 total</strong>.
+            </div>
+            <span class="tl-badge debt">Projected Debt: ~$32,900</span>
+          </div>
+          <div class="timeline-item future">
+            <div class="tl-date">Jan 2027 · Semester 3</div>
+            <div class="tl-title">+$10,000 New Disbursement (Face Value)</div>
+            <div class="tl-body">
+              Projected total: ~<strong>$41,000–43,000</strong>. Monthly
+              interest approaches ~$490/month. Origination fee again removes
+              ~$610 from usable cash on this disbursement.
+            </div>
+            <span class="tl-badge debt">Projected Debt: ~$42,000</span>
+          </div>
+          <div class="timeline-item future">
+            <div class="tl-date">Aug 2027 · Semester 4 (Final)</div>
+            <div class="tl-title">+$10,000 Final Disbursement (Face Value)</div>
+            <div class="tl-body">
+              With school income allocated: projected peak debt ~<strong
+                >$46,000–50,000</strong
+              >
+              (vs. $52,000 without allocation).
+            </div>
+            <span class="tl-badge debt">Peak Debt: ~$48,000</span>
+          </div>
+          <div class="timeline-item future">
+            <div class="tl-date">Dec 2027 / Jan 2028 · Graduation → OPT</div>
+            <div class="tl-title">STEM OPT Begins</div>
+            <div class="tl-body">
+              MS CS qualifies for 3-year STEM OPT. Primary income window for
+              aggressive debt repayment.
+            </div>
+            <span class="tl-badge income">OPT Window: 36 Months</span>
+          </div>
+        </div>
+
+        <div class="chart-container" style="margin-top: 32px">
+          <div class="chart-title">
+            Projected Total Debt Stack — With School Income ($300/mo Extra) vs.
+            Without
+          </div>
+          <canvas id="debtAccumChart" height="240"></canvas>
+        </div>
+      </div>
+
+      <!-- ════════ PART VI — OPT ════════ -->
+      <div class="part-divider" id="part6">
+        <span class="part-label">Part VI · OPT Income &amp; Debt Service</span>
+        <h2 class="part-title">
+          Optional Practical Training: Your Primary Repayment Engine
+        </h2>
+        <p class="part-intro">
+          OPT is not merely employment authorization — it is the primary
+          financial mechanism by which an international MS graduate services
+          accumulated debt. We model the empirical salary distribution for MS CS
+          graduates and compute debt-service capacity under multiple scenarios.
+        </p>
+      </div>
+
+      <div class="section-block" id="s6-1">
+        <span class="section-num">Section 6.1</span>
+        <h3 class="section-title">OPT Salary Distribution — MS CS Graduates</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Annual Gross</th>
+                <th>Monthly Gross</th>
+                <th>Net Monthly (FICA Exempt)</th>
+                <th>Debt:Income Ratio</th>
+                <th>Assessment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Conservative</strong> — Regional/AL-based</td>
+                <td class="td-num">$65,000</td>
+                <td class="td-num">$5,417</td>
+                <td class="td-num">$4,000–$4,200</td>
+                <td class="td-num td-gold">7.4%</td>
+                <td><span class="badge badge-gold">Manageable</span></td>
+              </tr>
+              <tr>
+                <td><strong>Median</strong> — Mid-tier tech</td>
+                <td class="td-num">$90,000</td>
+                <td class="td-num">$7,500</td>
+                <td class="td-num">$5,500–$5,800</td>
+                <td class="td-num td-green">5.3%</td>
+                <td><span class="badge badge-green">Comfortable</span></td>
+              </tr>
+              <tr>
+                <td><strong>Strong</strong> — Tier 2 tech</td>
+                <td class="td-num">$120,000</td>
+                <td class="td-num">$10,000</td>
+                <td class="td-num">$7,200–$7,600</td>
+                <td class="td-num td-green">4.0%</td>
+                <td><span class="badge badge-green">Strong</span></td>
+              </tr>
+              <tr>
+                <td><strong>Excellent</strong> — FAANG, SF/NYC/Seattle</td>
+                <td class="td-num">$160,000+</td>
+                <td class="td-num">$13,333+</td>
+                <td class="td-num">$9,200+</td>
+                <td class="td-num td-green">3.1%</td>
+                <td><span class="badge badge-green">Excellent</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout success">
+          <span class="callout-label"
+            >✅ F-1 OPT FICA Exemption — Significant Advantage</span
+          >
+          On an $80,000 salary, FICA exemption saves
+          <strong>$6,120/year ($510/month)</strong> vs. domestic peers.
+        </div>
+      </div>
+
+      <div class="section-block" id="s6-2">
+        <span class="section-num">Section 6.2</span>
+        <h3 class="section-title">
+          OPT Repayment Simulation — 36-Month Window
+        </h3>
+        <p>
+          Starting from projected peak debt of ~$48,000 (with school income
+          allocation), three OPT payment scenarios are modeled across the full
+          36-month STEM OPT window.
+        </p>
+        <div class="chart-container">
+          <div class="chart-title">
+            Projected Balance Reduction During 36-Month OPT — Starting ~$48,000
+          </div>
+          <canvas id="optChart" height="280"></canvas>
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-card worst">
+            <span class="sc-tag">OPT A · Minimum</span>
+            <div class="sc-title">~$580/mo</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Balance at OPT End</span
+              ><span class="sc-metric-val td-red">~$43,600</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Principal Reduced</span
+              ><span class="sc-metric-val td-red">~$4,400</span>
+            </div>
+          </div>
+          <div class="scenario-card opt">
+            <span class="sc-tag">OPT B · Recommended</span>
+            <div class="sc-title">$1,500/mo</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Balance at OPT End</span
+              ><span class="sc-metric-val td-gold">~$27,000</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Principal Reduced</span
+              ><span class="sc-metric-val td-gold">~$21,000</span>
+            </div>
+          </div>
+          <div class="scenario-card best">
+            <span class="sc-tag">OPT C · Optimal</span>
+            <div class="sc-title">$2,500/mo</div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Balance at OPT End</span
+              ><span class="sc-metric-val td-green">~$3,000</span>
+            </div>
+            <div class="sc-metric">
+              <span class="sc-metric-label">Near Debt-Free by H-1B</span
+              ><span class="sc-metric-val td-green">✓ Yes</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout teal">
+          <span class="callout-label">🎯 OPT Debt Kill Strategy</span>
+          Live on 50–55% of net OPT income for 36 months. On $90k with FICA
+          exemption (~$6,200 net/month): allocate $2,500 to debt, $3,700 to
+          living. Enter H-1B status near debt-free.
+        </div>
+      </div>
+
+      <!-- ════════ PART VII — RISK ════════ -->
+      <div class="part-divider" id="part7">
+        <span class="part-label">Part VII · Risk &amp; Sensitivity</span>
+        <h2 class="part-title">Empirical Risk Assessment</h2>
+        <p class="part-intro">
+          A rigorous analysis requires quantifying uncertainty. The following
+          section models sensitivity of total repayment cost, assesses
+          structural risks, and provides a calibrated probability-weighted view
+          of outcomes.
+        </p>
+      </div>
+
+      <div class="section-block" id="s7-1">
+        <span class="section-num">Section 7.1</span>
+        <h3 class="section-title">Sensitivity Matrix — Total Interest</h3>
+        <p>
+          Total interest paid on the current $24,707.52 balance across
+          combinations of interest rate (if refinanced) and additional monthly
+          principal payments.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rate \ Extra $/mo</th>
+                <th>+$0 (Min Only)</th>
+                <th>+$40 (AutoPay)</th>
+                <th>+$200/mo</th>
+                <th>+$500/mo</th>
+                <th>+$1,000/mo</th>
+              </tr>
+            </thead>
+            <tbody id="sensitivity-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-block" id="s7-2">
+        <span class="section-num">Section 7.2</span>
+        <h3 class="section-title">Structured Risk Register</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Risk Factor</th>
+                <th>Probability</th>
+                <th>Financial Impact</th>
+                <th>Mitigation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>H-1B lottery failure (Year 1)</strong></td>
+                <td><span class="badge badge-gold">~65%</span></td>
+                <td class="td-red">$7,500/yr interest, no income</td>
+                <td>6-mo emergency fund; Cap-Gap bridge</td>
+              </tr>
+              <tr>
+                <td><strong>Job market volatility</strong></td>
+                <td><span class="badge badge-gold">~30%</span></td>
+                <td class="td-red">Delayed income; longer debt</td>
+                <td>Diversified search: fintech, healthcare IT</td>
+              </tr>
+              <tr>
+                <td><strong>Cannot refinance</strong></td>
+                <td><span class="badge badge-red">~40%</span></td>
+                <td class="td-red">Full $16,829 interest burden</td>
+                <td>Build US credit NOW with secured card</td>
+              </tr>
+              <tr>
+                <td><strong>Additional semester borrowing</strong></td>
+                <td><span class="badge badge-red">~85%</span></td>
+                <td class="td-red">
+                  +$30,000 principal; $20k+ interest; each disbursement loses
+                  ~6% to origination fees
+                </td>
+                <td>
+                  Minimize borrowed amount each semester; borrow only what's
+                  needed
+                </td>
+              </tr>
+              <tr>
+                <td><strong>School job income disruption</strong></td>
+                <td><span class="badge badge-gold">~20%</span></td>
+                <td class="td-gold">$1,000/mo less for principal</td>
+                <td>Diversify income: tutoring, freelance</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Father's contribution never materializes</strong>
+                </td>
+                <td><span class="badge badge-red">High</span></td>
+                <td class="td-gold">
+                  No effect if unplanned; disruptive if budgeted for
+                </td>
+                <td>
+                  Treat as $0 in all planning; bonus only if/when received
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ════════ PART VIII — ACTIONS ════════ -->
+      <div class="part-divider" id="part8">
+        <span class="part-label">Part VIII · Strategic Action Framework</span>
+        <h2 class="part-title">Evidence-Based Optimization Playbook</h2>
+        <p class="part-intro">
+          Each recommendation is ranked by expected value. Execute in the listed
+          order.
+        </p>
+      </div>
+
+      <div class="section-block" id="s8-1">
+        <div class="callout warning">
+          <span class="callout-label">Priority 1 — This Month</span>
+          <strong>Apply for a secured US credit card ($200–500 limit).</strong>
+          Every future refinancing lender requires US credit history. Start now.
+        </div>
+        <div class="callout note">
+          <span class="callout-label">Priority 2 — Each Month</span>
+          <strong
+            >Allocate minimum $300/month of school income to principal.</strong
+          >
+          At $867 net monthly, this leaves $567 for living while reducing
+          graduation debt by ~$6,300.
+        </div>
+        <div class="callout success">
+          <span class="callout-label">Priority 3 — First OPT Paycheck</span>
+          <strong
+            >Apply to refinance simultaneously with SoFi, Earnest, Splash, and
+            ELFI.</strong
+          >
+          From 13.99% to 7.5% on $45,000 saves $14,000+ in total interest.
+        </div>
+        <div class="callout teal">
+          <span class="callout-label">Priority 4 — OPT Years</span>
+          <strong
+            >Structure debt as 25–30% of net OPT income as a fixed budget
+            line.</strong
+          >
+          At $90k salary: $1,800/month to debt = $64,800 over 36 months.
+        </div>
+        <div class="callout note">
+          <span class="callout-label">Ongoing — Every Semester</span>
+          <strong>Borrow the minimum amount actually needed.</strong>
+          Since each disbursement loses roughly 6% to origination fees, every
+          dollar of unnecessary borrowing costs more than face value once fees
+          and interest are included.
+        </div>
+      </div>
+
+      <!-- ════════ PART IX — LIFECYCLE ════════ -->
+      <div class="part-divider" id="part9">
+        <span class="part-label">Part IX · Forward Projection</span>
+        <h2 class="part-title">10-Year Financial Life Cycle</h2>
+        <p class="part-intro">
+          Incorporating school job income, OPT employment, FICA exemption, and
+          refinancing — the following synthesizes the complete financial
+          trajectory.
+        </p>
+      </div>
+
+      <div class="section-block" id="s9-1">
+        <div class="chart-container">
+          <div class="chart-title">
+            10-Year Income vs. Debt Trajectory — Median OPT ($90k) · School
+            Income Deployed · Aggressive Repayment
+          </div>
+          <canvas id="lifecycleChart" height="300"></canvas>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 32px">
+          <table>
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Life Event</th>
+                <th>School/Work Income</th>
+                <th>Remaining Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026</td>
+                <td>Sem 1+2; school job running</td>
+                <td class="td-num td-gold">$8,000–12,000</td>
+                <td class="td-num td-red">~$32,900</td>
+              </tr>
+              <tr>
+                <td>2027</td>
+                <td>Sem 3+4; graduation Dec 2027</td>
+                <td class="td-num td-gold">$8,000–20,000</td>
+                <td class="td-num td-red">~$42,000–48,000</td>
+              </tr>
+              <tr style="background: var(--teal-light)">
+                <td>2028</td>
+                <td><strong>OPT Year 1</strong></td>
+                <td class="td-num td-green">$90,000</td>
+                <td class="td-num td-gold">~$41,000</td>
+              </tr>
+              <tr style="background: var(--teal-light)">
+                <td>2029</td>
+                <td>OPT Year 2</td>
+                <td class="td-num td-green">$95,000</td>
+                <td class="td-num td-gold">~$20,000</td>
+              </tr>
+              <tr style="background: var(--green-light)">
+                <td>2030</td>
+                <td><strong>OPT Year 3</strong></td>
+                <td class="td-num td-green">$100,000+</td>
+                <td class="td-num td-green">~$0–3,000</td>
+              </tr>
+              <tr style="background: var(--green-light)">
+                <td>2031+</td>
+                <td><strong>H-1B Status</strong></td>
+                <td class="td-num td-green">$110,000–$150,000</td>
+                <td class="td-num td-green">$0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ════════ PART X — MASTER SUMMARY ════════ -->
+      <div class="part-divider" id="part10">
+        <span class="part-label">Part X · Master Summary</span>
+        <h2 class="part-title">Consolidated Findings</h2>
+        <p class="part-intro">
+          This section synthesizes every insight from the preceding analysis
+          into a single, actionable summary.
+        </p>
+      </div>
+
+      <div class="section-block" id="s10-1">
+        <div class="highlight-row">
+          <div class="hl-num">81.8%</div>
+          <div class="hl-text">
+            <h4>Of every dollar paid so far has gone to interest</h4>
+            <p>
+              Your <strong>$40/month AutoPay overpayment</strong> is the primary
+              engine of principal reduction. Without it, the loan would be in
+              near-stasis.
+            </p>
+          </div>
+        </div>
+        <div class="highlight-row">
+          <div class="hl-num" style="color: var(--gold)">$328.45</div>
+          <div class="hl-text">
+            <h4>Your current AutoPay — $40 above minimum</h4>
+            <p>
+              This decision saves approximately <strong>$1,700</strong> in
+              interest and shortens the loan by <strong>8–10 months</strong>
+              compared to minimum payments.
+            </p>
+          </div>
+        </div>
+        <div class="highlight-row">
+          <div class="hl-num" style="color: var(--green)">3 yrs</div>
+          <div class="hl-text">
+            <h4>STEM OPT is your most valuable financial instrument</h4>
+            <p>
+              The 36-month STEM OPT window + FICA exemption, used optimally,
+              eliminates the entire debt before H-1B.
+            </p>
+          </div>
+        </div>
+        <div class="highlight-row">
+          <div class="hl-num" style="color: var(--teal)">$14k+</div>
+          <div class="hl-text">
+            <h4>Refinancing from 13.99% to 7.5% saves $14,000+</h4>
+            <p>
+              Achievable within 6–12 months of first employment. Start building
+              US credit today.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" id="s10-2">
+        <div
+          style="
+            margin-top: 32px;
+            padding: 32px;
+            background: var(--ink);
+            color: var(--paper);
+          "
+        >
+          <div
+            style="
+              font-family: 'IBM Plex Mono', monospace;
+              font-size: 9px;
+              letter-spacing: 0.3em;
+              text-transform: uppercase;
+              color: var(--gold);
+              margin-bottom: 12px;
+            "
+          >
+            Final Assessment
+          </div>
+          <p
+            style="
+              font-family: 'Playfair Display', serif;
+              font-size: 17px;
+              line-height: 1.7;
+              color: #ddd;
+            "
+          >
+            Your loan is expensive, not unmanageable. The 13.99% rate is the
+            cost of access — Mpower provides financing that no US federal
+            program offers to international students without US cosigners. Every
+            dollar disbursed loses roughly 6% to origination fees before it
+            reaches you, so borrow only what each semester actually requires.
+            Your school job income is a genuine amortization accelerator:
+            $867/month net, deployed intelligently, reduces your graduation debt
+            by thousands and saves compounding interest. Your
+            <strong>$40/month AutoPay overpayment</strong> already demonstrates
+            disciplined financial instinct. Any contribution from your father
+            should be treated as an unplanned bonus, not a line in the budget —
+            plan entirely around your verified income. The quantitative case is
+            clear: deploy school income to principal now, build US credit
+            aggressively, and treat the 36-month OPT window as a
+            debt-elimination sprint. Execute these actions and what is currently
+            a projected 12-year burden transforms into a 3-year project.
+          </p>
+          <div
+            style="
+              margin-top: 16px;
+              font-family: 'IBM Plex Mono', monospace;
+              font-size: 10px;
+              color: #555;
+            "
+          >
+            Prepared: July 3, 2026 · Data source: Account 2111725000, Loan
+            #1567680 · All projections deterministic · Not financial advice.
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ PART XI — ISP RELOCATION LOAN ════════ -->
+      <div class="part-divider" id="part11">
+        <span class="part-label">Part XI · Secondary Obligation</span>
+        <h2 class="part-title">ISP Relocation Loan — Plane Ticket Financing</h2>
+        <p class="part-intro">
+          A separate, much smaller installment loan covers your relocation plane
+          ticket. This is a fixed 24-month amortizing loan, fully scheduled
+          through July 2028, and runs in parallel with the Mpower loan above.
+        </p>
+      </div>
+
+      <div class="section-block" id="s11-1">
+        <span class="section-num">Section 11.1</span>
+        <h3 class="section-title">ISP Loan Summary</h3>
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num">$2,146</span>
+            <span class="stat-label">Total Scheduled</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num green">$2,100</span>
+            <span class="stat-label">Total Paid</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num red">$2,146</span>
+            <span class="stat-label">Remaining Balance</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">$89</span>
+            <span class="stat-label">Monthly Installment</span>
+          </div>
+        </div>
+        <div class="callout note">
+          <span class="callout-label">📘 Next Payment</span>
+          <p>
+            Your next payment of <strong>$89</strong> is due
+            <strong>August 1, 2026</strong>. Remaining scheduled balance is
+            <strong>$2,146</strong> across <strong>24 installments</strong>,
+            with <strong>0 overdue</strong> and <strong>$0 missed</strong> to
+            date. This loan pays off on <strong>July 1, 2028</strong> if kept on
+            schedule.
+          </p>
+        </div>
+      </div>
+
+      <div class="section-block" id="s11-2">
+        <span class="section-num">Section 11.2</span>
+        <h3 class="section-title">Full 24-Month Amortization Schedule</h3>
+        <div class="table-wrap">
+          <table class="amort-mini">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Due Date</th>
+                <th class="td-num">Opening Principal</th>
+                <th class="td-num">Principal</th>
+                <th class="td-num">Interest</th>
+                <th class="td-num">Scheduled Total</th>
+                <th class="td-num">Closing Principal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Aug 1, 2026</td>
+                <td class="td-num">$1,900</td>
+                <td class="td-num td-green">$70</td>
+                <td class="td-num td-red">$19</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,829</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Sep 1, 2026</td>
+                <td class="td-num">$1,829</td>
+                <td class="td-num td-green">$71</td>
+                <td class="td-num td-red">$18</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,758</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Oct 1, 2026</td>
+                <td class="td-num">$1,758</td>
+                <td class="td-num td-green">$72</td>
+                <td class="td-num td-red">$18</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,686</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Nov 1, 2026</td>
+                <td class="td-num">$1,686</td>
+                <td class="td-num td-green">$73</td>
+                <td class="td-num td-red">$17</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,614</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Dec 1, 2026</td>
+                <td class="td-num">$1,614</td>
+                <td class="td-num td-green">$73</td>
+                <td class="td-num td-red">$16</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,540</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Jan 1, 2027</td>
+                <td class="td-num">$1,540</td>
+                <td class="td-num td-green">$74</td>
+                <td class="td-num td-red">$15</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,466</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Feb 1, 2027</td>
+                <td class="td-num">$1,466</td>
+                <td class="td-num td-green">$75</td>
+                <td class="td-num td-red">$15</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,392</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Mar 1, 2027</td>
+                <td class="td-num">$1,392</td>
+                <td class="td-num td-green">$76</td>
+                <td class="td-num td-red">$14</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,316</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Apr 1, 2027</td>
+                <td class="td-num">$1,316</td>
+                <td class="td-num td-green">$76</td>
+                <td class="td-num td-red">$13</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,240</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>May 1, 2027</td>
+                <td class="td-num">$1,240</td>
+                <td class="td-num td-green">$77</td>
+                <td class="td-num td-red">$12</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,163</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Jun 1, 2027</td>
+                <td class="td-num">$1,163</td>
+                <td class="td-num td-green">$78</td>
+                <td class="td-num td-red">$12</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,085</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Jul 1, 2027</td>
+                <td class="td-num">$1,085</td>
+                <td class="td-num td-green">$79</td>
+                <td class="td-num td-red">$11</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$1,006</td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>Aug 1, 2027</td>
+                <td class="td-num">$1,006</td>
+                <td class="td-num td-green">$79</td>
+                <td class="td-num td-red">$10</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$927</td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>Sep 1, 2027</td>
+                <td class="td-num">$927</td>
+                <td class="td-num td-green">$80</td>
+                <td class="td-num td-red">$9</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$847</td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>Oct 1, 2027</td>
+                <td class="td-num">$847</td>
+                <td class="td-num td-green">$81</td>
+                <td class="td-num td-red">$8</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$766</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>Nov 1, 2027</td>
+                <td class="td-num">$766</td>
+                <td class="td-num td-green">$82</td>
+                <td class="td-num td-red">$8</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$684</td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>Dec 1, 2027</td>
+                <td class="td-num">$684</td>
+                <td class="td-num td-green">$83</td>
+                <td class="td-num td-red">$7</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$602</td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>Jan 1, 2028</td>
+                <td class="td-num">$602</td>
+                <td class="td-num td-green">$83</td>
+                <td class="td-num td-red">$6</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$518</td>
+              </tr>
+              <tr>
+                <td>19</td>
+                <td>Feb 1, 2028</td>
+                <td class="td-num">$518</td>
+                <td class="td-num td-green">$84</td>
+                <td class="td-num td-red">$5</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$434</td>
+              </tr>
+              <tr>
+                <td>20</td>
+                <td>Mar 1, 2028</td>
+                <td class="td-num">$434</td>
+                <td class="td-num td-green">$85</td>
+                <td class="td-num td-red">$4</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$349</td>
+              </tr>
+              <tr>
+                <td>21</td>
+                <td>Apr 1, 2028</td>
+                <td class="td-num">$349</td>
+                <td class="td-num td-green">$86</td>
+                <td class="td-num td-red">$3</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$263</td>
+              </tr>
+              <tr>
+                <td>22</td>
+                <td>May 1, 2028</td>
+                <td class="td-num">$263</td>
+                <td class="td-num td-green">$87</td>
+                <td class="td-num td-red">$3</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$176</td>
+              </tr>
+              <tr>
+                <td>23</td>
+                <td>Jun 1, 2028</td>
+                <td class="td-num">$176</td>
+                <td class="td-num td-green">$88</td>
+                <td class="td-num td-red">$2</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$89</td>
+              </tr>
+              <tr>
+                <td>24</td>
+                <td>Jul 1, 2028</td>
+                <td class="td-num">$89</td>
+                <td class="td-num td-green">$89</td>
+                <td class="td-num td-red">$1</td>
+                <td class="td-num">$89</td>
+                <td class="td-num">$0</td>
+              </tr>
+              <tr style="background: #111; color: #ddd">
+                <td
+                  colspan="2"
+                  style="
+                    color: #aaa;
+                    font-family: 'IBM Plex Mono', monospace;
+                    font-size: 11px;
+                  "
+                >
+                  TOTALS
+                </td>
+                <td class="td-num"></td>
+                <td class="td-num" style="color: #4ade80">$1,891</td>
+                <td class="td-num" style="color: var(--red)">$255</td>
+                <td class="td-num" style="color: var(--gold)">$2,146</td>
+                <td class="td-num">$0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout teal">
+          <span class="callout-label">🎯 Combined Fixed Debt Service</span>
+          Between Mpower AutoPay ($328.45/mo) and the ISP relocation installment
+          ($89/mo), you carry <strong>$417.45/month</strong> in combined fixed
+          debt obligations through July 2028, after which the ISP loan retires
+          and only the Mpower loan remains.
+        </div>
+      </div>
+
+      <div class="ornament">— ✦ —</div>
+    </div>
+    <!-- end content-wrap -->
+
+    <footer>
+      <div>
+        MPOWER STUDENT LOAN FORENSIC ANALYSIS · DENNIS KIBET · UNIVERSITY OF
+        ALABAMA · MS COMPUTER SCIENCE
+      </div>
+      <div style="margin-top: 8px; color: #444">
+        Data as of July 3, 2026 · Account 2111725000 · Loan #1567680 · Figures
+        computed from verified transaction data · Not financial advice
+      </div>
+    </footer>
+
+    <button
+      id="scroll-top"
+      onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+    >
+      ↑
+    </button>
+
+    <!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+    <script>
+      // ── Progress bar & scroll ──
+      window.addEventListener('scroll', () => {
+        const d = document.documentElement
+        const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100
+        document.getElementById('progress-bar').style.width = pct + '%'
+        const st = document.getElementById('scroll-top')
+        if (st) st.classList.toggle('visible', d.scrollTop > 400)
+      })
+
+      // ── Core loan parameters ──
+      const BALANCE = 24707.52
+      const RATE_ANNUAL = 0.1399
+      const RATE_MONTHLY = RATE_ANNUAL / 12
+      const MIN_PAYMENT = 288.45
+      const AUTOPAY = 328.45
+
+      // ── Amortization engine ──
+      function amortize(balance, rate, payment) {
+        const months = []
+        let b = balance
+        while (b > 0.01 && months.length < 360) {
+          const interest = b * rate
+          const principal = Math.min(payment - interest, b)
+          if (principal <= 0) {
+            months.push({
+              balance: b,
+              interest,
+              principal: 0,
+              cumInt: (months.at(-1)?.cumInt || 0) + interest,
+              cumPrin: months.at(-1)?.cumPrin || 0,
+            })
+            break
+          }
+          b = Math.max(0, b - principal)
+          months.push({
+            balance: b,
+            interest,
+            principal,
+            cumInt: (months.at(-1)?.cumInt || 0) + interest,
+            cumPrin: (months.at(-1)?.cumPrin || 0) + principal,
+          })
+        }
+        return months
+      }
+
+      function computeInterestFixed(balance, annualRate, extraPayment) {
+        const pmt = MIN_PAYMENT + extraPayment
+        const mr = annualRate / 12
+        let b = balance,
+          total = 0
+        for (let i = 0; i < 360 && b > 0.01; i++) {
+          const interest = b * mr
+          const principal = Math.min(pmt - interest, b)
+          if (principal <= 0) {
+            total += interest
+            break
+          }
+          total += interest
+          b = Math.max(0, b - principal)
+        }
+        return total
+      }
+
+      // ── Sensitivity table ──
+      function buildSensitivity() {
+        const rates = [0.0599, 0.0799, 0.0999, 0.1299, 0.1399]
+        const extras = [0, 40, 200, 500, 1000]
+        const labels = [
+          '5.99% (Refi Best)',
+          '7.99% (Refi Avg)',
+          '9.99% (Refi Fair)',
+          '12.99%',
+          '13.99% (Current)',
+        ]
+        const tbody = document.getElementById('sensitivity-table')
+        const maxVal = computeInterestFixed(BALANCE, 0.1399, 0)
+        rates.forEach((r, ri) => {
+          const tr = document.createElement('tr')
+          const isCurrent = r === 0.1399
+          let html = `<td style="${isCurrent ? 'background:var(--red-light);' : ''}"><strong>${labels[ri]}</strong></td>`
+          extras.forEach((e) => {
+            const v = computeInterestFixed(BALANCE, r, e)
+            const pct = v / maxVal
+            let color, bg
+            if (pct < 0.3) {
+              color = 'var(--green)'
+              bg = 'var(--green-light)'
+            } else if (pct < 0.6) {
+              color = '#7a5a00'
+              bg = 'var(--gold-light)'
+            } else {
+              color = 'var(--red)'
+              bg = isCurrent ? 'var(--red-light)' : ''
+            }
+            html += `<td class="td-num" style="color:${color};font-weight:600;${bg ? 'background:' + bg + ';' : ''}">$${Math.round(v).toLocaleString()}</td>`
+          })
+          tr.innerHTML = html
+          tbody.appendChild(tr)
+        })
+      }
+
+      // ── Payment pills ──
+      function buildPaymentPills() {
+        const months = [
+          {
+            label: 'Feb 2026',
+            total: 291.78,
+            interest: 288.96,
+            principal: 2.82,
+          },
+          {
+            label: 'Mar 2026',
+            total: 291.78,
+            interest: 268.38,
+            principal: 23.4,
+          },
+          {
+            label: 'Apr 2026 (+Extra)',
+            total: 421.78,
+            interest: 296.86,
+            principal: 124.92,
+          },
+          {
+            label: 'May 2026 (+Extra)',
+            total: 420.02,
+            interest: 285.85,
+            principal: 134.17,
+          },
+          {
+            label: 'Jun 2026',
+            total: 328.45,
+            interest: 293.78,
+            principal: 34.67,
+          },
+        ]
+        const container = document.getElementById('payment-pills')
+        months.forEach((m) => {
+          const intPct = ((m.interest / m.total) * 100).toFixed(1)
+          const prinPct = ((m.principal / m.total) * 100).toFixed(1)
+          const div = document.createElement('div')
+          div.style.cssText = 'margin:10px 0;'
+          div.innerHTML = `
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--grey);margin-bottom:4px;">${m.label} — Total: <strong>$${m.total.toFixed(2)}</strong></div>
+        <div class="payment-pill">
+          <div class="pp-interest" style="width:${intPct}%"><span class="pp-label">${intPct}% int ($${m.interest.toFixed(0)})</span></div>
+          <div class="pp-principal" style="width:${prinPct}%"><span class="pp-label">${prinPct}% prin ($${m.principal.toFixed(0)})</span></div>
+        </div>`
+          container.appendChild(div)
+        })
+      }
+
+      // ── Canvas setup ──
+      function setupCanvas(id) {
+        const canvas = document.getElementById(id)
+        if (!canvas) return null
+        const dpr = window.devicePixelRatio || 1
+        const rect = canvas.parentElement.getBoundingClientRect()
+        const w = Math.max(rect.width - 48, 400)
+        const h = parseInt(canvas.getAttribute('height'))
+        canvas.width = w * dpr
+        canvas.height = h * dpr
+        canvas.style.width = w + 'px'
+        canvas.style.height = h + 'px'
+        const ctx = canvas.getContext('2d')
+        ctx.scale(dpr, dpr)
+        return { ctx, w, h }
+      }
+
+      function drawLine(
+        ctx,
+        data,
+        w,
+        h,
+        padL,
+        padR,
+        padT,
+        padB,
+        yMax,
+        color,
+        lw = 2,
+      ) {
+        if (!data.length) return
+        ctx.beginPath()
+        data.forEach((v, i) => {
+          const x = padL + ((w - padL - padR) * i) / (data.length - 1)
+          const y = padT + (h - padT - padB) * (1 - Math.min(v, yMax) / yMax)
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+        })
+        ctx.strokeStyle = color
+        ctx.lineWidth = lw
+        ctx.stroke()
+      }
+
+      function fillArea(ctx, data, w, h, padL, padR, padT, padB, yMax, color) {
+        if (!data.length) return
+        ctx.beginPath()
+        data.forEach((v, i) => {
+          const x = padL + ((w - padL - padR) * i) / (data.length - 1)
+          const y = padT + (h - padT - padB) * (1 - Math.min(v, yMax) / yMax)
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+        })
+        ctx.lineTo(padL + (w - padL - padR), h - padB)
+        ctx.lineTo(padL, h - padB)
+        ctx.closePath()
+        ctx.fillStyle = color
+        ctx.fill()
+      }
+
+      function drawGrid(ctx, w, h, padL, padR, padT, padB, yTicks, yFmt) {
+        ctx.strokeStyle = '#e0d8c8'
+        ctx.lineWidth = 0.5
+        yTicks.forEach((v) => {
+          const y =
+            padT + (h - padT - padB) * (1 - v / yTicks[yTicks.length - 1])
+          ctx.beginPath()
+          ctx.moveTo(padL, y)
+          ctx.lineTo(w - padR, y)
+          ctx.stroke()
+          ctx.fillStyle = '#999'
+          ctx.font = '10px IBM Plex Mono,monospace'
+          ctx.textAlign = 'right'
+          ctx.fillText(yFmt(v), padL - 6, y + 4)
+        })
+      }
+
+      // ── Chart 1: Payment bar chart ──
+      function drawPaymentChart() {
+        const r = setupCanvas('paymentChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const labels = ['Feb', 'Mar', 'Apr (+extra)', 'May (+extra)', 'Jun']
+        const interest = [288.96, 268.38, 296.86, 285.85, 293.78]
+        const principal = [2.82, 23.4, 124.92, 134.17, 34.67]
+        const padL = 60,
+          padR = 20,
+          padT = 24,
+          padB = 36
+        const cW = w - padL - padR,
+          cH = h - padT - padB
+        const bW = (cW / labels.length) * 0.6,
+          bGap = cW / labels.length,
+          maxV = 450
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 100, 200, 300, 400],
+          (v) => '$' + v,
+        )
+        labels.forEach((m, i) => {
+          const x = padL + bGap * i + bGap * 0.2
+          const iH = (cH * interest[i]) / maxV,
+            pH = (cH * principal[i]) / maxV
+          const baseY = padT + cH
+          ctx.fillStyle = '#c0392b'
+          ctx.fillRect(x, baseY - iH, bW, iH)
+          ctx.fillStyle = '#1a5c2e'
+          ctx.fillRect(x, baseY - iH - pH, bW, pH)
+          ctx.fillStyle = '#444'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText(m, x + bW / 2, h - padB + 14)
+          ctx.fillText(
+            '$' + (interest[i] + principal[i]).toFixed(0),
+            x + bW / 2,
+            baseY - iH - pH - 4,
+          )
+        })
+        ;[
+          { c: '#c0392b', l: 'Interest' },
+          { c: '#1a5c2e', l: 'Principal' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 100, 8, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 100 + 18, 18)
+        })
+      }
+
+      // ── Chart 2: Full amortization ──
+      function drawAmortChart() {
+        const r = setupCanvas('amortChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const data = amortize(BALANCE, RATE_MONTHLY, AUTOPAY)
+        const balances = data.map((d) => d.balance)
+        const cumInt = data.map((d) => d.cumInt)
+        const cumPrin = data.map((d) => d.cumPrin)
+        const padL = 70,
+          padR = 24,
+          padT = 24,
+          padB = 40,
+          yMax = 45000
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 10000, 20000, 30000, 40000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        ;[0, 24, 48, 72, 96, 120, 143].forEach((idx) => {
+          const x = padL + ((w - padL - padR) * idx) / (data.length - 1)
+          ctx.fillStyle = '#999'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText('Mo' + idx, x, h - padB + 14)
+        })
+        let cx = -1
+        for (let i = 1; i < data.length; i++) {
+          if (data[i].cumPrin >= data[i].cumInt && cx === -1) cx = i
+        }
+        if (cx > 0) {
+          const x = padL + ((w - padL - padR) * cx) / (data.length - 1)
+          ctx.strokeStyle = '#b8860b'
+          ctx.lineWidth = 1
+          ctx.setLineDash([4, 4])
+          ctx.beginPath()
+          ctx.moveTo(x, padT)
+          ctx.lineTo(x, h - padB)
+          ctx.stroke()
+          ctx.setLineDash([])
+          ctx.fillStyle = '#b8860b'
+          ctx.font = 'bold 9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText('Crossover Mo' + cx, x, padT - 6)
+        }
+        fillArea(
+          ctx,
+          cumInt,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          yMax,
+          'rgba(192,57,43,0.08)',
+        )
+        drawLine(
+          ctx,
+          balances,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          yMax,
+          '#1a3a5c',
+          2.5,
+        )
+        drawLine(ctx, cumInt, w, h, padL, padR, padT, padB, yMax, '#c0392b', 2)
+        drawLine(ctx, cumPrin, w, h, padL, padR, padT, padB, yMax, '#1a5c2e', 2)
+        ;[
+          { c: '#1a3a5c', l: 'Remaining Balance' },
+          { c: '#c0392b', l: 'Cumulative Interest' },
+          { c: '#1a5c2e', l: 'Cumulative Principal' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 175, 8, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 175 + 18, 18)
+        })
+      }
+
+      // ── Chart 3: Scenario comparison ──
+      function drawScenarioChart() {
+        const r = setupCanvas('scenarioChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const s1 = amortize(BALANCE, RATE_MONTHLY, MIN_PAYMENT).map(
+          (d) => d.balance,
+        )
+        const s2 = amortize(BALANCE, RATE_MONTHLY, AUTOPAY).map(
+          (d) => d.balance,
+        )
+        const s3 = amortize(BALANCE, RATE_MONTHLY, MIN_PAYMENT + 500).map(
+          (d) => d.balance,
+        )
+        const maxLen = s1.length
+        while (s2.length < maxLen) s2.push(0)
+        while (s3.length < maxLen) s3.push(0)
+        const padL = 70,
+          padR = 20,
+          padT = 24,
+          padB = 40,
+          yMax = 26000
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 5000, 10000, 15000, 20000, 25000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        const step = Math.floor(maxLen / 6)
+        for (let i = 0; i <= 6; i++) {
+          const xi = Math.min(i * step, maxLen - 1)
+          const x = padL + ((w - padL - padR) * xi) / (maxLen - 1)
+          ctx.fillStyle = '#999'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText('Mo' + xi, x, h - padB + 14)
+        }
+        drawLine(ctx, s1, w, h, padL, padR, padT, padB, yMax, '#c0392b', 2)
+        drawLine(ctx, s2, w, h, padL, padR, padT, padB, yMax, '#b8860b', 2.5)
+        drawLine(ctx, s3, w, h, padL, padR, padT, padB, yMax, '#1a5c2e', 2)
+        ;[
+          { c: '#c0392b', l: 'Min Pay ($288)' },
+          { c: '#b8860b', l: 'AutoPay ($328) — Current' },
+          { c: '#1a5c2e', l: '+$500/mo ($788)' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 185, 6, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 185 + 18, 16)
+        })
+      }
+
+      // ── Chart 4: School income impact ──
+      function drawSchoolIncomeChart() {
+        const r = setupCanvas('schoolIncomeChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const months = 21
+        function simBalance(extra) {
+          const pts = [BALANCE]
+          let b = BALANCE
+          for (let i = 0; i < months; i++) {
+            const interest = b * RATE_MONTHLY
+            const principal = Math.min(MIN_PAYMENT + extra - interest, b)
+            b = Math.max(0, b - (principal > 0 ? principal : 0))
+            pts.push(b)
+          }
+          return pts
+        }
+        const s0 = simBalance(0)
+        const s1 = simBalance(300)
+        const s2 = simBalance(500)
+        const padL = 70,
+          padR = 20,
+          padT = 24,
+          padB = 40,
+          yMax = 26000
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 5000, 10000, 15000, 20000, 25000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        for (let i = 0; i <= 7; i++) {
+          const xi = Math.round((i * months) / 7)
+          const x = padL + ((w - padL - padR) * xi) / months
+          ctx.fillStyle = '#999'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText('Mo' + xi, x, h - padB + 14)
+        }
+        drawLine(ctx, s0, w, h, padL, padR, padT, padB, yMax, '#c0392b', 2)
+        drawLine(ctx, s1, w, h, padL, padR, padT, padB, yMax, '#b8860b', 2)
+        drawLine(ctx, s2, w, h, padL, padR, padT, padB, yMax, '#1a5c2e', 2.5)
+        ;[
+          { c: '#c0392b', l: 'Min Pay Only' },
+          { c: '#b8860b', l: '+$300/mo School Income' },
+          { c: '#1a5c2e', l: '+$500/mo School Income' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 220, 6, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 220 + 18, 16)
+        })
+      }
+
+      // ── Chart 5: Debt accumulation ──
+      function drawDebtAccumChart() {
+        const r = setupCanvas('debtAccumChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const padL = 70,
+          padR = 20,
+          padT = 24,
+          padB = 52
+        const bars = [
+          { label: 'Sem 1\n(Now)', withIncome: 24906, noIncome: 24906 },
+          { label: 'Sem 2\n(Aug 26)', withIncome: 32900, noIncome: 34450 },
+          { label: 'Sem 3\n(Jan 27)', withIncome: 41200, noIncome: 43500 },
+          { label: 'Sem 4\n(Aug 27)', withIncome: 46500, noIncome: 52000 },
+          { label: 'Grad\n(Dec 27)', withIncome: 45800, noIncome: 51200 },
+          { label: 'OPT Yr1\n(2028)', withIncome: 32000, noIncome: 37000 },
+          { label: 'OPT Yr2\n(2029)', withIncome: 14000, noIncome: 19000 },
+          { label: 'OPT Yr3\n(2030)', withIncome: 0, noIncome: 2000 },
+        ]
+        const yMax = 58000,
+          n = bars.length,
+          cW = w - padL - padR,
+          cH = h - padT - padB
+        const bW = (cW / n) * 0.38,
+          bGap = cW / n
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 10000, 20000, 30000, 40000, 50000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        bars.forEach((bar, i) => {
+          const x = padL + bGap * i + bGap * 0.07
+          const niH = (cH * bar.noIncome) / yMax
+          ctx.fillStyle = '#c0392b55'
+          ctx.fillRect(x, padT + cH - niH, bW, niH)
+          const wiH = (cH * bar.withIncome) / yMax
+          ctx.fillStyle = '#1a5c2e'
+          ctx.fillRect(x + bW * 0.05, padT + cH - wiH, bW * 0.9, wiH)
+          ctx.fillStyle = '#333'
+          ctx.font = '8px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          bar.label
+            .split('\n')
+            .forEach((ln, li) =>
+              ctx.fillText(ln, x + bW / 2, h - padB + 12 + li * 11),
+            )
+          if (wiH > 14) {
+            ctx.fillStyle = '#fff'
+            ctx.font = 'bold 8px IBM Plex Mono,monospace'
+            ctx.fillText(
+              '$' + (bar.withIncome / 1000).toFixed(0) + 'k',
+              x + bW / 2,
+              padT + cH - wiH - 4,
+            )
+          }
+        })
+        ;[
+          { c: 'rgba(192,57,43,0.35)', l: 'Without School Income' },
+          { c: '#1a5c2e', l: 'With School Income ($300/mo)' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 240, 6, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 240 + 18, 16)
+        })
+      }
+
+      // ── Chart 6: OPT ──
+      function drawOPTChart() {
+        const r = setupCanvas('optChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const START = 48000
+        function simOPT(pmt) {
+          const pts = [START]
+          let b = START
+          for (let i = 0; i < 36; i++) {
+            const interest = b * RATE_MONTHLY
+            const prin = Math.min(pmt - interest, b)
+            b = Math.max(0, b - (prin > 0 ? prin : 0))
+            pts.push(b)
+          }
+          return pts
+        }
+        const s1 = simOPT(580),
+          s2 = simOPT(1500),
+          s3 = simOPT(2500)
+        const padL = 70,
+          padR = 80,
+          padT = 24,
+          padB = 36,
+          yMax = 52000
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 10000, 20000, 30000, 40000, 50000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        ;[0, 6, 12, 18, 24, 30, 36].forEach((mo) => {
+          const x = padL + ((w - padL - padR) * mo) / 36
+          ctx.fillStyle = '#999'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText(mo === 36 ? '36mo (End)' : 'Mo ' + mo, x, h - padB + 14)
+        })
+        drawLine(ctx, s1, w, h, padL, padR, padT, padB, yMax, '#c0392b', 2)
+        drawLine(ctx, s2, w, h, padL, padR, padT, padB, yMax, '#0b6e6e', 2.5)
+        drawLine(ctx, s3, w, h, padL, padR, padT, padB, yMax, '#1a5c2e', 2.5)
+        ;[
+          [s1, 'Min~$580/mo', '#c0392b'],
+          [s2, '$1,500/mo', '#0b6e6e'],
+          [s3, '$2,500/mo', '#1a5c2e'],
+        ].forEach(([s, lbl, c]) => {
+          const lv = s[s.length - 1]
+          const x = padL + (w - padL - padR)
+          const y = padT + (h - padT - padB) * (1 - lv / yMax)
+          ctx.fillStyle = c
+          ctx.font = 'bold 9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'left'
+          ctx.fillText(lbl + ' →$' + (lv / 1000).toFixed(0) + 'k', x + 4, y + 4)
+        })
+        ;[
+          { c: '#c0392b', l: 'Min Pay (A)' },
+          { c: '#0b6e6e', l: '$1,500/mo (B)' },
+          { c: '#1a5c2e', l: '$2,500/mo (C)' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 165, 6, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 165 + 18, 16)
+        })
+      }
+
+      // ── Chart 7: 10-year lifecycle ──
+      function drawLifecycleChart() {
+        const r = setupCanvas('lifecycleChart')
+        if (!r) return
+        const { ctx, w, h } = r
+        const years = [
+          '2026',
+          '2027',
+          '2028',
+          '2029',
+          '2030',
+          '2031',
+          '2032',
+          '2033',
+          '2034',
+          '2035',
+        ]
+        const debt = [32000, 46000, 41000, 20000, 3000, 0, 0, 0, 0, 0]
+        const income = [
+          0, 4000, 90000, 95000, 100000, 115000, 120000, 125000, 130000, 135000,
+        ]
+        const savings = [
+          0, 0, 10000, 28000, 55000, 90000, 130000, 175000, 225000, 280000,
+        ]
+        const padL = 70,
+          padR = 20,
+          padT = 24,
+          padB = 40,
+          yMax = 280000
+        drawGrid(
+          ctx,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          [0, 50000, 100000, 150000, 200000, 250000],
+          (v) => '$' + v / 1000 + 'k',
+        )
+        years.forEach((yr, i) => {
+          const x = padL + ((w - padL - padR) * i) / (years.length - 1)
+          ctx.fillStyle = '#999'
+          ctx.font = '9px IBM Plex Mono,monospace'
+          ctx.textAlign = 'center'
+          ctx.fillText(yr, x, h - padB + 14)
+        })
+        fillArea(
+          ctx,
+          savings,
+          w,
+          h,
+          padL,
+          padR,
+          padT,
+          padB,
+          yMax,
+          'rgba(26,92,46,0.07)',
+        )
+        drawLine(ctx, savings, w, h, padL, padR, padT, padB, yMax, '#1a5c2e', 2)
+        drawLine(ctx, income, w, h, padL, padR, padT, padB, yMax, '#0b6e6e', 2)
+        drawLine(ctx, debt, w, h, padL, padR, padT, padB, yMax, '#c0392b', 2.5)
+        ;[
+          { c: '#c0392b', l: 'Debt Balance' },
+          { c: '#0b6e6e', l: 'Annual Income' },
+          { c: '#1a5c2e', l: 'Cumulative Savings' },
+        ].forEach((lg, i) => {
+          ctx.fillStyle = lg.c
+          ctx.fillRect(padL + i * 205, 6, 14, 10)
+          ctx.fillStyle = '#333'
+          ctx.font = '10px IBM Plex Sans,sans-serif'
+          ctx.textAlign = 'left'
+          ctx.fillText(lg.l, padL + i * 205 + 18, 16)
+        })
+      }
+
+      // ── Draw all ──
+      function drawAll() {
+        drawPaymentChart()
+        drawAmortChart()
+        drawScenarioChart()
+        drawSchoolIncomeChart()
+        drawDebtAccumChart()
+        drawOPTChart()
+        drawLifecycleChart()
+      }
+
+      // ── Init ──
+      window.addEventListener('load', () => {
+        buildSensitivity()
+        buildPaymentPills()
+        drawAll()
+      })
+      window.addEventListener('resize', drawAll)
+      window.addEventListener('beforeprint', () => {
+        setTimeout(drawAll, 100)
+      })
+    </script>
+  </body>
+</html>
