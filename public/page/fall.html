@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fall 2026 Financial Position — with Job Income & Starting Liquidity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+    rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        :root {
+            --ink: #0d0d0d;
+            --paper: #f5f0e8;
+            --parchment: #ede6d3;
+            --parchment-dk: #e2d9c2;
+            --red: #c0392b;
+            --red-light: #f5cdc9;
+            --blue: #1a3a5c;
+            --blue-light: #d0dce8;
+            --gold: #b8860b;
+            --gold-light: #f0e0a0;
+            --green: #1a5c2e;
+            --green-light: #c9e8d5;
+            --grey: #5a5a5a;
+            --teal: #0b6e6e;
+            --teal-light: #c9e8e8;
+            --purple: #4a1a6e;
+            --purple-light: #e0d0f0;
+            --orange: #b84a0b;
+            --orange-light: #f5dac9;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            font-size: 15px;
+            line-height: 1.75;
+            overflow-x: hidden;
+        }
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--red);
+            z-index: 999;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        #scroll-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 38px;
+            height: 38px;
+            background: var(--ink);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 300;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        #scroll-top.visible {
+            opacity: 1;
+        }
+        #scroll-top:hover {
+            background: var(--gold);
+            color: var(--ink);
+        }
+
+        .cover-page {
+            background: var(--ink);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .cover-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 60px;
+            border-bottom: 1px solid #222;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: #555;
+            letter-spacing: 0.12em;
+        }
+        .cover-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 80px 40px;
+        }
+        .cover-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--red);
+            display: block;
+            margin-bottom: 16px;
+        }
+        .cover-rule-top {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+            width: 100%;
+            margin-bottom: 32px;
+        }
+        .cover-h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(30px, 4.6vw, 58px);
+            font-weight: 900;
+            color: var(--paper);
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin-bottom: 12px;
+        }
+        .cover-h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(15px, 2.2vw, 24px);
+            font-weight: 400;
+            color: #aaa;
+            font-style: italic;
+            margin-bottom: 32px;
+        }
+        .cover-rule-bot {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent);
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .cover-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto 48px;
+            border: 1px solid #222;
+        }
+        .cover-meta-cell {
+            padding: 18px 24px;
+            border-right: 1px solid #222;
+            text-align: center;
+        }
+        .cover-meta-cell:last-child {
+            border-right: none;
+        }
+        .cover-meta-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #555;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .cover-meta-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .cover-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0;
+            width: 100%;
+            border-top: 2px solid var(--gold);
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 40px;
+        }
+        .cover-kpi-cell {
+            padding: 18px 12px;
+            text-align: center;
+            border-right: 1px solid #222;
+        }
+        .cover-kpi-cell:last-child {
+            border-right: none;
+        }
+        .cover-kpi-val {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(12px, 1.7vw, 19px);
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+            line-height: 1;
+        }
+        .cover-kpi-val.danger {
+            color: var(--red);
+        }
+        .cover-kpi-val.green {
+            color: #4ade80;
+        }
+        .cover-kpi-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+        .cover-bottom {
+            padding: 20px 60px;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            color: #444;
+            letter-spacing: 0.1em;
+        }
+        .cover-toc {
+            text-align: left;
+            padding: 0 80px 40px;
+            width: 100%;
+        }
+        .cover-toc-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 16px;
+        }
+        .cover-toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 40px;
+            margin-bottom: 20px;
+        }
+        .cover-toc-item {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: #777;
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+            text-decoration: none;
+        }
+        .cover-toc-item .part-num {
+            color: var(--gold);
+            min-width: 60px;
+            font-size: 9px;
+        }
+
+        .screen-meta-bar {
+            background: #111;
+            border-bottom: 2px solid var(--gold);
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+        }
+        .kpi-cell {
+            padding: 16px 14px;
+            text-align: center;
+            border-right: 1px solid #222;
+        }
+        .kpi-cell:last-child {
+            border-right: none;
+        }
+        .kpi-val {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(13px, 1.6vw, 20px);
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+            line-height: 1;
+        }
+        .kpi-val.danger {
+            color: var(--red);
+        }
+        .kpi-val.green {
+            color: #4ade80;
+        }
+        .kpi-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .content-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 72px 64px 120px;
+        }
+
+        .part-divider {
+            margin: 96px 0 0;
+            scroll-margin-top: 24px;
+        }
+        .part-divider:first-child {
+            margin-top: 0;
+        }
+        .part-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            color: var(--red);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .part-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 3.2vw, 38px);
+            font-weight: 900;
+            color: var(--ink);
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+            padding-bottom: 18px;
+            border-bottom: 4px solid var(--ink);
+            margin-bottom: 40px;
+        }
+        .part-intro {
+            font-size: 16px;
+            color: var(--grey);
+            font-style: italic;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 36px;
+            padding-left: 20px;
+            border-left: 3px solid var(--gold);
+            line-height: 1.65;
+        }
+        .section-block {
+            margin: 56px 0 0;
+            scroll-margin-top: 24px;
+        }
+        .section-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.28em;
+            color: var(--grey);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 7px;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(17px, 2.2vw, 23px);
+            font-weight: 700;
+            color: var(--ink);
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--ink);
+            margin-bottom: 22px;
+        }
+        .subsection-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--blue);
+            padding-left: 14px;
+            border-left: 4px solid var(--gold);
+            margin: 32px 0 14px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+        p:last-child {
+            margin-bottom: 0;
+        }
+        strong {
+            font-weight: 600;
+            color: var(--blue);
+        }
+        em {
+            font-style: italic;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 22px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead {
+            background: var(--ink);
+            color: var(--paper);
+        }
+        thead th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 400;
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--parchment-dk);
+        }
+        tbody tr:nth-child(even) {
+            background: var(--parchment);
+        }
+        tbody tr:hover {
+            background: var(--gold-light);
+        }
+        tbody td {
+            padding: 10px 16px;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+        .td-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            text-align: right;
+        }
+        .td-red {
+            color: var(--red);
+            font-weight: 600;
+        }
+        .td-green {
+            color: var(--green);
+            font-weight: 600;
+        }
+        .td-gold {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        tfoot td {
+            font-weight: 700;
+            border-top: 2px solid var(--ink);
+            background: var(--parchment-dk);
+        }
+
+        .callout {
+            padding: 18px 22px;
+            margin: 22px 0;
+            font-size: 14px;
+            line-height: 1.7;
+            border-radius: 1px;
+        }
+        .callout-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .callout.warning {
+            background: var(--gold-light);
+            border-left: 4px solid var(--gold);
+        }
+        .callout.warning .callout-label {
+            color: var(--gold);
+        }
+        .callout.critical {
+            background: var(--red-light);
+            border-left: 4px solid var(--red);
+        }
+        .callout.critical .callout-label {
+            color: var(--red);
+        }
+        .callout.note {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+        }
+        .callout.note .callout-label {
+            color: var(--blue);
+        }
+        .callout.success {
+            background: var(--green-light);
+            border-left: 4px solid var(--green);
+        }
+        .callout.success .callout-label {
+            color: var(--green);
+        }
+        .callout.teal {
+            background: var(--teal-light);
+            border-left: 4px solid var(--teal);
+        }
+        .callout.teal .callout-label {
+            color: var(--teal);
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 22px 0;
+        }
+        .stat-box {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 18px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--gold);
+            display: block;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-num.red {
+            color: var(--red);
+        }
+        .stat-num.green {
+            color: #4ade80;
+        }
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        .chart-container {
+            background: var(--parchment);
+            border: 1px solid var(--parchment-dk);
+            padding: 22px;
+            margin: 22px 0;
+        }
+        .chart-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--grey);
+            margin-bottom: 14px;
+        }
+        .chart-canvas-wrap {
+            position: relative;
+            height: 300px;
+        }
+        .chart-canvas-wrap.short {
+            height: 240px;
+        }
+        .chart-note {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--grey);
+            margin-top: 12px;
+            line-height: 1.6;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 18px;
+            margin: 22px 0;
+        }
+        .scenario-card {
+            background: var(--parchment);
+            border: 1px solid var(--parchment-dk);
+            border-top: 4px solid var(--gold);
+            padding: 20px;
+        }
+        .scenario-card.worst {
+            border-top-color: var(--red);
+        }
+        .scenario-card.opt {
+            border-top-color: var(--teal);
+        }
+        .scenario-card.best {
+            border-top-color: var(--green);
+        }
+        .sc-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--grey);
+            display: block;
+            margin-bottom: 8px;
+        }
+        .sc-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .sc-metric {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--parchment-dk);
+        }
+        .sc-metric:last-child {
+            border-bottom: none;
+        }
+        .sc-metric-label {
+            color: var(--grey);
+        }
+        .sc-metric-val {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gold);
+            opacity: 0.4;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--paper);
+            box-shadow: 0 0 0 2px var(--gold);
+        }
+        .timeline-item.active::before {
+            background: var(--red);
+            box-shadow: 0 0 0 2px var(--red);
+        }
+        .timeline-item.income-point::before {
+            background: var(--green);
+            box-shadow: 0 0 0 2px var(--green);
+        }
+        .timeline-item.starting-bal::before {
+            background: var(--teal);
+            box-shadow: 0 0 0 2px var(--teal);
+        }
+        .tl-date {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 4px;
+        }
+        .tl-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+        .tl-body {
+            font-size: 13px;
+            color: var(--grey);
+            line-height: 1.6;
+        }
+        .tl-badge {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            margin-top: 8px;
+            margin-right: 6px;
+        }
+        .tl-badge.debt {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        .tl-badge.income {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        .tl-badge.current {
+            background: var(--gold-light);
+            color: #7a5a00;
+        }
+        .tl-badge.liquid {
+            background: var(--teal-light);
+            color: var(--teal);
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 26px;
+            margin: 22px 0;
+        }
+        @media (max-width: 900px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            .screen-meta-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            .cover-kpi-row {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .content-wrap {
+                padding: 40px 22px 80px;
+            }
+            .cover-toc-grid {
+                grid-template-columns: 1fr;
+            }
+            .cover-meta-grid {
+                grid-template-columns: 1fr;
+            }
+            .cover-kpi-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .screen-meta-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .formula-box {
+            background: #0f1117;
+            border: 1px solid #2a2a2a;
+            border-left: 4px solid var(--gold);
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.85;
+            color: #e0e0e0;
+            overflow-x: auto;
+        }
+        .formula-box .comment {
+            color: #666;
+        }
+        .formula-box .val {
+            color: #4ade80;
+        }
+        .formula-box .label {
+            color: var(--gold);
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 2px;
+            margin: 2px;
+        }
+        .badge-red {
+            background: var(--red-light);
+            color: var(--red);
+        }
+        .badge-gold {
+            background: var(--gold-light);
+            color: #7a5a00;
+        }
+        .badge-green {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        .badge-blue {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .highlight-row {
+            display: flex;
+            gap: 20px;
+            background: var(--parchment);
+            border: 1px solid var(--parchment-dk);
+            padding: 20px;
+            margin: 20px 0;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .hl-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--red);
+            line-height: 1;
+            min-width: 110px;
+        }
+        .hl-num.gold {
+            color: var(--gold);
+        }
+        .hl-num.green {
+            color: #4ade80;
+        }
+        .hl-num.teal {
+            color: var(--teal);
+        }
+        .hl-text {
+            flex: 1;
+            min-width: 220px;
+        }
+        .hl-text h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .hl-text p {
+            font-size: 13px;
+            color: var(--grey);
+            margin: 0;
+        }
+
+        .ornament {
+            text-align: center;
+            color: var(--gold);
+            font-size: 14px;
+            letter-spacing: 0.5em;
+            margin: 56px 0 0;
+            opacity: 0.5;
+        }
+        footer {
+            background: var(--ink);
+            color: #555;
+            padding: 30px 60px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-align: center;
+            border-top: 3px solid var(--red);
+        }
+        ul.styled,
+        ol.styled {
+            margin: 12px 0 14px 24px;
+            line-height: 1.75;
+        }
+        ul.styled li,
+        ol.styled li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+        ul.styled li::marker {
+            color: var(--gold);
+        }
+        ol.styled li::marker {
+            color: var(--red);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+
+        .income-badge {
+            background: var(--green-light);
+            color: var(--green);
+            padding: 2px 10px;
+            border-radius: 2px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progress-bar"></div>
+    <div id="scroll-top">&#8593;</div>
+
+    <!-- ===================== COVER PAGE ===================== -->
+    <div class="cover-page">
+        <div class="cover-top-bar">
+            <span>PERSONAL FINANCE / QUANTITATIVE ANALYSIS</span>
+            <span>REF. FA2026-01</span>
+        </div>
+        <div class="cover-body">
+            <span class="cover-eyebrow">Empirical Cash-Flow Assessment &mdash; With Job Income & Starting Liquidity</span>
+            <div class="cover-rule-top"></div>
+            <h1 class="cover-h1">Fall 2026 Financial Position</h1>
+            <h2 class="cover-h2">A statistical assessment of tuition obligations, monthly cash flow, and the trajectory toward an $11,000 savings target &mdash; including $13/hr job income and $4,673 starting liquidity</h2>
+            <div class="cover-rule-bot"></div>
+
+            <div class="cover-meta-grid">
+                <div class="cover-meta-cell">
+                    <span class="cover-meta-label">Analysis Date</span>
+                    <span class="cover-meta-val">Jul 28, 2026</span>
+                </div>
+                <div class="cover-meta-cell">
+                    <span class="cover-meta-label">Modeling Horizon</span>
+                    <span class="cover-meta-val">Aug 2026 &ndash; Jul 2027</span>
+                </div>
+                <div class="cover-meta-cell">
+                    <span class="cover-meta-label">Currency</span>
+                    <span class="cover-meta-val">USD</span>
+                </div>
+            </div>
+
+            <div class="cover-kpi-row">
+                <div class="cover-kpi-cell"><span class="cover-kpi-val">$10,098.00</span><span class="cover-kpi-label">Total Charges</span></div>
+                <div class="cover-kpi-cell"><span class="cover-kpi-val">$3,366.00</span><span class="cover-kpi-label">Paid To Date</span></div>
+                <div class="cover-kpi-cell"><span class="cover-kpi-val danger">$6,732.00</span><span class="cover-kpi-label">Balance Due</span></div>
+                <div class="cover-kpi-cell"><span class="cover-kpi-val">$1,399.07</span><span class="cover-kpi-label">Monthly Expenses</span></div>
+                <div class="cover-kpi-cell"><span class="cover-kpi-val green">$2,535.00</span><span class="cover-kpi-label">Monthly Income (Job)</span></div>
+                <div class="cover-kpi-cell"><span class="cover-kpi-val green">+$13,137.78</span><span class="cover-kpi-label">12-Mo Projected Balance</span></div>
+            </div>
+        </div>
+
+        <div class="cover-toc">
+            <span class="cover-toc-title">Contents</span>
+            <div class="cover-toc-grid">
+                <a href="#part1" class="cover-toc-item"><span class="part-num">Part I</span> Payment Obligations &amp; Semester Charges</a>
+                <a href="#part2" class="cover-toc-item"><span class="part-num">Part II</span> Monthly Cash Flow Model</a>
+                <a href="#part3" class="cover-toc-item"><span class="part-num">Part III</span> Twelve-Month Statistical Projection</a>
+                <a href="#part4" class="cover-toc-item"><span class="part-num">Part IV</span> Savings Goal Sensitivity Analysis</a>
+                <a href="#part5" class="cover-toc-item"><span class="part-num">Part V</span> Findings &amp; Recommendations</a>
+                <a href="#appendix" class="cover-toc-item"><span class="part-num">Appendix</span> Methodology &amp; Assumptions</a>
+            </div>
+        </div>
+        <div class="cover-bottom">
+            <span>Compiled from stated obligations + job income ($13/hr, 9h/day, 5d/wk) + starting liquidity $4,673</span>
+            <span>n = 1 &middot; deterministic projection</span>
+        </div>
+    </div>
+
+    <div class="screen-meta-bar">
+        <div class="kpi-cell"><span class="kpi-val">$10,098.00</span><span class="kpi-label">Charges</span></div>
+        <div class="kpi-cell"><span class="kpi-val">$3,366.00</span><span class="kpi-label">Paid</span></div>
+        <div class="kpi-cell"><span class="kpi-val danger">$6,732.00</span><span class="kpi-label">Due</span></div>
+        <div class="kpi-cell"><span class="kpi-val">$1,399.07</span><span class="kpi-label">Monthly Expenses</span></div>
+        <div class="kpi-cell"><span class="kpi-val green">$2,535.00</span><span class="kpi-label">Job Income/Mo</span></div>
+        <div class="kpi-cell"><span class="kpi-val green">+$13,137.78</span><span class="kpi-label">12-Mo Proj. Balance</span></div>
+    </div>
+
+    <div class="content-wrap">
+
+        <!-- ===================== PART I ===================== -->
+        <div class="part-divider" id="part1">
+            <span class="part-label">Part I</span>
+            <h2 class="part-title">Payment Obligations &amp; Semester Charges</h2>
+            <p class="part-intro">The Fall 2026 balance is structured as three equal installments of $3,366.00, applied sequentially against tuition, the non-resident fee, and the international fee. This section lays out the raw obligation set before any cash-flow modeling is applied.</p>
+
+            <div class="section-block">
+                <span class="section-num">Section 1.1</span>
+                <h3 class="section-title">Charge Ledger</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Description</th><th>Charge</th><th>Payment Method</th><th>Due Date</th><th>Installment</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>Tuition</td><td class="td-num">$4,000.00</td><td>Electronic Check</td><td>Aug 15, 2026</td><td class="td-num">$3,366.00</td><td class="td-green">Paid</td></tr>
+                            <tr><td>Non-Resident Fee</td><td class="td-num">$5,000.00</td><td>Flexible Payment Plan</td><td>Sep 21, 2026</td><td class="td-num">$3,366.00</td><td class="td-red">Pending</td></tr>
+                            <tr><td>International Fee</td><td class="td-num">$1,073.00</td><td>Flexible Payment Plan</td><td>Oct 19, 2026</td><td class="td-num">$3,366.00</td><td class="td-red">Pending</td></tr>
+                            <tr><td>Blazer Flex Plan Fee</td><td class="td-num">$25.00</td><td>&mdash;</td><td>&mdash;</td><td class="td-num">&mdash;</td><td class="td-gold">Included in total</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>Total</td><td class="td-num">$10,098.00</td><td></td><td></td><td class="td-num">$10,098.00</td><td></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="callout note">
+                    <span class="callout-label">Observation</span>
+                    The three stated installments sum to $3,366.00 &times; 3 = $10,098.00, exactly matching total charges. This confirms the "Flexible Payment Plan" divides the balance into three equal thirds rather than billing each fee independently &mdash; the fee-level allocation in the ledger above is an accounting label, not a reflection of which dollars fund which line item.
+                </div>
+            </div>
+
+            <div class="section-block">
+                <span class="section-num">Section 1.2</span>
+                <h3 class="section-title">Obligation Timeline &mdash; August through October</h3>
+                <div class="timeline">
+                    <div class="timeline-item starting-bal"><span class="tl-date">Jul 28</span><h4 class="tl-title">Starting Liquidity</h4><p class="tl-body">$4,673.00 available in bank account <span class="tl-badge liquid">Liquidity</span></p></div>
+                    <div class="timeline-item"><span class="tl-date">Aug 1</span><h4 class="tl-title">Rent, Utilities &amp; Home Insurance</h4><p class="tl-body">$650.00 recurring, first of each month.</p></div>
+                    <div class="timeline-item"><span class="tl-date">Aug 12</span><h4 class="tl-title">Car Insurance + Existing Monthly Payment</h4><p class="tl-body">$69.00 + $288.45 = $357.45. Loan repayment has not yet begun (disbursement occurs Aug 21).</p></div>
+                    <div class="timeline-item active"><span class="tl-date">Aug 15</span><h4 class="tl-title">Tuition Installment</h4><p class="tl-body">$3,366.00 <span class="tl-badge current">Paid</span></p></div>
+                    <div class="timeline-item income-point"><span class="tl-date">Aug 21</span><h4 class="tl-title">Loan Disbursement</h4><p class="tl-body">$5,000.00 received <span class="tl-badge income">Income</span>. Triggers the $71.62/month repayment obligation beginning the following billing cycle.</p></div>
+                    <div class="timeline-item"><span class="tl-date">Sep 12</span><h4 class="tl-title">First Loan Repayment Begins</h4><p class="tl-body">$71.62 added to the recurring 12th-of-month cluster going forward.</p></div>
+                    <div class="timeline-item active"><span class="tl-date">Sep 21</span><h4 class="tl-title">Non-Resident Fee Installment Due</h4><p class="tl-body">$3,366.00 <span class="tl-badge debt">Pending</span></p></div>
+                    <div class="timeline-item active"><span class="tl-date">Oct 19</span><h4 class="tl-title">International Fee Installment Due</h4><p class="tl-body">$3,366.00 <span class="tl-badge debt">Pending</span></p></div>
+                    <div class="timeline-item"><span class="tl-date">One-Time</span><h4 class="tl-title">Car Payoff</h4><p class="tl-body">$140.00, no interest &mdash; clears the remaining car balance entirely.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== PART II ===================== -->
+        <div class="part-divider" id="part2">
+            <span class="part-label">Part II</span>
+            <h2 class="part-title">Monthly Cash Flow Model</h2>
+            <p class="part-intro">Recurring obligations are decomposed into a fixed monthly base, then overlaid with the semester payment schedule, the one-time loan disbursement, <strong>recurring job income of $2,535/month</strong> (based on $13/hr, 9h/day, 5d/week), and a <strong>starting liquidity of $4,673</strong> as of July 28, 2026.</p>
+
+            <div class="section-block">
+                <span class="section-num">Section 2.1</span>
+                <h3 class="section-title">Income Sources &amp; Starting Capital</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Source</th><th>Amount</th><th>Frequency</th><th>Active From</th></tr></thead>
+                        <tbody>
+                            <tr><td>Job Income <span class="income-badge">$13/hr &bull; 7am&ndash;4pm &bull; M&ndash;F</span></td><td class="td-num td-green">$2,535.00</td><td>Monthly</td><td>Ongoing</td></tr>
+                            <tr><td>Loan Disbursement</td><td class="td-num td-green">$5,000.00</td><td>One-time</td><td>Aug 21, 2026</td></tr>
+                            <tr><td>Starting Liquidity</td><td class="td-num td-green">$4,673.00</td><td>Initial Balance</td><td>Jul 28, 2026</td></tr>
+                            <tr><td><em>Total Monthly Recurring Income</em></td><td class="td-num td-green"><strong>$2,535.00</strong></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="callout success">
+                    <span class="callout-label">Income Assumption</span>
+                    Job income is calculated as 9 hours/day &times; 5 days/week &times; $13/hour = $585/week &times; 52 weeks / 12 months = <strong>$2,535/month</strong>. This assumes the 7am&ndash;4pm window is paid time (no unpaid lunch break). If a 1-hour unpaid lunch applies (8 paid hours/day), income would be $2,253/month &mdash; a difference of $282/month.
+                </div>
+            </div>
+
+            <div class="section-block">
+                <span class="section-num">Section 2.2</span>
+                <h3 class="section-title">Fixed Recurring Obligations</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Item</th><th>Amount</th><th>Billing Day</th><th>Active From</th></tr></thead>
+                        <tbody>
+                            <tr><td>Rent + Utilities + Home Insurance</td><td class="td-num">$650.00</td><td>1st</td><td>Ongoing</td></tr>
+                            <tr><td>Car Insurance</td><td class="td-num">$69.00</td><td>12th</td><td>Ongoing</td></tr>
+                            <tr><td>Existing Monthly Payment</td><td class="td-num">$288.45</td><td>12th</td><td>Ongoing</td></tr>
+                            <tr><td>New Loan Repayment</td><td class="td-num">$71.62</td><td>12th</td><td>Begins Sep 2026</td></tr>
+                            <tr><td>Food &amp; Miscellaneous</td><td class="td-num">$150.00</td><td>Variable</td><td>Modeled as fixed mean</td></tr>
+                            <tr><td>Fuel</td><td class="td-num">$120.00</td><td>Variable</td><td>Ongoing</td></tr>
+                            <tr><td>Emergency Fund Contribution</td><td class="td-num">$50.00</td><td>Variable</td><td>Ongoing</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="formula-box">
+                    <span class="comment">// August (loan repayment not yet active)</span><br/>
+                    650.00 + 69.00 + 288.45 + 150.00 + 120.00 + 50.00 = <span class="val">$1,327.45</span><br/><br/>
+                    <span class="comment">// September onward (loan repayment active)</span><br/>
+                    <span class="label">$1,327.45</span> + 71.62 = <span class="val">$1,399.07</span> <span class="comment">&larr; steady-state monthly expenses</span><br/><br/>
+                    <span class="comment">// Net monthly cash flow (steady state, with job income)</span><br/>
+                    <span class="label">$2,535.00</span> (income) &minus; <span class="label">$1,399.07</span> (expenses) = <span class="val">+$1,135.93</span> <span class="comment">&larr; positive monthly surplus</span><br/><br/>
+                    <span class="comment">// Starting balance: $4,673.00</span>
+                </div>
+                <div class="chart-container">
+                    <span class="chart-title">Distribution of Steady-State Monthly Expenses</span>
+                    <div class="chart-canvas-wrap short"><canvas id="expenseDoughnut"></canvas></div>
+                </div>
+            </div>
+
+            <div class="section-block">
+                <span class="section-num">Section 2.3</span>
+                <h3 class="section-title">Semester Payment Overlay &amp; Cash Flow</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Month</th><th>Job Income</th><th>Other Income</th><th>Total Income</th><th>Base Expenses</th><th>Semester / One-Time</th><th>Total Expenses</th><th>Net Cash Flow</th><th>Cumulative Balance</th></tr></thead>
+                        <tbody>
+                            <tr><td>Start (Jul 28)</td><td class="td-num">—</td><td class="td-num td-green">$4,673.00</td><td class="td-num td-green">$4,673.00</td><td class="td-num">—</td><td class="td-num">—</td><td class="td-num">—</td><td class="td-num">—</td><td class="td-num td-green">$4,673.00</td></tr>
+                            <tr><td>Aug 2026</td><td class="td-num td-green">$2,535.00</td><td class="td-num td-green">$5,000.00</td><td class="td-num td-green">$7,535.00</td><td class="td-num">$1,327.45</td><td class="td-num">$3,506.00</td><td class="td-num">$4,833.45</td><td class="td-num td-green">+$2,701.55</td><td class="td-num td-green">$7,374.55</td></tr>
+                            <tr><td>Sep 2026</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$0.00</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$1,399.07</td><td class="td-num">$3,366.00</td><td class="td-num">$4,765.07</td><td class="td-num td-red">&minus;$2,230.07</td><td class="td-num td-green">$5,144.48</td></tr>
+                            <tr><td>Oct 2026</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$0.00</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$1,399.07</td><td class="td-num">$3,366.00</td><td class="td-num">$4,765.07</td><td class="td-num td-red">&minus;$2,230.07</td><td class="td-num td-green">$2,914.41</td></tr>
+                            <tr><td>Nov 2026</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$0.00</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$1,399.07</td><td class="td-num">$0.00</td><td class="td-num">$1,399.07</td><td class="td-num td-green">+$1,135.93</td><td class="td-num td-green">$4,050.34</td></tr>
+                            <tr><td>Dec 2026</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$0.00</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$1,399.07</td><td class="td-num">$0.00</td><td class="td-num">$1,399.07</td><td class="td-num td-green">+$1,135.93</td><td class="td-num td-green">$5,186.27</td></tr>
+                            <tr><td>Jan 2027</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$0.00</td><td class="td-num td-green">$2,535.00</td><td class="td-num">$1,399.07</td><td class="td-num">$0.00</td><td class="td-num">$1,399.07</td><td class="td-num td-green">+$1,135.93</td><td class="td-num td-green">$6,322.20</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>6-Month Total</td><td class="td-num td-green">$15,210.00</td><td class="td-num td-green">$9,673.00</td><td class="td-num td-green">$24,883.00</td><td class="td-num">$8,323.80</td><td class="td-num">$10,238.00</td><td class="td-num">$18,561.80</td><td class="td-num td-green">+$6,321.20</td><td class="td-num td-green">$6,322.20</td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="chart-container">
+                    <span class="chart-title">Monthly Income vs. Expenses (Aug 2026 &ndash; Jan 2027)</span>
+                    <div class="chart-canvas-wrap"><canvas id="cashFlowBar"></canvas></div>
+                </div>
+                <div class="callout success">
+                    <span class="callout-label">Key Insight</span>
+                    With the job income and starting liquidity, the August&ndash;October deficit window is more than cushioned. The cumulative balance after October is <strong>+$2,914.41</strong>, and by January 2027 it reaches <strong>+$6,322.20</strong>. The model is firmly in positive territory throughout the entire horizon.
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== PART III ===================== -->
+        <div class="part-divider" id="part3">
+            <span class="part-label">Part III</span>
+            <h2 class="part-title">Twelve-Month Statistical Projection</h2>
+            <p class="part-intro">Extending the model to a twelve-month horizon (Aug 2026&ndash;Jul 2027) with the job income and $4,673 starting balance. The baseline projection already exceeds the $11,000 savings target. Additional supplemental income accelerates the surplus.</p>
+
+            <div class="chart-container">
+                <span class="chart-title">Cumulative Balance Projection &mdash; With Job Income, Starting Liquidity &amp; Supplemental Scenarios</span>
+                <div class="chart-canvas-wrap"><canvas id="projectionLine"></canvas></div>
+                <p class="chart-note">Dashed navy line marks the $11,000 savings target. The <strong>solid green</strong> line is the baseline (job income + loan + starting balance). Each additional scenario layers a constant supplemental monthly income on top of the job income.</p>
+            </div>
+
+            <div class="scenario-grid">
+                <div class="scenario-card best">
+                    <span class="sc-tag">Scenario A</span>
+                    <h4 class="sc-title">Baseline (Job + Loan + $4,673 start)</h4>
+                    <div class="sc-metric"><span class="sc-metric-label">Monthly income</span><span class="sc-metric-val">$2,535</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Balance @ 12 mo</span><span class="sc-metric-val td-green">+$13,137.78</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Reaches $11K goal?</span><span class="sc-metric-val">Yes (by Jun 2027)</span></div>
+                </div>
+                <div class="scenario-card opt">
+                    <span class="sc-tag">Scenario B</span>
+                    <h4 class="sc-title">+$100/mo Supplemental</h4>
+                    <div class="sc-metric"><span class="sc-metric-label">Extra income / mo</span><span class="sc-metric-val">$100</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Balance @ 12 mo</span><span class="sc-metric-val td-green">+$14,337.78</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Reaches $11K goal?</span><span class="sc-metric-val">Yes (surplus $3,337.78)</span></div>
+                </div>
+                <div class="scenario-card">
+                    <span class="sc-tag">Scenario C</span>
+                    <h4 class="sc-title">+$200/mo Supplemental</h4>
+                    <div class="sc-metric"><span class="sc-metric-label">Extra income / mo</span><span class="sc-metric-val">$200</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Balance @ 12 mo</span><span class="sc-metric-val td-green">+$15,537.78</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Reaches $11K goal?</span><span class="sc-metric-val">Yes (surplus $4,537.78)</span></div>
+                </div>
+                <div class="scenario-card best">
+                    <span class="sc-tag">Scenario D</span>
+                    <h4 class="sc-title">+$500/mo Supplemental</h4>
+                    <div class="sc-metric"><span class="sc-metric-label">Extra income / mo</span><span class="sc-metric-val">$500</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Balance @ 12 mo</span><span class="sc-metric-val td-green">+$19,137.78</span></div>
+                    <div class="sc-metric"><span class="sc-metric-label">Reaches $11K goal?</span><span class="sc-metric-val">Yes (surplus $8,137.78)</span></div>
+                </div>
+            </div>
+
+            <div class="callout note">
+                <span class="callout-label">Interpretation</span>
+                With the job income alone and the $4,673 starting balance, the 12-month balance reaches <strong>$13,137.78</strong> &mdash; exceeding the $11,000 goal by $2,137.78. The goal is actually achieved in <strong>June 2027</strong>, a full month before the 12-month horizon ends. Any supplemental income simply builds a larger buffer.
+            </div>
+        </div>
+
+        <!-- ===================== PART IV ===================== -->
+        <div class="part-divider" id="part4">
+            <span class="part-label">Part IV</span>
+            <h2 class="part-title">Savings Goal Sensitivity Analysis</h2>
+            <p class="part-intro">The $11,000 savings target is evaluated across three horizons. Because the starting balance and job income already put the model ahead, the table below shows the <strong>additional</strong> monthly income needed (on top of the $2,535/month job income) to reach the goal <em>earlier</em> than the baseline, or the surplus achieved without any extra income.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Horizon</th><th>Target Date</th><th>Projected Balance (Job Income + Start)</th><th>Gap to $11,000</th><th>Required <em>Additional</em> Income / Mo</th></tr></thead>
+                    <tbody>
+                        <tr><td>6 months</td><td>Jan 2027</td><td class="td-num td-green">+$6,322.20</td><td class="td-num">$4,677.80</td><td class="td-num td-gold">$779.63</td></tr>
+                        <tr><td>9 months</td><td>Apr 2027</td><td class="td-num td-green">+$9,729.99</td><td class="td-num">$1,270.01</td><td class="td-num td-gold">$141.11</td></tr>
+                        <tr><td>12 months</td><td>Jul 2027</td><td class="td-num td-green">+$13,137.78</td><td class="td-num td-green"><em>Surplus $2,137.78</em></td><td class="td-num td-gold">$0.00 (already reached)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-row">
+                <span class="hl-num teal">$4,673</span>
+                <div class="hl-text">
+                    <h4>Starting Liquidity Advantage</h4>
+                    <p>Your existing bank balance of $4,673 provides a critical buffer, transforming the short-term deficit window into a consistently positive balance throughout the entire 12‑month horizon.</p>
+                </div>
+            </div>
+            <div class="highlight-row">
+                <span class="hl-num green">$1,136</span>
+                <div class="hl-text">
+                    <h4>Monthly Surplus (Steady State)</h4>
+                    <p>Job income ($2,535) minus monthly expenses ($1,399.07) = <strong>$1,135.93</strong> surplus each month after the semester payments conclude. This surplus is the engine driving the positive trajectory.</p>
+                </div>
+            </div>
+
+            <div class="callout teal">
+                <span class="callout-label">Strategic Takeaway</span>
+                The $11,000 goal is already achievable within the 12‑month horizon without any additional income. To reach the goal sooner (e.g., in 6 months), you'd need an extra $779.63/month. For a 9‑month timeline, only $141.11/month extra is needed &mdash; about 11 hours of additional work per month at $13/hr.
+            </div>
+        </div>
+
+        <!-- ===================== PART V ===================== -->
+        <div class="part-divider" id="part5">
+            <span class="part-label">Part V</span>
+            <h2 class="part-title">Findings &amp; Recommendations</h2>
+
+            <div class="section-block">
+                <span class="section-num">Section 5.1</span>
+                <h3 class="section-title">Key Findings</h3>
+                <ol class="styled">
+                    <li>The payment plan divides total charges into three equal $3,366.00 installments; the per-fee ledger is an accounting allocation, not a reflection of which specific installment funds which fee.</li>
+                    <li>Job income of <strong>$2,535/month</strong> ($13/hr, 9h/day, 5d/wk) combined with <strong>$4,673 starting liquidity</strong> transforms the model from a deficit trajectory to a consistently positive surplus trajectory.</li>
+                    <li>Steady-state monthly expenses (post-October) are <strong>$1,399.07</strong>, yielding a monthly surplus of <strong>$1,135.93</strong> with the job income.</li>
+                    <li>September and October each carry a $3,366.00 semester installment with no offsetting income beyond the job, but the starting balance ensures the cumulative balance never dips below <strong>+$2,914.41</strong>.</li>
+                    <li>The 12-month cumulative balance with job income and starting liquidity reaches <strong>+$13,137.78</strong> &mdash; exceeding the $11,000 savings target by <strong>$2,137.78</strong>. The goal is achieved in <strong>June 2027</strong>.</li>
+                    <li>To reach the $11,000 goal in 9 months, only <strong>$141.11/month</strong> extra income is needed. In 6 months, $779.63/month is required.</li>
+                    <li>The emergency fund is being built at $50/month against a $1,399.07/month burn rate; at this pace it would take roughly 28 months to accumulate a single month's expenses in reserve.</li>
+                </ol>
+            </div>
+
+            <div class="section-block">
+                <span class="section-num">Section 5.2</span>
+                <h3 class="section-title">Recommendations</h3>
+                <ul class="styled">
+                    <li><strong>Maintain the job income as a baseline</strong> &mdash; the surplus it generates is the primary driver of the positive trajectory. Any disruption to this income would reduce the surplus.</li>
+                    <li><strong>Since the $11,000 goal is already reached, consider setting a higher target</strong> &mdash; for example, $15,000 or $18,000. With the current surplus, you'll have $13,137.78 in 12 months; a $500/month side gig would push that to $19,137.78.</li>
+                    <li><strong>To accelerate the goal</strong>, target an extra $141/month for a 9‑month timeline, or $780/month for a 6‑month timeline. These are achievable through a few extra work hours or a small side gig.</li>
+                    <li><strong>Treat the car payoff as a quick win</strong> &mdash; clearing the $140.00 balance removes a line item permanently at negligible cost.</li>
+                    <li><strong>Revisit food and fuel together</strong> &mdash; combined, these total $270.00/month; a 10&ndash;15% reduction ($27&ndash;$40.50/month) would further accelerate savings.</li>
+                    <li><strong>Re-run this model monthly</strong> against actual statement data once payments post, to replace the deterministic projection with an empirically updated one.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===================== APPENDIX ===================== -->
+        <div class="part-divider" id="appendix">
+            <span class="part-label">Appendix</span>
+            <h2 class="part-title">Methodology &amp; Assumptions</h2>
+            <ul class="styled">
+                <li>All payments are modeled as posting exactly on their stated due date; no grace periods or float are assumed.</li>
+                <li>Food/misc ($150) is explicitly variable per the source data but is treated as a fixed monthly mean for projection purposes &mdash; actual monthly variance is not modeled.</li>
+                <li>The new loan repayment ($71.62/mo) is assumed to begin on the first 12th-of-month billing cycle following the Aug 21 disbursement, i.e. Sep 12, 2026.</li>
+                <li><strong>Job income:</strong> Calculated as 9 hours/day &times; 5 days/week &times; $13/hour = $585/week &times; 52 weeks / 12 months = <strong>$2,535.00/month</strong>. This assumes the 7am&ndash;4pm window is paid time (no unpaid lunch break). If an unpaid 1-hour lunch applies, the monthly income would be $2,253.33/month (8 paid hours/day).</li>
+                <li><strong>Starting liquidity:</strong> $4,673.00 as of July 28, 2026 is added as an initial balance. This figure is treated as cash available for all obligations.</li>
+                <li>All figures are deterministic point estimates (n = 1, no confidence intervals) since the underlying inputs are fixed obligations rather than sampled data.</li>
+            </ul>
+        </div>
+
+        <div class="ornament">&#10022; &#10022; &#10022;</div>
+    </div>
+
+    <footer>
+        Compiled Jul 28, 2026 &middot; Figures in USD &middot; For personal planning purposes only &middot; Not financial advice
+    </footer>
+
+    <script>
+        // Scroll progress + back-to-top
+        window.addEventListener('scroll', function() {
+            const h = document.documentElement;
+            const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+            document.getElementById('scroll-top').classList.toggle('visible', h.scrollTop > 600);
+        });
+        document.getElementById('scroll-top').addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const inkPalette = { blue: '#1a3a5c', teal: '#0b6e6e', gold: '#b8860b', red: '#c0392b', green: '#1a5c2e',
+                purple: '#4a1a6e', orange: '#b84a0b' };
+
+            // ---- Expense Doughnut ----
+            new Chart(document.getElementById('expenseDoughnut').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Rent + Utilities + Insurance', 'Existing Payment', 'New Loan Repayment',
+                        'Car Insurance', 'Food + Misc', 'Fuel', 'Emergency Fund'
+                    ],
+                    datasets: [{
+                        data: [650, 288.45, 71.62, 69, 150, 120, 50],
+                        backgroundColor: [inkPalette.blue, inkPalette.teal, inkPalette.orange, inkPalette
+                            .gold, inkPalette.red, '#5a5a5a', inkPalette.purple
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#f5f0e8'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11,
+                                    family: 'IBM Plex Mono' }, color: '#1a1a1a' } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                                    return ctx.label + ': $' + ctx.parsed.toFixed(2) + ' (' + pct + '%)';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '58%'
+                }
+            });
+
+            // ---- Cash Flow Bar (Aug-Jan) ----
+            new Chart(document.getElementById('cashFlowBar').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Aug 26', 'Sep 26', 'Oct 26', 'Nov 26', 'Dec 26', 'Jan 27'],
+                    datasets: [
+                        { label: 'Income', data: [7535, 2535, 2535, 2535, 2535, 2535],
+                            backgroundColor: inkPalette.green, borderRadius: 3 },
+                        { label: 'Expenses', data: [4833.45, 4765.07, 4765.07, 1399.07, 1399.07, 1399.07],
+                            backgroundColor: inkPalette.red, borderRadius: 3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 11, family: 'IBM Plex Mono' },
+                                color: '#1a1a1a' } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString(
+                                    'en-US', { minimumFractionDigits: 2 })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: (v) => '$' + v.toLocaleString(),
+                                color: '#5a5a5a' }, grid: { color: '#e2d9c2' } },
+                        x: { ticks: { color: '#5a5a5a' }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // ---- 12-Month Projection Line (starting balance = 4673) ----
+            const months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+
+            const income = [2535 + 5000, 2535, 2535, 2535, 2535, 2535, 2535, 2535, 2535, 2535, 2535, 2535];
+            const expense = [1327.45 + 3506, 1399.07 + 3366, 1399.07 + 3366, 1399.07, 1399.07, 1399.07, 1399.07, 1399.07,
+                1399.07, 1399.07, 1399.07, 1399.07
+            ];
+
+            function buildSeries(extraPerMonth, initialBalance = 4673) {
+                let bal = initialBalance;
+                const out = [];
+                for (let i = 0; i < months.length; i++) {
+                    bal += (income[i] || 0) + extraPerMonth - expense[i];
+                    out.push(Math.round(bal * 100) / 100);
+                }
+                return out;
+            }
+
+            const baseline = buildSeries(0);
+            const plus100 = buildSeries(100);
+            const plus200 = buildSeries(200);
+            const plus500 = buildSeries(500);
+
+            new Chart(document.getElementById('projectionLine').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Baseline (Job + Loan + $4,673 start)', data: baseline, borderColor: inkPalette
+                                .green, backgroundColor: 'rgba(26,92,46,0.10)', fill: true,
+                            tension: 0.25, pointRadius: 3, borderWidth: 2.5 },
+                        { label: 'B: +$100/mo extra', data: plus100, borderColor: inkPalette.orange,
+                            borderDash: [5, 4], fill: false, tension: 0.25, pointRadius: 3 },
+                        { label: 'C: +$200/mo extra', data: plus200, borderColor: inkPalette.gold,
+                            fill: false, tension: 0.25, pointRadius: 3 },
+                        { label: 'D: +$500/mo extra', data: plus500, borderColor: inkPalette.teal,
+                            borderDash: [2, 3], fill: false, tension: 0.25, pointRadius: 3 },
+                        { label: 'Savings Goal ($11,000)', data: Array(months.length).fill(11000),
+                            borderColor: inkPalette.blue, borderDash: [4, 6], pointRadius: 0,
+                            borderWidth: 2 },
+                        { label: 'Zero Line', data: Array(months.length).fill(0), borderColor: '#5a5a5a',
+                            borderWidth: 1, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { size: 10.5, family: 'IBM Plex Mono' },
+                                color: '#1a1a1a', boxWidth: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ctx.dataset.label + ': $' + ctx.parsed.y.toLocaleString(
+                                    'en-US', { minimumFractionDigits: 2 })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { ticks: { callback: (v) => '$' + v.toLocaleString(), color: '#5a5a5a' },
+                            grid: { color: '#e2d9c2' } },
+                        x: { ticks: { color: '#5a5a5a' }, grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

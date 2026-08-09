@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Human Verdict — Who Decides, Who Gets Believed, and What It Costs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0d0d0d;
+        --paper: #f5f0e8;
+        --parchment: #ede6d3;
+        --parchment-dk: #e2d9c2;
+        --red: #c0392b;
+        --red-light: #f5cdc9;
+        --blue: #1a3a5c;
+        --blue-light: #d0dce8;
+        --gold: #b8860b;
+        --gold-light: #f0e0a0;
+        --green: #1a5c2e;
+        --green-light: #c9e8d5;
+        --grey: #5a5a5a;
+        --teal: #0b6e6e;
+        --teal-light: #c9e8e8;
+        --purple: #4a1a6e;
+        --purple-light: #e0d0f0;
+        --orange: #b84a0b;
+        --orange-light: #f5dac9;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'IBM Plex Sans', sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        font-size: 15px;
+        line-height: 1.75;
+        overflow-x: hidden;
+      }
+      #progress-bar {
+        position: fixed; top: 0; left: 0; height: 3px;
+        background: var(--red); z-index: 999; width: 0%;
+        transition: width 0.1s linear;
+      }
+      #scroll-top {
+        position: fixed; bottom: 28px; right: 28px; width: 38px; height: 38px;
+        background: var(--ink); border: 1px solid var(--gold); color: var(--gold);
+        font-size: 16px; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; opacity: 0; transition: opacity 0.2s; z-index: 300;
+        font-family: 'IBM Plex Mono', monospace;
+      }
+      #scroll-top.visible { opacity: 1; }
+      #scroll-top:hover { background: var(--gold); color: var(--ink); }
+
+      .cover-page { background: var(--ink); display: flex; flex-direction: column; min-height: 100vh; position: relative; overflow: hidden; }
+      .cover-top-bar {
+        display: flex; justify-content: space-between; align-items: center; padding: 14px 60px;
+        border-bottom: 1px solid #222; font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+        color: #555; letter-spacing: 0.12em;
+      }
+      .cover-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 80px 40px; }
+      .cover-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 16px; }
+      .cover-rule-top { height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent); width: 100%; margin-bottom: 32px; }
+      .cover-h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 64px); font-weight: 900; color: var(--paper); letter-spacing: -0.02em; line-height: 1.05; margin-bottom: 12px; }
+      .cover-h2 { font-family: 'Playfair Display', serif; font-size: clamp(16px, 2.4vw, 26px); font-weight: 400; color: #aaa; font-style: italic; margin-bottom: 32px; }
+      .cover-rule-bot { height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--red), var(--gold), transparent); width: 100%; margin-bottom: 40px; }
+      .cover-meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; width: 100%; max-width: 760px; margin: 0 auto 48px; border: 1px solid #222; }
+      .cover-meta-cell { padding: 18px 24px; border-right: 1px solid #222; text-align: center; }
+      .cover-meta-cell:last-child { border-right: none; }
+      .cover-meta-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: #555; display: block; margin-bottom: 6px; }
+      .cover-meta-val { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--gold); }
+      .cover-kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; width: 100%; border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: auto; }
+      .cover-kpi-cell { padding: 18px 12px; text-align: center; border-right: 1px solid #222; }
+      .cover-kpi-cell:last-child { border-right: none; }
+      .cover-kpi-val { font-family: 'Playfair Display', serif; font-size: clamp(13px, 1.8vw, 20px); font-weight: 900; color: var(--gold); display: block; line-height: 1; }
+      .cover-kpi-val.danger { color: var(--red); }
+      .cover-kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 7px; letter-spacing: 0.15em; text-transform: uppercase; color: #666; display: block; margin-top: 5px; }
+      .cover-bottom { padding: 20px 60px; border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #444; letter-spacing: 0.1em; }
+      .cover-toc { text-align: left; padding: 32px 80px 0; width: 100%; }
+      .cover-toc-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--red); margin-bottom: 16px; }
+      .cover-toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 40px; margin-bottom: 20px; }
+      .cover-toc-item { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #777; display: flex; gap: 8px; align-items: baseline; text-decoration: none; }
+      .cover-toc-item .part-num { color: var(--gold); min-width: 60px; font-size: 9px; }
+
+      .screen-meta-bar { background: #111; border-bottom: 2px solid var(--gold); display: grid; grid-template-columns: repeat(6, 1fr); }
+      .kpi-cell { padding: 20px 16px; text-align: center; border-right: 1px solid #222; }
+      .kpi-cell:last-child { border-right: none; }
+      .kpi-val { font-family: 'Playfair Display', serif; font-size: clamp(15px, 1.8vw, 24px); font-weight: 900; color: var(--gold); display: block; line-height: 1; }
+      .kpi-val.danger { color: var(--red); }
+      .kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: #666; display: block; margin-top: 5px; }
+      .kpi-sub { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #444; margin-top: 3px; }
+
+      .content-wrap { max-width: 1200px; margin: 0 auto; padding: 72px 64px 120px; }
+
+      .part-divider { margin: 96px 0 0; scroll-margin-top: 24px; }
+      .part-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.35em; color: var(--red); text-transform: uppercase; display: block; margin-bottom: 10px; }
+      .part-title { font-family: 'Playfair Display', serif; font-size: clamp(26px, 3.6vw, 42px); font-weight: 900; color: var(--ink); line-height: 1.05; letter-spacing: -0.01em; padding-bottom: 18px; border-bottom: 4px solid var(--ink); margin-bottom: 48px; }
+      .part-intro { font-size: 16px; color: var(--grey); font-style: italic; font-family: 'Playfair Display', serif; margin-bottom: 36px; padding-left: 20px; border-left: 3px solid var(--gold); line-height: 1.65; }
+      .section-block { margin: 64px 0 0; scroll-margin-top: 24px; }
+      .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.28em; color: var(--grey); text-transform: uppercase; display: block; margin-bottom: 7px; }
+      .section-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 2.5vw, 26px); font-weight: 700; color: var(--ink); padding-bottom: 12px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
+      .subsection-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--blue); padding-left: 14px; border-left: 4px solid var(--gold); margin: 36px 0 16px; }
+
+      p { margin-bottom: 16px; color: #1a1a1a; }
+      p:last-child { margin-bottom: 0; }
+      strong { font-weight: 600; color: var(--blue); }
+      em { font-style: italic; }
+      a.src { color: var(--red); text-decoration: none; border-bottom: 1px dotted var(--red); font-size: 0.85em; }
+      a.src:hover { border-bottom-style: solid; }
+
+      .table-wrap { overflow-x: auto; margin: 24px 0; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      thead { background: var(--ink); color: var(--paper); }
+      thead th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; padding: 12px 16px; text-align: left; font-weight: 400; }
+      tbody tr { border-bottom: 1px solid var(--parchment-dk); }
+      tbody tr:nth-child(even) { background: var(--parchment); }
+      tbody tr:hover { background: var(--gold-light); }
+      tbody td { padding: 10px 16px; vertical-align: top; line-height: 1.5; }
+      .td-num { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: right; }
+      .td-red { color: var(--red); font-weight: 600; }
+      .td-green { color: var(--green); font-weight: 600; }
+      .td-gold { color: var(--gold); font-weight: 600; }
+
+      .callout { padding: 18px 22px; margin: 24px 0; font-size: 14px; line-height: 1.7; border-radius: 1px; }
+      .callout-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 8px; }
+      .callout.warning { background: var(--gold-light); border-left: 4px solid var(--gold); }
+      .callout.warning .callout-label { color: var(--gold); }
+      .callout.critical { background: var(--red-light); border-left: 4px solid var(--red); }
+      .callout.critical .callout-label { color: var(--red); }
+      .callout.note { background: var(--blue-light); border-left: 4px solid var(--blue); }
+      .callout.note .callout-label { color: var(--blue); }
+      .callout.success { background: var(--green-light); border-left: 4px solid var(--green); }
+      .callout.success .callout-label { color: var(--green); }
+      .callout.teal { background: var(--teal-light); border-left: 4px solid var(--teal); }
+      .callout.teal .callout-label { color: var(--teal); }
+      .callout.purple { background: var(--purple-light); border-left: 4px solid var(--purple); }
+      .callout.purple .callout-label { color: var(--purple); }
+      .callout.orange { background: var(--orange-light); border-left: 4px solid var(--orange); }
+      .callout.orange .callout-label { color: var(--orange); }
+
+      .stat-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin: 24px 0; }
+      .stat-box { background: var(--ink); color: var(--paper); padding: 20px; text-align: center; }
+      .stat-num { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 900; color: var(--gold); display: block; line-height: 1; margin-bottom: 6px; }
+      .stat-num.red { color: var(--red); }
+      .stat-num.green { color: #4ade80; }
+      .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+
+      .chart-container { background: var(--parchment); border: 1px solid var(--parchment-dk); padding: 24px; margin: 24px 0; }
+      .chart-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--grey); margin-bottom: 16px; }
+
+      .bar-row { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 13px; }
+      .bar-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; min-width: 130px; color: var(--grey); }
+      .bar-track { flex: 1; height: 18px; background: #e0d8c8; position: relative; overflow: hidden; }
+      .bar-fill { height: 100%; }
+      .bar-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; min-width: 90px; text-align: right; }
+
+      .scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin: 24px 0; }
+      .scenario-card { background: var(--parchment); border: 1px solid var(--parchment-dk); border-top: 4px solid var(--gold); padding: 22px; }
+      .scenario-card.best { border-top-color: var(--green); }
+      .scenario-card.worst { border-top-color: var(--red); }
+      .scenario-card.opt { border-top-color: var(--teal); }
+      .scenario-card.orange { border-top-color: var(--orange); }
+      .sc-tag { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--grey); display: block; margin-bottom: 8px; }
+      .sc-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+      .sc-metric { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--parchment-dk); }
+      .sc-metric:last-child { border-bottom: none; }
+      .sc-metric-label { color: var(--grey); }
+      .sc-metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; }
+
+      .timeline { position: relative; padding-left: 40px; }
+      .timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: var(--gold); opacity: 0.4; }
+      .timeline-item { position: relative; margin-bottom: 36px; }
+      .timeline-item::before { content: ''; position: absolute; left: -34px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--paper); box-shadow: 0 0 0 2px var(--gold); }
+      .timeline-item.active::before { background: var(--red); box-shadow: 0 0 0 2px var(--red); }
+      .timeline-item.future::before { background: var(--parchment-dk); box-shadow: 0 0 0 2px var(--grey); }
+      .timeline-item.income-point::before { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+      .tl-date { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+      .tl-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+      .tl-body { font-size: 13px; color: var(--grey); line-height: 1.6; }
+      .tl-badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; margin-top: 8px; margin-right: 6px; }
+      .tl-badge.debt { background: var(--red-light); color: var(--red); }
+      .tl-badge.income { background: var(--green-light); color: var(--green); }
+      .tl-badge.current { background: var(--gold-light); color: #7a5a00; }
+
+      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 24px 0; }
+      .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 24px 0; }
+      @media (max-width: 900px) {
+        .two-col, .three-col { grid-template-columns: 1fr; }
+        .screen-meta-bar { grid-template-columns: 1fr 1fr; }
+        .cover-kpi-row { grid-template-columns: 1fr 1fr 1fr; }
+      }
+      @media (max-width: 600px) {
+        .content-wrap { padding: 40px 24px 80px; }
+        .cover-toc-grid { grid-template-columns: 1fr; }
+        .cover-meta-grid { grid-template-columns: 1fr; }
+        .cover-kpi-row { grid-template-columns: 1fr 1fr; }
+        .screen-meta-bar { grid-template-columns: 1fr 1fr; }
+      }
+
+      .formula-box { background: #0f1117; border: 1px solid #2a2a2a; border-left: 4px solid var(--gold); padding: 18px 22px; margin: 16px 0; font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.8; color: #e0e0e0; overflow-x: auto; }
+      .formula-box .comment { color: #555; }
+      .formula-box .val { color: #4ade80; }
+      .formula-box .label { color: var(--gold); }
+
+      .badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin: 2px; }
+      .badge-red { background: var(--red-light); color: var(--red); }
+      .badge-gold { background: var(--gold-light); color: #7a5a00; }
+      .badge-green { background: var(--green-light); color: var(--green); }
+      .badge-blue { background: var(--blue-light); color: var(--blue); }
+      .badge-grey { background: #e0e0e0; color: #555; }
+      .badge-teal { background: var(--teal-light); color: var(--teal); }
+      .badge-orange { background: var(--orange-light); color: var(--orange); }
+
+      .highlight-row { display: flex; gap: 20px; background: var(--parchment); border: 1px solid var(--parchment-dk); padding: 20px; margin: 20px 0; align-items: flex-start; flex-wrap: wrap; }
+      .hl-num { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; color: var(--red); line-height: 1; min-width: 110px; }
+      .hl-text { flex: 1; }
+      .hl-text h4 { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+      .hl-text p { font-size: 13px; color: var(--grey); margin: 0; }
+
+      .income-box { background: var(--ink); padding: 24px 28px; margin: 24px 0; }
+      .income-box-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; display: block; }
+      .income-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1e1e1e; font-size: 13px; }
+      .income-row:last-child { border-bottom: none; border-top: 2px solid var(--gold); padding-top: 12px; margin-top: 4px; }
+      .income-row-label { color: #aaa; font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+      .income-row-val { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+      .income-row-val.pos { color: #4ade80; }
+      .income-row-val.neg { color: var(--red); }
+      .income-row-val.net { color: var(--gold); }
+
+      .ornament { text-align: center; color: var(--gold); font-size: 14px; letter-spacing: 0.5em; margin: 64px 0 0; opacity: 0.5; }
+      footer { background: var(--ink); color: #555; padding: 32px 60px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-align: center; border-top: 3px solid var(--red); }
+      ul.styled, ol.styled { margin: 14px 0 14px 24px; line-height: 1.75; }
+      ul.styled li, ol.styled li { margin-bottom: 8px; font-size: 14px; color: #1a1a1a; }
+      ul.styled li::marker { color: var(--gold); }
+      ol.styled li::marker { color: var(--red); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+
+      .source-list { font-size: 12px; color: var(--grey); line-height: 2; }
+      .source-list li { margin-bottom: 4px; }
+      .source-list a { color: var(--blue); }
+
+      @media print {
+        @page { size: Letter; margin: 2.2cm 2cm 2.8cm 2cm; }
+        @page :first { margin: 0; }
+        #progress-bar, #scroll-top { display: none !important; }
+        body { font-size: 11pt; line-height: 1.6; background: white; color: #111; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .cover-page { page-break-after: always; height: 100vh; min-height: 100vh; overflow: hidden; }
+        .content-wrap { padding: 32pt 0 60pt; max-width: 100%; }
+        .part-divider { page-break-before: always; margin-top: 0; padding-top: 12pt; }
+        .callout, .formula-box, .highlight-row, .income-box, .stat-box, .scenario-card, .scenario-grid, .stat-row, .timeline-item, .chart-container { page-break-inside: avoid; }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid; }
+        .table-wrap { page-break-inside: avoid; }
+        .section-title, .subsection-title, .part-title, .part-label { page-break-after: avoid; }
+        .part-title { font-size: 26pt; }
+        .section-title { font-size: 17pt; }
+        .cover-h1 { font-size: 42pt; }
+        thead { background: #0d0d0d !important; color: white !important; }
+        .stat-box, .cover-page, .income-box { background: #0d0d0d !important; }
+        .screen-only { display: none !important; }
+        a { color: inherit; text-decoration: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="progress-bar"></div>
+    <div id="scroll-top">&#8593;</div>
+
+    <!-- ============ COVER ============ -->
+    <div class="cover-page">
+      <div class="cover-top-bar">
+        <span>DECISION RESEARCH DOSSIER &middot; VOL. I</span>
+        <span>PERSON &rarr; EVIDENCE &rarr; EVALUATOR &rarr; DECISION</span>
+      </div>
+      <div class="cover-body">
+        <span class="cover-eyebrow">Who Decides &middot; Who Gets Believed &middot; What It Costs</span>
+        <div class="cover-rule-top"></div>
+        <h1 class="cover-h1">THE HUMAN VERDICT</h1>
+        <h2 class="cover-h2">An evidence dossier on discretion, bias, and consequence across twenty-seven categories of gatekept decisions &mdash; visas, jobs, courtrooms, road tests, hospitals, and beyond</h2>
+        <div class="cover-rule-bot"></div>
+
+        <div class="cover-meta-grid">
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Framework</span>
+            <span class="cover-meta-val">27 Decision Types</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Evidence Base</span>
+            <span class="cover-meta-val">40+ Primary Studies</span>
+          </div>
+          <div class="cover-meta-cell">
+            <span class="cover-meta-label">Core Pipeline</span>
+            <span class="cover-meta-val">Person &rarr; Judgment &rarr; Fate</span>
+          </div>
+        </div>
+
+        <div class="cover-kpi-row">
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">5% vs 88%</span>
+            <span class="cover-kpi-label">Same law, diff. asylum judge</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">+50%</span>
+            <span class="cover-kpi-label">Callbacks, white-sounding name</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">14.2 yrs</span>
+            <span class="cover-kpi-label">Avg. wrongful imprisonment</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">+13.4%</span>
+            <span class="cover-kpi-label">Sentence gap, Black vs white men</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val danger">1.9&times;</span>
+            <span class="cover-kpi-label">False "high risk" algorithm flags</span>
+          </div>
+          <div class="cover-kpi-cell">
+            <span class="cover-kpi-val">$500K</span>
+            <span class="cover-kpi-label">Lifetime earnings lost, 1 conviction</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cover-toc">
+        <span class="cover-toc-title">Contents</span>
+        <div class="cover-toc-grid">
+          <a class="cover-toc-item" href="#part0"><span class="part-num">PART 00</span> The Pipeline &mdash; how a person becomes a decision</a>
+          <a class="cover-toc-item" href="#part1"><span class="part-num">PART I</span> Does Your Face Decide? &mdash; the appearance halo</a>
+          <a class="cover-toc-item" href="#part2"><span class="part-num">PART II</span> Visas &amp; Asylum &mdash; the adjudicator lottery</a>
+          <a class="cover-toc-item" href="#part3"><span class="part-num">PART III</span> Work &amp; Hiring &mdash; the r&eacute;sum&eacute; test</a>
+          <a class="cover-toc-item" href="#part4"><span class="part-num">PART IV</span> The Courtroom &mdash; noise, sentencing, the judge you get</a>
+          <a class="cover-toc-item" href="#part5"><span class="part-num">PART V</span> Behind the Wheel &mdash; the DMV examiner</a>
+          <a class="cover-toc-item" href="#part6"><span class="part-num">PART VI</span> Credit &amp; Shelter &mdash; lending and housing</a>
+          <a class="cover-toc-item" href="#part7"><span class="part-num">PART VII</span> The Exam Room &mdash; medicine's judgment gap</a>
+          <a class="cover-toc-item" href="#part8"><span class="part-num">PART VIII</span> When the Judge Is a Machine</a>
+          <a class="cover-toc-item" href="#part9"><span class="part-num">PART IX</span> After the Verdict &mdash; the cost of "no"</a>
+          <a class="cover-toc-item" href="#part10"><span class="part-num">PART X</span> Detecting Bias &mdash; tools, fixes, and their limits</a>
+          <a class="cover-toc-item" href="#part11"><span class="part-num">PART XI</span> Research Agenda &mdash; open questions</a>
+        </div>
+      </div>
+
+      <div class="cover-bottom">
+        <span>COMPILED FROM PUBLIC RESEARCH &middot; PEER-REVIEWED &amp; GOVERNMENT SOURCES</span>
+        <span>FOR RESEARCH &amp; EDUCATIONAL USE</span>
+      </div>
+    </div>
+
+    <!-- ============ STICKY-STYLE KPI STRIP ============ -->
+    <div class="screen-meta-bar screen-only">
+      <div class="kpi-cell">
+        <span class="kpi-val">44.9% &rarr; 0%</span>
+        <span class="kpi-label">Asylum grant rate range, by judge</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val danger">65% &rarr; ~0%</span>
+        <span class="kpi-label">Parole grant rate, within one session</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val">32% vs 56%</span>
+        <span class="kpi-label">UK driving pass rate, groups compared</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val danger">2.0&times;</span>
+        <span class="kpi-label">Raw mortgage denial gap, Black vs white</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val">50%</span>
+        <span class="kpi-label">Med. students holding false pain beliefs</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="kpi-val danger">7&times;</span>
+        <span class="kpi-label">Wrongful conviction risk, Black defendants</span>
+      </div>
+    </div>
+
+    <div class="content-wrap">
+
+      <!-- ============ PART 00 ============ -->
+      <section class="part-divider" id="part0">
+        <span class="part-label">Part 00 &middot; Framework</span>
+        <h1 class="part-title">The Pipeline: How a Person Becomes a Decision</h1>
+        <p class="part-intro">Every one of the twenty-seven categories in this dossier &mdash; from a driver's test to a death-penalty appeal &mdash; reduces to the same four-step chain: a person presents themselves, evidence is gathered, a human evaluator interprets that evidence, and a decision is rendered into one of a small set of binary outcomes. This report treats that chain as the unit of analysis.</p>
+
+        <div class="section-block">
+          <span class="section-num">00.1</span>
+          <h2 class="section-title">The Chain and Its Failure Points</h2>
+          <p>The chain looks simple &mdash; <strong>Person &rarr; Evidence &rarr; Human Evaluator &rarr; Decision</strong> &mdash; but each arrow is a place where something other than merit can enter. The evidence stage can omit relevant facts or admit irrelevant ones (a photograph, an accent, a name). The evaluator stage is where discretion, mood, fatigue, and unconscious pattern-matching operate. The decision stage compresses a complex human situation into a binary: admit or reject, grant or deny, pass or fail, release or detain.</p>
+
+          <div class="formula-box">
+            <span class="label">// the four-step chain, annotated</span><br/>
+            PERSON &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&mdash;&gt; <span class="comment">who they are, what they present</span><br/>
+            EVIDENCE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&mdash;&gt; <span class="comment">what the evaluator is allowed / able to see</span><br/>
+            HUMAN EVALUATOR &mdash;&gt; <span class="comment">discretion, training, fatigue, bias enter HERE</span><br/>
+            DECISION &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&mdash;&gt; <span class="val">binary output: admit/reject, grant/deny, pass/fail...</span>
+          </div>
+
+          <p>Two people can enter this chain with <em>identical</em> evidence and exit with opposite decisions purely because of which evaluator they were randomly assigned. That single fact &mdash; documented over and over in the sections that follow, in courts, hospitals, hiring offices, and orchestra pits &mdash; is the empirical core of this entire dossier.</p>
+
+          <div class="callout note">
+            <span class="callout-label">Framing note</span>
+            A raw outcome gap between two groups (e.g., "Group A is denied twice as often as Group B") is not, by itself, proof of bias. Groups can legitimately differ in the underlying evidence they present. Distinguishing a <strong>real</strong> gap from a <strong>legitimate</strong> gap is the central methodological problem in every section below, and this report flags it every time the distinction matters.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">00.2</span>
+          <h2 class="section-title">The Twenty-Seven Categories, Grouped</h2>
+          <p>The source framework for this research names twenty-seven domains where a human being holds discretionary power over another person's fate. They cluster into seven families by what is actually at stake:</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Cluster</th><th>Categories</th><th>Typical decision verbs</th></tr></thead>
+              <tbody>
+                <tr><td class="td-gold">Belonging &amp; status</td><td>Immigration &amp; border, citizenship, military admission, membership/community</td><td>Admit / Reject, Grant / Withhold</td></tr>
+                <tr><td class="td-gold">Livelihood</td><td>Employment, professional licensing, business approval, financial credit</td><td>Hire / Reject, License / Refuse</td></tr>
+                <tr><td class="td-gold">Liberty</td><td>Criminal justice, corrections, legal/judicial rulings</td><td>Release / Detain, Appeal upheld / rejected</td></tr>
+                <tr><td class="td-gold">Body</td><td>Healthcare eligibility &amp; treatment, insurance</td><td>Treat / Don't treat, Approve / Deny</td></tr>
+                <tr><td class="td-gold">Shelter &amp; welfare</td><td>Housing, government benefits, tax/public finance</td><td>Approve / Deny, Fund / Don't fund</td></tr>
+                <tr><td class="td-gold">Mind &amp; merit</td><td>Education, research participation, arts/entertainment, sports</td><td>Select / Don't select, Pass / Fail</td></tr>
+                <tr><td class="td-gold">Everyday competence</td><td>DMV road test, permits &amp; regulatory approval, identity/civil status</td><td>Pass / Fail, Clear / Don't clear</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>What unites them is not subject matter but <strong>structure</strong>: a closed room (literal or figurative), one or a few evaluators, incomplete visibility into the reasoning, and a decision that is nominally appealable but practically difficult to reverse. The DMV road test belongs on the same page as an asylum hearing because both share that structure exactly &mdash; <em>"no one knows what happened in that car except the two [people in it]."</em></p>
+        </div>
+      </section>
+
+      <!-- ============ PART I ============ -->
+      <section class="part-divider" id="part1">
+        <span class="part-label">Part I &middot; The Appearance Question</span>
+        <h1 class="part-title">Does Your Face Decide?</h1>
+        <p class="part-intro">Before touching any single institution, the research asks the most uncomfortable question first: does what an evaluator sees &mdash; not what a person has done &mdash; move the needle? The answer, replicated across seventy years of psychology and economics, is an unambiguous yes, with real financial and legal magnitude attached.</p>
+
+        <div class="section-block">
+          <span class="section-num">I.1</span>
+          <h2 class="section-title">The Halo Effect</h2>
+          <p>In 1920, psychologist Edward Thorndike noticed that military officers who rated a soldier highly on one trait &mdash; physical fitness, say &mdash; tended to rate that same soldier highly on unrelated traits like leadership and intelligence. He called it the <strong>halo effect</strong>: a single positive impression bleeding into every other judgment about a person, with no evidentiary basis for the bleed. In 1972, Karen Dion, Ellen Berscheid, and Elaine Walster gave the effect its modern, best-known form: participants shown only a photograph assumed attractive people had better personalities, happier lives, and more successful marriages than unattractive people &mdash; despite having zero information about any of those things.</p>
+          <p>The effect has since been demonstrated in hiring interviews, courtroom sentencing, university grading, credit approval, and political voting. A 2018 meta-analysis spanning more than a hundred studies found the effect holds consistently across cultures.</p>
+
+          <div class="stat-row">
+            <div class="stat-box"><span class="stat-num">9%</span><span class="stat-label">Wage penalty, below-average looks</span></div>
+            <div class="stat-box"><span class="stat-num">5%</span><span class="stat-label">Wage premium, above-average looks</span></div>
+            <div class="stat-box"><span class="stat-num">10%</span><span class="stat-label">Higher lawyer earnings, +1 attractiveness rank, 5 yrs out</span></div>
+            <div class="stat-box red"><span class="stat-num red">25%</span><span class="stat-label">Overweight workers reporting overlooked promotions</span></div>
+          </div>
+
+          <p>Economists Daniel Hamermesh and Jeff Biddle formalized the wage numbers above using interviewer-rated attractiveness across three large national surveys, holding education and experience constant &mdash; meaning two people with identical r&eacute;sum&eacute;s earned different amounts purely as a function of how the interviewer had rated their looks years earlier. Follow-up work found the effect for lawyers specifically <em>grows</em> with time in the profession, and that body weight and height explain wage variation on top of &mdash; not merely as a proxy for &mdash; attractiveness.</p>
+
+          <div class="callout warning">
+            <span class="callout-label">Where the evidence is thinner</span>
+            The classic 1991 Eagly meta-analysis found attractiveness has only a weak link to <em>perceived intelligence</em> specifically, even though it strongly predicts perceived competence, trustworthiness, and moral character. The halo effect is real but not uniform across every trait &mdash; a nuance worth preserving rather than flattening into "attractive people always win everything."
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">I.2</span>
+          <h2 class="section-title">The Horn Effect &mdash; What Happens to People Judged Unattractive</h2>
+          <p>The mirror image of the halo effect is the <strong>horn effect</strong>: a single negative trait &mdash; often weight, disability, visible scarring, or non-conforming grooming &mdash; contaminates every other judgment downward. In simulated interviews, good grooming alone outweighed job qualifications in producing favorable hiring decisions, even though the same interviewers insisted appearance played almost no role in their choices. That gap between what evaluators believe about their own objectivity and what actually drives their decisions recurs throughout this dossier &mdash; in courts, hospitals, and licensing boards alike.</p>
+          <div class="highlight-row">
+            <div class="hl-num">75%</div>
+            <div class="hl-text">
+              <h4>of hiring managers make a poor decision traceable to the halo/horn effect</h4>
+              <p>A bad hire driven substantially by first-impression bias costs roughly 30% of that role's annual salary &mdash; meaning appearance bias is not just an ethical problem but a measurable institutional cost.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PART II ============ -->
+      <section class="part-divider" id="part2">
+        <span class="part-label">Part II &middot; Case Study: Belonging</span>
+        <h1 class="part-title">Visas &amp; Asylum: The Adjudicator Lottery</h1>
+        <p class="part-intro">No category in this framework demonstrates "same evidence, different verdict" more starkly, or with higher stakes, than asylum and immigration adjudication. The applicant cannot choose their judge. The law does not change from room to room. The outcome does.</p>
+
+        <div class="section-block">
+          <span class="section-num">II.1</span>
+          <h2 class="section-title">Refugee Roulette</h2>
+          <p>A landmark study analyzed 133,000 decisions by 884 U.S. asylum officers, 140,000 decisions by 225 immigration judges, 126,000 Board of Immigration Appeals rulings, and over 4,000 federal appellate decisions. Its findings became known as <strong>"refugee roulette."</strong></p>
+
+          <div class="scenario-grid">
+            <div class="scenario-card worst">
+              <span class="sc-tag">Same courthouse, worst case</span>
+              <div class="sc-title">Miami, Colombian Applicants</div>
+              <div class="sc-metric"><span class="sc-metric-label">Judge A grant rate</span><span class="sc-metric-val td-red">5%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Judge B grant rate</span><span class="sc-metric-val td-green">88%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Same building?</span><span class="sc-metric-val">Yes</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Same law applied?</span><span class="sc-metric-val">Yes</span></div>
+            </div>
+            <div class="scenario-card orange">
+              <span class="sc-tag">Regional office variance</span>
+              <div class="sc-title">Chinese National Applicants</div>
+              <div class="sc-metric"><span class="sc-metric-label">Lowest officer grant rate</span><span class="sc-metric-val td-red">0%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Highest officer grant rate</span><span class="sc-metric-val td-green">68%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">60% of officers deviated</span><span class="sc-metric-val">&gt;50% from mean</span></div>
+            </div>
+            <div class="scenario-card">
+              <span class="sc-tag">Current data, 2026</span>
+              <div class="sc-title">All U.S. Immigration Judges</div>
+              <div class="sc-metric"><span class="sc-metric-label">Judges &gt;500 decisions, grant &gt;30%</span><span class="sc-metric-val td-green">17</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Judges &gt;500 decisions, grant &lt;3%</span><span class="sc-metric-val td-red">378</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Highest single-judge rate</span><span class="sc-metric-val">44.9%</span></div>
+            </div>
+          </div>
+
+          <p>The Kahneman/Sibony/Sunstein "Noise" framework gives this pattern a name: <strong>level noise</strong> &mdash; some evaluators are simply, permanently more generous or harsher than others, independent of the merits in front of them. What made the original study notable is that it also found correlations between grant rates and the judge's own gender and pre-appointment career background, and confirmed that having legal representation strongly predicted a favorable outcome &mdash; meaning the applicant's fate depended not only on the assigned judge, but on whether they could afford a lawyer at all.</p>
+
+          <div class="callout critical">
+            <span class="callout-label">Why this domain sits at the top of the severity list</span>
+            Unlike a road test, an asylum denial can mean deportation to danger. Unlike a hiring rejection, there is often no "reapply next quarter." Unlike most legal proceedings, U.S. immigration courts use a single judge with no jury and no panel of peers to catch an outlier ruling &mdash; the credibility call rests on one person's read of one person's testimony, exactly like the sealed-car dynamic of a driving test, except the stakes are a matter of safety and survival rather than a delayed commute.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">II.2</span>
+          <h2 class="section-title">What Recovery Looks Like After a Denial</h2>
+          <p>A negative asylum decision is technically appealable through the Board of Immigration Appeals and, beyond that, the federal circuit courts &mdash; but appeals take years, cost money most applicants do not have, and are themselves subject to circuit-by-circuit variance in how readily they overturn the immigration court below. For an applicant without representation, the practical difference between "technically appealable" and "effectively final" collapses to almost nothing.</p>
+        </div>
+      </section>
+
+      <!-- ============ PART III ============ -->
+      <section class="part-divider" id="part3">
+        <span class="part-label">Part III &middot; Case Study: Livelihood</span>
+        <h1 class="part-title">Work &amp; Hiring: The R&eacute;sum&eacute; Test</h1>
+        <p class="part-intro">Employment discrimination is the most heavily audited domain in this entire dossier &mdash; because it is the easiest to test experimentally. Send identical fictitious applications, vary only one signal, count the callbacks. The results are simultaneously the field's strongest evidence and its messiest replication history.</p>
+
+        <div class="section-block">
+          <span class="section-num">III.1</span>
+          <h2 class="section-title">The Name on the R&eacute;sum&eacute;</h2>
+          <p>Economists Marianne Bertrand and Sendhil Mullainathan sent nearly 5,000 fictitious, otherwise-identical r&eacute;sum&eacute;s to real job postings in Boston and Chicago, randomly assigning each one a stereotypically Black-sounding or white-sounding name.</p>
+
+          <div class="chart-container">
+            <span class="chart-title">Callback rate by name signal &mdash; Bertrand &amp; Mullainathan (2004)</span>
+            <div class="bar-row">
+              <span class="bar-label">White-sounding name</span>
+              <div class="bar-track"><div class="bar-fill" style="width:96.5%; background:var(--blue);"></div></div>
+              <span class="bar-val">9.65 / 100 sent</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Black-sounding name</span>
+              <div class="bar-track"><div class="bar-fill" style="width:64.5%; background:var(--red);"></div></div>
+              <span class="bar-val">6.45 / 100 sent</span>
+            </div>
+          </div>
+          <p>White-sounding names received roughly <strong>50% more callbacks</strong> &mdash; a gap the authors calculated as equivalent to what eight additional years of work experience would buy an applicant. Discrimination was uniform across occupation, industry, and employer size, and <strong>federal contractors and self-declared "Equal Opportunity Employers" discriminated just as much as everyone else.</strong> Better r&eacute;sum&eacute;s helped white-named applicants far more than Black-named applicants &mdash; a 30% callback boost from a stronger r&eacute;sum&eacute; for white names, versus a much smaller boost for Black names.</p>
+
+          <div class="callout warning">
+            <span class="callout-label">Replication is messier than the headline number</span>
+            A later, larger study of college-graduate hiring (Nunley et al.) found a much smaller gap of 2.6 percentage points &mdash; less than half the size of the original. A well-known 2016 <em>American Economic Review</em> paper by Deming, Yuchtman, Abulafi, Goldin &amp; Katz, using a similar design, did not replicate the original effect size at all. The <em>direction</em> of the bias is one of the most robust findings in labor economics; the exact <em>magnitude</em> is genuinely contested and appears to shrink in tighter labor markets and among more credentialed applicant pools.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">III.2</span>
+          <h2 class="section-title">The Blind Audition &mdash; A Fix That May Not Have Worked</h2>
+          <p>This is the single most-cited "we found the bias and fixed it" story in all of social science, and it deserves to be told with its full, more complicated ending.</p>
+          <div class="two-col">
+            <div class="callout success">
+              <span class="callout-label">The famous finding</span>
+              When U.S. symphony orchestras began auditioning musicians behind a screen that concealed their identity, the probability a woman advanced past preliminary rounds rose by roughly 50%. The switch to blind auditions was credited with 30&ndash;55% of the rise in the proportion of women hired into major U.S. orchestras between 1970 and 1996. It has been cited by Malcolm Gladwell, invoked in a Justice Ginsburg dissent, and spun into commercial "blind hiring" software.
+            </div>
+            <div class="callout critical">
+              <span class="callout-label">The complication</span>
+              Researchers who went back to the raw, unadjusted tabulations found that women actually did <em>worse</em> behind the screen in the raw data &mdash; the famous 50% figure only appears after a statistical adjustment applied to a small subsample. A large 2017 randomized controlled trial by the Australian government, explicitly designed to test the same mechanism at scale with 2,000+ managers, found the <strong>opposite</strong> result: de-identifying candidates <em>reduced</em> the odds women were shortlisted.
+            </div>
+          </div>
+          <p>The lesson for a research project like this one is not "blind auditions don't work" &mdash; it's that even the field's most celebrated success story turns out to be genuinely unsettled on close inspection, and repeating it as proven fact without the caveat is itself a form of the overconfidence this whole dossier is trying to document.</p>
+        </div>
+      </section>
+
+      <!-- ============ PART IV ============ -->
+      <section class="part-divider" id="part4">
+        <span class="part-label">Part IV &middot; Case Study: Liberty</span>
+        <h1 class="part-title">The Courtroom: Noise, Sentencing, and the Judge You Get</h1>
+        <p class="part-intro">If asylum courts show variance <em>between</em> evaluators, the criminal justice system adds a second axis: variance <em>within</em> the same evaluator, across the same day, depending on factors that have nothing to do with the case.</p>
+
+        <div class="section-block">
+          <span class="section-num">IV.1</span>
+          <h2 class="section-title">The Hungry Judges</h2>
+          <p>In 2011, researchers analyzed 1,112 parole rulings made by eight experienced Israeli judges &mdash; averaging over twenty years on the bench &mdash; across ten months. Each day was split into three sessions by two food breaks.</p>
+          <div class="chart-container">
+            <span class="chart-title">Favorable parole ruling rate, across one session (Danziger, Levav &amp; Avnaim-Pesso, 2011)</span>
+            <div class="bar-row"><span class="bar-label">Right after a break</span><div class="bar-track"><div class="bar-fill" style="width:65%; background:var(--green);"></div></div><span class="bar-val">~65%</span></div>
+            <div class="bar-row"><span class="bar-label">Mid-session</span><div class="bar-track"><div class="bar-fill" style="width:30%; background:var(--gold);"></div></div><span class="bar-val">~30%</span></div>
+            <div class="bar-row"><span class="bar-label">Right before next break</span><div class="bar-track"><div class="bar-fill" style="width:2%; background:var(--red);"></div></div><span class="bar-val">~0%</span></div>
+          </div>
+          <p>The same prisoner, with the same file, appearing at a different point in the judge's session, faced a dramatically different probability of release. The finding became one of the most cited results in behavioral decision science &mdash; and one of the most contested. Critics, including Cornell's Jeffrey Rachlinski, argued the pattern could be an artifact of case scheduling (harder cases pushed later, or attorneys arranging dockets non-randomly) rather than true mental fatigue. The original authors maintain the case order was arbitrary. Both readings remain live in the literature &mdash; a useful reminder that a dramatic, easily-quotable finding about bias is not automatically a settled one.</p>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">IV.2</span>
+          <h2 class="section-title">"Noise": When Two Judges See the Same File Differently</h2>
+          <p>Nobel laureate Daniel Kahneman, with Olivier Sibony and Cass Sunstein, coined the term <strong>system noise</strong> for exactly this problem: unwanted variability in judgments that should, in principle, be identical. Their book documents it everywhere discretion exists &mdash; two doctors giving different diagnoses to identical patients, two underwriters quoting prices 55% apart on the same case file, a quarter of interview panels disagreeing internally about who the best candidate was, despite watching the same candidates in the same room.</p>
+          <div class="three-col">
+            <div class="callout note"><span class="callout-label">Level noise</span>Some judges are simply, consistently harsher or more lenient than their peers, across every case type.</div>
+            <div class="callout teal"><span class="callout-label">Pattern noise</span>An evaluator reacts idiosyncratically to specific case features &mdash; their own personal "triggers" &mdash; that other evaluators don't share.</div>
+            <div class="callout purple"><span class="callout-label">Occasion noise</span>The very same evaluator would rule differently depending on time of day, hunger, mood, or whether their sports team lost last night.</div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">IV.3</span>
+          <h2 class="section-title">Federal Sentencing: The Government's Own Audit of Itself</h2>
+          <p>The U.S. Sentencing Commission's 2023 report &mdash; not an advocacy document, but the Commission's own internal statistical review &mdash; examined over 300,000 federal sentences from 2017&ndash;2021.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Group (vs. white men)</th><th>Sentence length gap (incl. probation decision)</th><th>Less likely to receive probation</th></tr></thead>
+              <tbody>
+                <tr><td>Black men</td><td class="td-num td-red">+13.4%</td><td class="td-num td-red">&minus;23.4%</td></tr>
+                <tr><td>Hispanic men</td><td class="td-num td-red">+11.2%</td><td class="td-num td-red">&minus;26.6%</td></tr>
+                <tr><td>Hispanic women (vs. white women)</td><td class="td-num td-red">+27.8%</td><td class="td-num">&mdash;</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The Commission's own analysis located <em>where</em> the disparity lives: overwhelmingly in the binary decision of whether to incarcerate at all, more than in the length of the sentence once incarceration is decided. That's an important structural finding &mdash; it means the highest-leverage point of bias in federal sentencing is a single yes/no gate, not a continuous number a judge slides up or down.</p>
+        </div>
+      </section>
+
+      <!-- ============ PART V ============ -->
+      <section class="part-divider" id="part5">
+        <span class="part-label">Part V &middot; Case Study: Everyday Competence</span>
+        <h1 class="part-title">Behind the Wheel: The DMV Examiner</h1>
+        <p class="part-intro">The road test is the smallest-stakes decision in this dossier and, in some ways, the hardest to study &mdash; because, as you noted, no one else is in the car. There is no transcript, no recording, no second observer. It is the purest version of the sealed-room problem this whole framework is built around.</p>
+
+        <div class="section-block">
+          <span class="section-num">V.1</span>
+          <h2 class="section-title">What the Available Data Shows</h2>
+          <p>A UK Freedom of Information request into the national driving-test agency (DVSA) found stark differences in pass rates by demographic group:</p>
+          <div class="chart-container">
+            <span class="chart-title">UK driving test pass rate by group, DVSA data 2008&ndash;2017</span>
+            <div class="bar-row"><span class="bar-label">White men</span><div class="bar-track"><div class="bar-fill" style="width:56%; background:var(--blue);"></div></div><span class="bar-val">56%</span></div>
+            <div class="bar-row"><span class="bar-label">Black women</span><div class="bar-track"><div class="bar-fill" style="width:32%; background:var(--red);"></div></div><span class="bar-val">32%</span></div>
+          </div>
+          <p>Only about 21% of UK driving examiners are women, and the agency maintains that all candidates are scored against identical, safety-based criteria. The source reporting this data is explicit that a raw pass-rate gap alone cannot prove examiner bias &mdash; the same caution that applies to every raw-gap number in this report.</p>
+          <div class="callout warning">
+            <span class="callout-label">A genuinely mixed evidence base</span>
+            Studies of examiner bias in other subjective, one-on-one licensing exams cut both ways. A review of 1,790 UK medical examiners found only three showed statistically detectable ethnic bias relative to peers scoring the same candidates. A separate UK study of GP licensing exams found ethnic background did <em>not</em> predict pass rates once entry-test scores and other legitimate factors were controlled for. Meanwhile, a study of international medical graduates found examiner-to-examiner stringency alone explained 16% of the variance in domain-level scores &mdash; meaning which examiner you got mattered a great deal, independent of any demographic pattern, purely because some examiners are systematically "hawks" and others "doves."
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">V.2</span>
+          <h2 class="section-title">Why the DMV Case Is the Cleanest Illustration of the Whole Problem</h2>
+          <p>The road test compresses every mechanism in this dossier into one twenty-minute window: a single evaluator, full discretion over pass/fail, no witness, a plausible safety justification for every judgment call, and a candidate with almost no leverage to contest a specific ruling ("you hesitated at the roundabout" cannot be independently verified after the fact). It is structurally identical to an asylum credibility hearing or a parole interview &mdash; just with lower stakes and, consequently, far less research funding directed at it. That gap between stakes and scrutiny is itself a finding: <strong>the domains where bias is hardest to detect are not the ones where it would do the least damage &mdash; they're simply the ones nobody has funded a large audit study for.</strong></p>
+        </div>
+      </section>
+
+      <!-- ============ PART VI ============ -->
+      <section class="part-divider" id="part6">
+        <span class="part-label">Part VI &middot; Case Study: Shelter &amp; Credit</span>
+        <h1 class="part-title">Credit &amp; Shelter: Lending and Housing Decisions</h1>
+        <p class="part-intro">Mortgage lending is the best domain in this whole dossier for showing exactly how much a number changes depending on whether you control for legitimate factors &mdash; because researchers have run the identical dataset through both a naive and a rigorous lens and published both results.</p>
+
+        <div class="section-block">
+          <span class="section-num">VI.1</span>
+          <h2 class="section-title">Raw Gap vs. Controlled Gap</h2>
+          <div class="scenario-grid">
+            <div class="scenario-card worst">
+              <span class="sc-tag">Observed / raw denial rate</span>
+              <div class="sc-title">No controls applied</div>
+              <div class="sc-metric"><span class="sc-metric-label">White applicants</span><span class="sc-metric-val">13.6%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Black applicants</span><span class="sc-metric-val td-red">27.1%</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Ratio</span><span class="sc-metric-val td-red">2.0&times;</span></div>
+            </div>
+            <div class="scenario-card orange">
+              <span class="sc-tag">"Real denial rate" (Urban Institute)</span>
+              <div class="sc-title">Adjusted for credit profile</div>
+              <div class="sc-metric"><span class="sc-metric-label">Ratio, Black vs white</span><span class="sc-metric-val td-red">1.2&times;</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Ratio, Hispanic vs white</span><span class="sc-metric-val td-red">1.1&times;</span></div>
+            </div>
+            <div class="scenario-card opt">
+              <span class="sc-tag">Full individual-level controls (Fed Reserve)</span>
+              <div class="sc-title">Income, debt, credit history held constant</div>
+              <div class="sc-metric"><span class="sc-metric-label">Remaining rejection ratio</span><span class="sc-metric-val td-red">1.6&times;</span></div>
+              <div class="sc-metric"><span class="sc-metric-label">Statistically significant?</span><span class="sc-metric-val">Yes</span></div>
+            </div>
+          </div>
+          <p>A 2024 Federal Reserve Bank of Philadelphia paper pushed the question further: what if lenders used <em>only</em> a race-blind automated underwriting recommendation? Even in that scenario, the data suggest roughly a <strong>9 percentage-point gap</strong> would remain &mdash; implying part of the disparity is embedded in the underlying financial profile itself, a residue of generations of unequal access to education, employment, and housing wealth, rather than something a lending officer decides in the room.</p>
+          <div class="callout note">
+            <span class="callout-label">Why both numbers matter</span>
+            Citing only the 2.0&times; raw gap overstates in-the-moment lender bias. Citing only the smallest controlled number understates the compounding effect of historical inequality baked into "objective" credit data. A rigorous research project reports both, explicitly labeled, every time.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">VI.2</span>
+          <h2 class="section-title">Where the Gap Is Largest</h2>
+          <p>The disparity is not uniform across loan types. Home-improvement loans had the highest denial rate of any category studied in 2020 (38.8% overall) &mdash; and more than half of Black (63.0%) and Hispanic (56.6%) applicants seeking to repair or renovate their homes were denied, despite living in older housing stock more likely to need exactly that work. For manufactured homes, over three-quarters of Black borrowers' applications were denied even when the home was secured by land.</p>
+        </div>
+      </section>
+
+      <!-- ============ PART VII ============ -->
+      <section class="part-divider" id="part7">
+        <span class="part-label">Part VII &middot; Case Study: The Body</span>
+        <h1 class="part-title">The Exam Room: Medicine's Judgment Gap</h1>
+        <p class="part-intro">Healthcare is the domain where bias is least likely to look like hostility &mdash; and that makes it, in some ways, the hardest to fix, because it can operate through sincerely held false beliefs rather than conscious prejudice.</p>
+
+        <div class="section-block">
+          <span class="section-num">VII.1</span>
+          <h2 class="section-title">False Beliefs, Real Undertreatment</h2>
+          <p>A 2016 study published in <em>PNAS</em> tested whether racial bias in pain treatment traces back to specific false beliefs about biology &mdash; for instance, that Black people's skin is thicker or that their blood coagulates faster than white people's. Both statements are false.</p>
+          <div class="stat-row">
+            <div class="stat-box"><span class="stat-num">70%</span><span class="stat-label">Laypeople endorsing &ge;1 false belief</span></div>
+            <div class="stat-box"><span class="stat-num red">50%</span><span class="stat-label">Med. students/residents endorsing &ge;1</span></div>
+            <div class="stat-box"><span class="stat-num red">&darr;</span><span class="stat-label">Pain rated lower for Black patients, by believers</span></div>
+            <div class="stat-box"><span class="stat-num red">&darr;</span><span class="stat-label">Treatment accuracy for Black patients, by believers</span></div>
+          </div>
+          <p>Participants who endorsed the false beliefs rated an identical vignette patient's pain as lower, and recommended less accurate treatment, when the patient was described as Black rather than white. A separate analysis of nearly one million pediatric appendicitis cases found Black children were less likely than white children to receive any pain medication for moderate pain, and less likely to receive appropriate opioid treatment for severe pain.</p>
+          <div class="callout critical">
+            <span class="callout-label">The unsettling part</span>
+            Researchers studying this pattern note it does not appear to trace back to overt hostility &mdash; it operates through beliefs sincerely held by people who would likely describe themselves as caring, unbiased clinicians. That makes it structurally different from, and arguably harder to correct than, a case of deliberate discrimination.
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PART VIII ============ -->
+      <section class="part-divider" id="part8">
+        <span class="part-label">Part VIII &middot; The Machine Alternative</span>
+        <h1 class="part-title">When the Judge Is a Machine</h1>
+        <p class="part-intro">A natural response to everything documented so far is: replace the biased human with an algorithm. The evidence says that doesn't dissolve the problem &mdash; it relocates it into a definitional argument about what "fair" even means.</p>
+
+        <div class="section-block">
+          <span class="section-num">VIII.1</span>
+          <h2 class="section-title">COMPAS: A Case Study in Two Correct Answers</h2>
+          <p>In 2016, ProPublica's "Machine Bias" investigation examined COMPAS, a proprietary algorithm used across U.S. courts to predict a defendant's likelihood of reoffending, feeding into bail, sentencing, and parole decisions.</p>
+          <div class="two-col">
+            <div class="callout critical">
+              <span class="callout-label">ProPublica's finding</span>
+              Among defendants who were <em>not</em> re-arrested within two years, Black defendants were misclassified as "high risk" by the algorithm nearly twice as often (45%) as white defendants who were also not re-arrested (24%).
+            </div>
+            <div class="callout note">
+              <span class="callout-label">Northpointe's (the vendor's) rebuttal</span>
+              Among defendants who received the <em>same</em> risk score, Black and white defendants were, in fact, equally likely to actually reoffend &mdash; meaning the tool was well "calibrated" even while its error rates were unequal across groups.
+            </div>
+          </div>
+          <p>Both claims are statistically true simultaneously, and that is not a data error &mdash; it is a proven mathematical result. Except in special cases, it is mathematically impossible for a predictive tool to have both equal false-positive rates across groups <em>and</em> equal calibration across groups whenever the two groups have different underlying base rates of the outcome being predicted. Choosing which fairness definition to prioritize is not a technical fix; it's the same value-laden choice a judge or an examiner makes, just made once, upstream, by whoever configures the software &mdash; and then applied at scale to everyone who comes after.</p>
+          <div class="callout purple">
+            <span class="callout-label">Why this matters for the whole dossier</span>
+            "Get rid of human discretion" is a common proposed fix for every category in this framework. COMPAS shows that removing the human doesn't remove the value judgment &mdash; it just makes the value judgment invisible, embedded in code that few of the people affected by it, and not all of the people who deploy it, can actually inspect.
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PART IX ============ -->
+      <section class="part-divider" id="part9">
+        <span class="part-label">Part IX &middot; Consequence</span>
+        <h1 class="part-title">After the Verdict: The Cost of "No"</h1>
+        <p class="part-intro">This section answers the question underneath your original one most directly: is the damage irreparable, or does it just feel that way? For one category &mdash; wrongful criminal conviction &mdash; the answer is measured in years and dollars with unusual precision, because it is the one type of "wrong decision" that gets independently, retrospectively confirmed at scale.</p>
+
+        <div class="section-block">
+          <span class="section-num">IX.1</span>
+          <h2 class="section-title">Wrongful Conviction: A Timeline of What Is Actually Lost</h2>
+          <div class="timeline">
+            <div class="timeline-item active">
+              <div class="tl-date">Year 0</div>
+              <div class="tl-title">Conviction on flawed evidence</div>
+              <div class="tl-body">Leading causes across the National Registry of Exonerations: official misconduct (71&ndash;85% of cases depending on crime type), mistaken witness identification (26%), perjury or false accusation (up to 72% of cases in some years), false or misleading forensic evidence, and false confessions.</div>
+              <span class="tl-badge debt">Liberty lost</span>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-date">~13&ndash;16 years later</div>
+              <div class="tl-title">Average time to exoneration</div>
+              <div class="tl-body">Persons exonerated in 2025 lost an average of 14.2 years each; in 2024, 13.5 years each. Black murder exonerees wait roughly three years longer than white murder exonerees before release &mdash; about 16 years versus 13, regardless of whether they were sentenced to death.</div>
+              <span class="tl-badge debt">Prime working years gone</span>
+            </div>
+            <div class="timeline-item">
+              <div class="tl-date">Extreme cases</div>
+              <div class="tl-title">Decades, not years</div>
+              <div class="tl-body">In the 2025 cohort, 37% of exonerees lost more than 20 years; 13 lost more than 30 years; 3 lost more than 40 years. Since 1989, wrongful convictions have cost exonerees a combined total exceeding 21,000 years of life.</div>
+              <span class="tl-badge current">Effectively irreversible</span>
+            </div>
+            <div class="timeline-item income-point">
+              <div class="tl-date">Post-release</div>
+              <div class="tl-title">Compensation, where it exists</div>
+              <div class="tl-body">States have paid over $5.5 billion in compensation and civil damages to exonerees since 1989 &mdash; but compensation statutes exist in only 38 states plus D.C., and typically require the exoneree to affirmatively prove innocence, not merely have their conviction vacated.</div>
+              <span class="tl-badge income">Partial, uneven repair</span>
+            </div>
+          </div>
+
+          <div class="callout critical">
+            <span class="callout-label">Who bears this risk disproportionately</span>
+            Black Americans are 13.6% of the U.S. population but 53% of all registry exonerations, and are roughly <strong>seven times</strong> more likely than white Americans to be wrongfully convicted of a serious crime. In wrongful drug-crime convictions specifically &mdash; where Black and white Americans use illegal drugs at similar rates &mdash; innocent Black people are about <strong>nineteen times</strong> more likely to be wrongfully convicted than innocent white people, largely traced to racial profiling in stops and, in some documented cases, officers fabricating evidence.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">IX.2</span>
+          <h2 class="section-title">Collateral Consequences: When One "No" Becomes Many</h2>
+          <p>Even a conviction that was <em>not</em> wrongful &mdash; and even, in many U.S. jurisdictions, a mere arrest that never led to conviction &mdash; can trigger consequences that compound across every other domain in this dossier simultaneously.</p>
+          <div class="income-box">
+            <span class="income-box-title">Lifetime financial impact of one incarceration &mdash; Brennan Center analysis</span>
+            <div class="income-row"><span class="income-row-label">AVG. EARNINGS REDUCTION, POST-RELEASE</span><span class="income-row-val neg">&minus;52%</span></div>
+            <div class="income-row"><span class="income-row-label">UNEMPLOYMENT RATE, FORMERLY INCARCERATED</span><span class="income-row-val neg">27%</span></div>
+            <div class="income-row"><span class="income-row-label">SHARE ACTIVELY WORKING / SEEKING WORK</span><span class="income-row-val pos">93%</span></div>
+            <div class="income-row"><span class="income-row-label">LIFETIME EARNINGS LOST, ON AVERAGE</span><span class="income-row-val net">&minus;$500,000</span></div>
+          </div>
+          <p>That 27% unemployment rate is not a motivation problem &mdash; 93% of formerly incarcerated working-age people are actively working or looking for work. It is a gatekeeping problem: <strong>9 in 10 employers, 4 in 5 landlords, and 3 in 5 colleges and universities</strong> now run background checks that can screen an applicant out before a human ever evaluates their actual qualifications. Between 70 and 100 million American adults carry some form of criminal record &mdash; including arrests that never resulted in a conviction &mdash; meaning a negative decision in the justice system routinely becomes a standing negative decision in housing, education, and employment for the rest of that person's life, applied automatically, by institutions that were never part of the original case.</p>
+        </div>
+      </section>
+
+      <!-- ============ PART X ============ -->
+      <section class="part-divider" id="part10">
+        <span class="part-label">Part X &middot; Methodology</span>
+        <h1 class="part-title">Detecting Bias: Tools, Fixes, and Their Limits</h1>
+        <p class="part-intro">"The outcome gap looks unfair" is a hypothesis, not a finding. This section covers how researchers actually try to move from a raw gap to a defensible claim of bias &mdash; and how often even careful attempts get contested.</p>
+
+        <div class="section-block">
+          <span class="section-num">X.1</span>
+          <h2 class="section-title">The Benchmark Test, the Outcome Test, and the Threshold Test</h2>
+          <p>The simplest approach &mdash; the <strong>benchmark test</strong> &mdash; compares decision rates across groups after controlling for every legitimate factor researchers can measure. Its weakness is baked in: it is essentially never possible to observe and control for <em>every</em> legitimate factor, so an apparent gap can always be explained away as an omitted variable.</p>
+          <p>The <strong>outcome test</strong> tries to sidestep this by looking not at how often a group is screened (searched, denied, flagged) but at the <em>hit rate</em> &mdash; how often that scrutiny actually turns up what it was looking for. If officers search minority drivers more often but find contraband at a <em>lower</em> rate than when they search white drivers, that's suggestive of a lower evidentiary bar being applied to minority drivers specifically.</p>
+          <p>The newer <strong>threshold test</strong>, developed to fix a known flaw in the outcome test (infra-marginality &mdash; the risk that the "marginal" cases searched aren't comparable across groups), was applied to 4.5 million North Carolina traffic stops and found real evidence of a lower search threshold applied to Black and Hispanic drivers &mdash; while also demonstrating, in the same paper, that the simpler outcome test can produce a <em>false</em> finding of bias against the majority group when applied carelessly to a single department. The lesson: the statistical tool you choose can change your conclusion, even applied to the identical underlying data.</p>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">X.2</span>
+          <h2 class="section-title">Interventions That Have Actually Been Tested</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Intervention</th><th>Domain tested</th><th>Result</th><th>Confidence</th></tr></thead>
+              <tbody>
+                <tr><td>Blind auditions (physical screen)</td><td>Orchestra hiring</td><td>+50% advancement for women (original study)</td><td><span class="badge badge-orange">Contested &mdash; RCT found opposite</span></td></tr>
+                <tr><td>De-identified applications</td><td>Australian public-service hiring</td><td>Reduced, not increased, women's shortlisting</td><td><span class="badge badge-red">Large RCT, high confidence</span></td></tr>
+                <tr><td>Algorithmic underwriting</td><td>Mortgage lending</td><td>Shrinks but does not eliminate racial gap (~9pp residual)</td><td><span class="badge badge-gold">Moderate confidence</span></td></tr>
+                <tr><td>Risk-assessment algorithms</td><td>Pretrial/sentencing (COMPAS)</td><td>Relocates bias into definitional choice, doesn't remove it</td><td><span class="badge badge-green">High confidence, proven mathematically</span></td></tr>
+                <tr><td>Controlled resume audits</td><td>Hiring</td><td>Confirms bias direction; magnitude shrinking across replications</td><td><span class="badge badge-blue">High confidence on direction only</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warning">
+            <span class="callout-label">Honest takeaway</span>
+            Almost nothing in this literature is a clean, unambiguous "problem solved" story. The most responsible research posture is to treat every widely-repeated success story &mdash; blind auditions above all &mdash; as provisional until you've checked whether it replicated.
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PART XI ============ -->
+      <section class="part-divider" id="part11">
+        <span class="part-label">Part XI &middot; Where the Research Goes Next</span>
+        <h1 class="part-title">Research Agenda: Open Questions</h1>
+        <p class="part-intro">A synthesis of where the evidence base is strong, where it is thin, and where a new research project &mdash; rather than a summary of existing work &mdash; could add genuine value.</p>
+
+        <div class="section-block">
+          <span class="section-num">XI.1</span>
+          <h2 class="section-title">What's Well-Established</h2>
+          <ul class="styled">
+            <li>Appearance measurably shifts judgments across hiring, wages, legal outcomes, and medical pain assessment &mdash; this is among the most replicated findings in social psychology.</li>
+            <li>Inter-evaluator variance for the identical case, in judicial, asylum, and parole systems, is large enough to functionally decide outcomes by lottery of assignment.</li>
+            <li>Wrongful conviction produces quantifiable, severe, partially irreparable harm &mdash; and falls disproportionately on Black defendants by a wide, consistent margin.</li>
+            <li>Raw demographic gaps in lending, sentencing, and healthcare persist, in reduced but real form, even after rigorous statistical controls are applied.</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">XI.2</span>
+          <h2 class="section-title">What's Genuinely Contested</h2>
+          <ul class="styled">
+            <li>The exact magnitude of name-based hiring discrimination (shrinking across replications, not disappearing).</li>
+            <li>Whether blind/de-identified hiring processes reduce bias at all (directly contradicted by a large government RCT).</li>
+            <li>Whether an algorithm can be made "less biased" than a human in any definition-independent sense (proven mathematically impossible to satisfy every fairness criterion at once).</li>
+            <li>Whether the "hungry judges" effect reflects true decision fatigue or an artifact of case-ordering &mdash; both readings remain live in the literature.</li>
+          </ul>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">XI.3</span>
+          <h2 class="section-title">The Gap Worth Filling</h2>
+          <div class="callout success">
+            <span class="callout-label">Where a new study could matter most</span>
+            Almost no existing research measures appearance bias <em>and</em> race/gender bias <em>simultaneously</em>, in the same dataset, to see how they interact &mdash; most audit studies isolate a single variable by design. Domains like the DMV road test, most professional licensing boards, and most of the twenty-seven categories in this framework have thin or nonexistent large-sample data, unlike hiring, asylum courts, and federal sentencing, which are comparatively saturated with research. A serious next step is either (a) an intersectional re-analysis of existing datasets that already contain both appearance and demographic variables, or (b) a new audit study &mdash; using paired photographs and identical case files &mdash; in one of the under-studied domains, most plausibly DMV/licensing exams, where the sealed-room structure makes bias hardest to detect and therefore most valuable to finally measure.
+          </div>
+        </div>
+
+        <div class="section-block">
+          <span class="section-num">XI.4</span>
+          <h2 class="section-title">Sources Consulted</h2>
+          <ul class="source-list">
+            <li>Dion, Berscheid &amp; Walster (1972); Eagly et al. (1991) &mdash; foundational halo-effect studies</li>
+            <li>Hamermesh &amp; Biddle, "Beauty and the Labor Market," <em>American Economic Review</em> (1994) &amp; NBER Working Paper 4518</li>
+            <li>Ramji-Nogales, Schoenholtz &amp; Schrag, "Refugee Roulette," <em>Stanford Law Review</em> (2007); OpenImmigration.us judge-variation data (2026)</li>
+            <li>Danziger, Levav &amp; Avnaim-Pesso, "Extraneous Factors in Judicial Decisions," <em>PNAS</em> (2011); critique by J. Rachlinski / Weinshall</li>
+            <li>Kahneman, Sibony &amp; Sunstein, <em>Noise: A Flaw in Human Judgment</em> (2021)</li>
+            <li>U.S. Sentencing Commission, "2023 Demographic Differences in Federal Sentencing"</li>
+            <li>National Registry of Exonerations, Annual Reports 2023&ndash;2025; "Race and Wrongful Convictions" (2022)</li>
+            <li>Bertrand &amp; Mullainathan, "Are Emily and Greg More Employable Than Lakisha and Jamal?," <em>AER</em> (2004); replication debate (Nunley et al.; Deming et al.; DataColada #51)</li>
+            <li>Goldin &amp; Rouse, "Orchestrating Impartiality," <em>AER</em> (2000); critique (AEI, 2022) and Australian Public Service RCT (2017)</li>
+            <li>Angwin et al., "Machine Bias," ProPublica (2016); Northpointe/Equivant response; Kleinberg, Chouldechova on fairness impossibility</li>
+            <li>Urban Institute, "Real Denial Rate" mortgage analyses; Federal Reserve Bank of Chicago &amp; Philadelphia mortgage-discrimination studies; HMDA data</li>
+            <li>Hoffman, Trawalter, Axt et al., "Racial Bias in Pain Assessment," <em>PNAS</em> (2016)</li>
+            <li>Chohlas-Wood, Goel et al., "threshold test" for discrimination in policing, North Carolina traffic-stop data</li>
+            <li>Brennan Center for Justice; Prison Policy Initiative; U.S. Commission on Civil Rights &mdash; collateral consequences data</li>
+          </ul>
+          <p style="margin-top:16px; font-size:12px; color:var(--grey);">This dossier synthesizes publicly available peer-reviewed research, government reports, and investigative journalism current as of August 2026. Figures are attributed to their original studies; where findings have been contested or failed to replicate, that is noted alongside the original claim. This document is intended as a research aid, not a legal or statistical authority in itself &mdash; primary sources should be consulted directly for any citation in further work.</p>
+        </div>
+      </section>
+
+      <div class="ornament">&#10070; &#10070; &#10070;</div>
+    </div>
+
+    <footer>
+      THE HUMAN VERDICT &middot; A DECISION RESEARCH DOSSIER &middot; COMPILED AUGUST 2026 &middot; FOR RESEARCH &amp; EDUCATIONAL USE ONLY
+    </footer>
+
+    <script>
+      const progressBar = document.getElementById('progress-bar');
+      const scrollTopBtn = document.getElementById('scroll-top');
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = pct + '%';
+        if (scrollTop > 600) { scrollTopBtn.classList.add('visible'); }
+        else { scrollTopBtn.classList.remove('visible'); }
+      });
+      scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    </script>
+  </body>
+</html>
